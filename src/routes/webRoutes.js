@@ -20,6 +20,7 @@ router.use(requireAdminAuth);
 router.get('/', WebController.renderDashboard);
 router.get('/profile', WebController.renderProfile);
 router.get('/articles', requireWebPermission('articles.manage'), WebController.renderArticles);
+router.get('/articles/:id', requireWebPermission('articles.manage'), WebController.renderArticleDetailAdmin);
 
 router.get('/services', requireWebPermission('services.manage'), WebController.renderServices);
 router.get('/services/:id', requireWebPermission('services.manage'), WebController.renderServiceDetailAdmin);

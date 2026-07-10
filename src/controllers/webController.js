@@ -59,6 +59,34 @@ export const renderArticles = async (req, res) => {
   }
 };
 
+// Render Article Dedicated Detail Admin Page
+export const renderArticleDetailAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    let article = await prisma.article.findUnique({
+      where: { id }
+    });
+
+    if (!article) {
+      article = await prisma.article.findUnique({
+        where: { slug: id }
+      });
+    }
+
+    if (!article) {
+      return res.redirect('/admin/articles');
+    }
+
+    res.render('admin/articleDetail', {
+      title: `Kelola Artikel: ${article.title}`,
+      activeMenu: 'articles',
+      article
+    });
+  } catch (error) {
+    res.status(500).send('Gagal memuat halaman detail artikel');
+  }
+};
+
 // Render Services Page
 export const renderServices = async (req, res) => {
   try {
