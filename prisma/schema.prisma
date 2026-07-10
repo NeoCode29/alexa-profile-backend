@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -35,8 +35,8 @@ model Role {
 
 model Permission {
   id          String           @id @default(uuid())
-  name        String           @unique // e.g., "articles.create", "inquiries.read"
-  module      String           // e.g., "articles", "services", "careers"
+  name        String           @unique
+  module      String
   description String?
   roles       RolePermission[]
   createdAt   DateTime         @default(now())
@@ -66,35 +66,35 @@ model RolePermission {
 // ==========================================
 
 model Article {
-  id        String   @id @default(uuid())
-  title     String
-  slug      String   @unique
-  category  String
-  author    String   @default("Tim Editorial Alexa")
-  views     Int      @default(0)
-  image     String?
-  excerpt   String
-  content   String   // Markdown / multiline text
-  isPublished Boolean @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  category    String
+  author      String   @default("Tim Editorial Alexa")
+  views       Int      @default(0)
+  image       String?
+  excerpt     String
+  content     String
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Service {
-  id          String           @id // "mediakampung", "inetmedia", "webmedia"
-  title       String
-  subtitle    String
-  description String
-  heroDesc    String?
+  id           String           @id // "mediakampung", "inetmedia", "webmedia"
+  title        String
+  subtitle     String
+  description  String
+  heroDesc     String?
   fullDesc     String?
   icon         String           @default("FaLaptopCode")
   color        String           @default("#3BAE7C")
-  features     String?          // JSON string of features array
-  portfolios   String?          // JSON string of portfolio items array
-  testimonials String?          // JSON string of testimonial items array
+  features     String?
+  portfolios   String?
+  testimonials String?
   packages     PricingPackage[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 }
 
 model PricingPackage {
@@ -102,7 +102,7 @@ model PricingPackage {
   serviceId String
   name      String
   price     String
-  features  String   // JSON string of features array
+  features  String
   isPopular Boolean  @default(false)
   service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
@@ -112,7 +112,7 @@ model PricingPackage {
 model Client {
   id        String   @id @default(uuid())
   name      String
-  image     String   // Logo URL or filepath
+  image     String
   order     Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -121,7 +121,7 @@ model Client {
 model Portfolio {
   id          String   @id @default(uuid())
   title       String
-  category    String   // "WebMedia" | "InetMedia" | "MediaKampung"
+  category    String
   image       String
   description String?
   createdAt   DateTime @default(now())
@@ -161,7 +161,7 @@ model AnnualReport {
 model Career {
   id          String   @id @default(uuid())
   title       String
-  department  String   // "WebMedia" | "InetMedia" | "MediaKampung"
+  department  String
   location    String   @default("Jakarta, Hybrid")
   type        String   @default("Full-time")
   description String
@@ -176,17 +176,109 @@ model Inquiry {
   email     String
   subject   String
   message   String
-  status    String   @default("NEW") // "NEW" | "READ" | "RESPONDED"
+  status    String   @default("NEW")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// ==========================================
-// PENGATURAN KONTEN HALAMAN FRONTEND
-// ==========================================
 model PageContent {
   id        String   @id @default(uuid())
-  pageName  String   @unique // "home" | "about" | "services" | "contact"
-  content   String   // JSON text storing exact page fields
+  pageName  String   @unique
+  content   String
   updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// 3. TAMBAHAN DARI SCHEMA KAMU (belum ada di punya teman)
+// ==========================================
+
+model HeroBanner {
+  id          String   @id @default(uuid())
+  title       String
+  subtitle    String?
+  image       String?
+  orderNumber Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ManagementTeam {
+  id          String   @id @default(uuid())
+  name        String
+  position    String?
+  photo       String?
+  bio         String?
+  orderNumber Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WhyChooseUs {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  icon        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Partner {
+  id        String   @id @default(uuid())
+  name      String
+  logo      String?
+  type      String?  // "client" | "tech_partner"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Faq {
+  id          String   @id @default(uuid())
+  question    String
+  answer      String
+  orderNumber Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  phone     String?
+  whatsapp  String?
+  email     String?
+  address   String?
+  latitude  Decimal? @db.Decimal(10, 8)
+  longitude Decimal? @db.Decimal(11, 8)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SeoSetting {
+  id              String   @id @default(uuid())
+  menuType        String
+  articleId       String?
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  ogImage         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model CompanyProfile {
+  id        String   @id @default(uuid())
+  history   String?
+  vision    String?
+  mission   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Timeline {
+  id          String   @id @default(uuid())
+  year        String
+  title       String
+  description String?
+  orderNumber Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
