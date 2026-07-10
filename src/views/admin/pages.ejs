@@ -1,0 +1,412 @@
+<div class="row mb-4 align-items-center">
+  <div class="col-md-8">
+    <h3 class="fw-bold text-dark mb-1">Pengaturan Konten Halaman Frontend</h3>
+    <p class="text-muted mb-0">Kelola dan ubah teks, judul, statistik, visi-misi, serta informasi kontak pada setiap halaman website PT. Alexa Computindo Group secara langsung.</p>
+  </div>
+</div>
+
+<!-- Nav Tabs Halaman -->
+<ul class="nav nav-tabs nav-tabs-custom mb-4 border-bottom" id="pageTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active fw-bold px-4 py-3 d-flex align-items-center" id="home-tab" data-bs-toggle="tab" data-bs-target="#tab-home" type="button" role="tab">
+      <i class="ti ti-home me-2 fs-5"></i>Halaman Beranda (Home)
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link fw-bold px-4 py-3 d-flex align-items-center" id="about-tab" data-bs-toggle="tab" data-bs-target="#tab-about" type="button" role="tab">
+      <i class="ti ti-building me-2 fs-5"></i>Halaman Tentang Kami (About)
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link fw-bold px-4 py-3 d-flex align-items-center" id="services-tab" data-bs-toggle="tab" data-bs-target="#tab-services" type="button" role="tab">
+      <i class="ti ti-briefcase me-2 fs-5"></i>Halaman Layanan (Services)
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link fw-bold px-4 py-3 d-flex align-items-center" id="contact-tab" data-bs-toggle="tab" data-bs-target="#tab-contact" type="button" role="tab">
+      <i class="ti ti-phone me-2 fs-5"></i>Halaman Kontak (Contact)
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content" id="pageTabsContent">
+
+  <!-- ========================================== -->
+  <!-- TAB 1: HALAMAN BERANDA (HOME) -->
+  <!-- ========================================== -->
+  <div class="tab-pane fade show active" id="tab-home" role="tabpanel">
+    <form id="form-home" onsubmit="savePageContent(event, 'home')">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+          <i class="ti ti-layout-navbar text-primary fs-4 me-2"></i>
+          <h5 class="card-title fw-bold mb-0">Hero Section Utama</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Judul Hero Baris 1</label>
+              <input type="text" class="form-control" name="heroTitleLine1" value="<%= pagesData.home.heroTitleLine1 %>" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Judul Hero Baris 2 (Teks Highlight Hijau)</label>
+              <input type="text" class="form-control" name="heroTitleHighlight" value="<%= pagesData.home.heroTitleHighlight %>" required>
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label fw-medium">Deskripsi Hero</label>
+              <textarea class="form-control" name="heroDesc" rows="3" required><%= pagesData.home.heroDesc %></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Teks Tombol CTA Utama</label>
+              <input type="text" class="form-control" name="ctaPrimaryText" value="<%= pagesData.home.ctaPrimaryText %>" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Teks Tombol CTA Sekunder</label>
+              <input type="text" class="form-control" name="ctaSecondaryText" value="<%= pagesData.home.ctaSecondaryText %>" required>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+          <i class="ti ti-info-circle text-primary fs-4 me-2"></i>
+          <h5 class="card-title fw-bold mb-0">Intro Section (Fundamen Solid & Statistik)</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-medium">Judul Intro</label>
+            <input type="text" class="form-control" name="introTitle" value="<%= pagesData.home.introTitle %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium">Deskripsi Intro Perusahaan</label>
+            <textarea class="form-control" name="introDesc" rows="3" required><%= pagesData.home.introDesc %></textarea>
+          </div>
+
+          <h6 class="fw-bold mt-4 mb-3 border-top pt-3">3 Kotak Statistik Pencapaian</h6>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <div class="p-3 border rounded bg-light">
+                <label class="form-label fw-bold">Statistik 1 - Angka</label>
+                <input type="text" class="form-control mb-2" name="stat1Number" value="<%= pagesData.home.stat1Number %>">
+                <label class="form-label fw-medium small">Label</label>
+                <input type="text" class="form-control" name="stat1Label" value="<%= pagesData.home.stat1Label %>">
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="p-3 border rounded bg-light">
+                <label class="form-label fw-bold">Statistik 2 - Angka</label>
+                <input type="text" class="form-control mb-2" name="stat2Number" value="<%= pagesData.home.stat2Number %>">
+                <label class="form-label fw-medium small">Label</label>
+                <input type="text" class="form-control" name="stat2Label" value="<%= pagesData.home.stat2Label %>">
+              </div>
+            </div>
+            <div class="col-md-4 mb-3">
+              <div class="p-3 border rounded bg-light">
+                <label class="form-label fw-bold">Statistik 3 - Angka</label>
+                <input type="text" class="form-control mb-2" name="stat3Number" value="<%= pagesData.home.stat3Number %>">
+                <label class="form-label fw-medium small">Label</label>
+                <input type="text" class="form-control" name="stat3Label" value="<%= pagesData.home.stat3Label %>">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
+          <i class="ti ti-briefcase text-primary fs-4 me-2"></i>
+          <h5 class="card-title fw-bold mb-0">Judul Bagian Divisi Layanan</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Judul Section Divisi</label>
+              <input type="text" class="form-control" name="servicesSectionTitle" value="<%= pagesData.home.servicesSectionTitle %>" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Subjudul Section Divisi</label>
+              <input type="text" class="form-control" name="servicesSectionSubtitle" value="<%= pagesData.home.servicesSectionSubtitle %>" required>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-end mb-5">
+        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+          <i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Halaman Beranda
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 2: HALAMAN TENTANG KAMI (ABOUT) -->
+  <!-- ========================================== -->
+  <div class="tab-pane fade" id="tab-about" role="tabpanel">
+    <form id="form-about" onsubmit="savePageContent(event, 'about')">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h5 class="card-title fw-bold mb-0">Hero About & Profil Singkat</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-medium">Judul Halaman</label>
+            <input type="text" class="form-control" name="heroTitle" value="<%= pagesData.about.heroTitle %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium">Deskripsi Hero Profil</label>
+            <textarea class="form-control" name="heroDesc" rows="3" required><%= pagesData.about.heroDesc %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h5 class="card-title fw-bold mb-0">Sejarah Perusahaan</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-medium">Judul Bagian Sejarah</label>
+            <input type="text" class="form-control" name="historyTitle" value="<%= pagesData.about.historyTitle %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium">Paragraf Sejarah 1</label>
+            <textarea class="form-control" name="historyPar1" rows="3" required><%= pagesData.about.historyPar1 %></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium">Paragraf Sejarah 2</label>
+            <textarea class="form-control" name="historyPar2" rows="3" required><%= pagesData.about.historyPar2 %></textarea>
+          </div>
+
+          <h6 class="fw-bold mt-4 mb-3 border-top pt-3">Kartu Timeline Sejarah (Kanan)</h6>
+          <div class="row">
+            <% const timelines = pagesData.about.timelineList || [
+                 { year: '2018', title: 'PENDIRIAN WEBMEDIA', desc: 'Fokus awal pada arsitektur sistem informasi enterprise.' },
+                 { year: '2020', title: 'EKSPANSI INETMEDIA', desc: 'Memperoleh lisensi ISP nasional untuk infrastruktur jaringan.' },
+                 { year: '2023', title: 'AKUISISI MEDIAKAMPUNG', desc: 'Membentuk pilar media digital yang kuat.' }
+               ]; %>
+            <% timelines.forEach(function(tl, index) { %>
+              <div class="col-md-4 mb-3">
+                <div class="p-3 border rounded bg-light">
+                  <label class="form-label fw-bold">Tahun Timeline <%= index + 1 %></label>
+                  <input type="text" class="form-control mb-2" name="timelineYear_<%= index %>" value="<%= tl.year %>" required>
+                  <label class="form-label fw-medium small">Judul Timeline</label>
+                  <input type="text" class="form-control mb-2" name="timelineTitle_<%= index %>" value="<%= tl.title %>" required>
+                  <label class="form-label fw-medium small">Deskripsi Singkat</label>
+                  <textarea class="form-control" name="timelineDesc_<%= index %>" rows="2" required><%= tl.desc %></textarea>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h5 class="card-title fw-bold mb-0">Visi & Misi Perusahaan</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-4">
+            <label class="form-label fw-medium">Visi Perusahaan</label>
+            <textarea class="form-control" name="visionText" rows="3" required><%= pagesData.about.visionText %></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium">Misi 1</label>
+            <input type="text" class="form-control mb-2" name="mission0" value="<%= pagesData.about.missionList[0] || '' %>">
+            <label class="form-label fw-medium">Misi 2</label>
+            <input type="text" class="form-control mb-2" name="mission1" value="<%= pagesData.about.missionList[1] || '' %>">
+            <label class="form-label fw-medium">Misi 3</label>
+            <input type="text" class="form-control" name="mission2" value="<%= pagesData.about.missionList[2] || '' %>">
+          </div>
+        </div>
+      </div>
+
+      <div class="text-end mb-5">
+        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+          <i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Halaman About
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 3: HALAMAN LAYANAN (SERVICES) -->
+  <!-- ========================================== -->
+  <div class="tab-pane fade" id="tab-services" role="tabpanel">
+    <form id="form-services" onsubmit="savePageContent(event, 'services')">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h5 class="card-title fw-bold mb-0">Hero Halaman Layanan</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-medium">Judul Utama Layanan</label>
+            <input type="text" class="form-control" name="heroTitle" value="<%= pagesData.services.heroTitle %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium">Subjudul Pengantar Layanan</label>
+            <textarea class="form-control" name="heroSubtitle" rows="2" required><%= pagesData.services.heroSubtitle %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h5 class="card-title fw-bold mb-0">Bagian Daftar Divisi Layanan</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-medium">Judul Bagian Divisi</label>
+            <input type="text" class="form-control" name="sectionTitle" value="<%= pagesData.services.sectionTitle || 'Eksplorasi Divisi AG Group' %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium">Subjudul Bagian Divisi</label>
+            <textarea class="form-control" name="sectionSubtitle" rows="2" required><%= pagesData.services.sectionSubtitle || 'Pilih divisi layanan di bawah ini untuk melihat deskripsi mendalam, spesifikasi paket harga, dan portofolio proyek.' %></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h5 class="card-title fw-bold mb-0">Bagian Testimonial Klien</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-medium">Judul Bagian Testimonial</label>
+            <input type="text" class="form-control" name="testiSectionTitle" value="<%= pagesData.services.testiSectionTitle || 'Kata Klien Kami' %>" required>
+          </div>
+          <small class="text-muted">Daftar kartu divisi layanan dan paket dapat dikelola di menu <b>Divisi & Layanan</b>.</small>
+        </div>
+      </div>
+
+      <div class="text-end mb-5">
+        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+          <i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Halaman Layanan
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- TAB 4: HALAMAN KONTAK (CONTACT) -->
+  <!-- ========================================== -->
+  <div class="tab-pane fade" id="tab-contact" role="tabpanel">
+    <form id="form-contact" onsubmit="savePageContent(event, 'contact')">
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h5 class="card-title fw-bold mb-0">Hero Halaman Kontak</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-3">
+            <label class="form-label fw-medium">Judul Halaman Kontak</label>
+            <input type="text" class="form-control" name="heroTitle" value="<%= pagesData.contact.heroTitle %>" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-medium">Subjudul Halaman Kontak</label>
+            <input type="text" class="form-control" name="heroSubtitle" value="<%= pagesData.contact.heroSubtitle %>" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h5 class="card-title fw-bold mb-0">Informasi Alamat & Kontak Resmi</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Judul Box Alamat</label>
+              <input type="text" class="form-control" name="addressTitle" value="<%= pagesData.contact.addressTitle %>" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Detail Alamat Kantor (Gunakan Enter untuk baris baru)</label>
+              <textarea class="form-control" name="addressText" rows="2" required><%= pagesData.contact.addressText %></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Judul Box Telepon</label>
+              <input type="text" class="form-control" name="phoneTitle" value="<%= pagesData.contact.phoneTitle %>" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Nomor Telepon / WhatsApp</label>
+              <textarea class="form-control" name="phoneText" rows="2" required><%= pagesData.contact.phoneText %></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Judul Box Email</label>
+              <input type="text" class="form-control" name="emailTitle" value="<%= pagesData.contact.emailTitle %>" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label fw-medium">Alamat Email Resmi</label>
+              <textarea class="form-control" name="emailText" rows="2" required><%= pagesData.contact.emailText %></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-header bg-white py-3 border-bottom">
+          <h5 class="card-title fw-bold mb-0">URL Embed Google Maps</h5>
+        </div>
+        <div class="card-body p-4">
+          <div class="mb-2">
+            <label class="form-label fw-medium">Link URL iframe Google Maps (src)</label>
+            <input type="url" class="form-control" name="mapEmbedUrl" value="<%= pagesData.contact.mapEmbedUrl %>" required>
+          </div>
+          <small class="text-muted">Masukkan link URL embed resmi dari Google Maps.</small>
+        </div>
+      </div>
+
+      <div class="text-end mb-5">
+        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+          <i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Halaman Kontak
+        </button>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<script>
+async function savePageContent(e, pageName) {
+  e.preventDefault();
+  const form = document.getElementById(`form-${pageName}`);
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData.entries());
+
+  if (pageName === 'about') {
+    data.missionList = [data.mission0, data.mission1, data.mission2].filter(Boolean);
+    delete data.mission0;
+    delete data.mission1;
+    delete data.mission2;
+
+    data.timelineList = [
+      { year: data.timelineYear_0, title: data.timelineTitle_0, desc: data.timelineDesc_0 },
+      { year: data.timelineYear_1, title: data.timelineTitle_1, desc: data.timelineDesc_1 },
+      { year: data.timelineYear_2, title: data.timelineTitle_2, desc: data.timelineDesc_2 }
+    ];
+    delete data.timelineYear_0; delete data.timelineTitle_0; delete data.timelineDesc_0;
+    delete data.timelineYear_1; delete data.timelineTitle_1; delete data.timelineDesc_1;
+    delete data.timelineYear_2; delete data.timelineTitle_2; delete data.timelineDesc_2;
+  }
+
+  try {
+    const res = await fetch(`/api/pages/${pageName}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: data })
+    });
+    const result = await res.json();
+    if (result.success) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Tersimpan!',
+        text: result.message || 'Konten halaman berhasil disimpan.',
+        confirmButtonColor: '#3BAE7C'
+      });
+    } else {
+      Swal.fire('Gagal', result.message || 'Gagal menyimpan data', 'error');
+    }
+  } catch (err) {
+    Swal.fire('Error', 'Terjadi kesalahan koneksi server', 'error');
+  }
+}
+</script>

@@ -1,0 +1,172 @@
+<!-- Page Header -->
+<div class="page-header mb-4">
+	<div class="row align-items-center">
+		<div class="col">
+			<h3 class="page-title fw-bold text-dark">Manajemen Logo Klien & Mitra (Marquee)</h3>
+			<ul class="breadcrumb">
+				<li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+				<li class="breadcrumb-item active">Klien</li>
+			</ul>
+		</div>
+		<div class="col-auto">
+			<button class="btn btn-primary d-inline-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addClientModal">
+				<i class="ti ti-plus me-2"></i>Tambah Klien
+			</button>
+		</div>
+	</div>
+</div>
+<!-- /Page Header -->
+
+<div class="card shadow-sm border-0">
+	<div class="card-body">
+		<div class="row">
+			<% if (clients && clients.length > 0) { %>
+				<% clients.forEach(function(item) { %>
+					<div class="col-xl-2 col-md-3 col-sm-4 col-6 mb-4">
+						<div class="card border p-3 text-center h-100 d-flex flex-column justify-content-between">
+							<div class="my-3 d-flex align-items-center justify-content-center" style="height: 60px;">
+								<img src="<%= item.image %>" alt="<%= item.name %>" class="img-fluid" style="max-height: 54px; object-fit: contain;">
+							</div>
+							<div>
+								<h6 class="fw-bold mb-3 text-truncate text-dark" title="<%= item.name %>"><%= item.name %></h6>
+								<button class="btn btn-sm btn-danger-subtle text-danger w-100" onclick="deleteClient('<%= item.id %>', '<%= item.name %>')">
+									<i class="ti ti-trash me-1"></i>Hapus
+								</button>
+							</div>
+						</div>
+					</div>
+				<% }); %>
+			<% } else { %>
+				<div class="col-12 text-center text-muted py-5">
+					<i class="ti ti-users-group fs-1 d-block mb-2 text-secondary"></i>
+					Belum ada logo klien ditambahkan.
+				</div>
+			<% } %>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Tambah Klien -->
+<div class="modal fade" id="addClientModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title fw-bold">Tambah Logo Klien Baru</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<form id="createClientForm">
+					<div class="mb-3">
+						<label class="form-label fw-medium">Nama Klien/Perusahaan <span class="text-danger">*</span></label>
+						<input type="text" class="form-control" name="name" required placeholder="Contoh: PT. Teknologi Nusantara">
+					</div>
+					<div class="mb-3">
+						<label class="form-label fw-medium">Unggah Logo dari PC (.png/.svg/.webp)</label>
+						<input type="file" class="form-control" id="clientLogoFile" accept="image/*" onchange="uploadClientLogo(event)">
+					</div>
+					<div class="mb-3">
+						<label class="form-label fw-medium">Atau URL Logo <span class="text-danger">*</span></label>
+						<input type="url" class="form-control" name="image" id="clientLogoUrl" required placeholder="https://...">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary" onclick="submitCreateClient()">Simpan Klien</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+async function uploadClientLogo(e) {
+	const file = e.target.files[0];
+	if (!file) return;
+	const formData = new FormData();
+	formData.append('image', file);
+	try {
+		const res = await fetch('/api/upload', { method: 'POST', body: formData });
+		const result = await res.json();
+		if (result.success) {
+			document.getElementById('clientLogoUrl').value = result.url;
+			Swal.fire({
+				icon: 'success',
+				title: 'Logo Terunggah',
+				text: 'File berhasil diunggah ke server.',
+				timer: 1000,
+				showConfirmButton: false
+			});
+		} else {
+			Swal.fire('Gagal', result.message, 'error');
+		}
+	} catch (err) {
+		Swal.fire('Error', 'Gagal mengunggah logo', 'error');
+	}
+}
+
+async function submitCreateClient() {
+	const form = document.getElementById('createClientForm');
+	const formData = new FormData(form);
+	const data = Object.fromEntries(formData.entries());
+	
+	if (!data.name || !data.image) {
+		Swal.fire('Peringatan', 'Harap isi nama dan gambar logo.', 'warning');
+		return;
+	}
+
+	try {
+		const res = await fetch('/api/clients', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Berhasil',
+				text: 'Klien baru berhasil ditambahkan.',
+				timer: 1500,
+				showConfirmButton: false
+			}).then(() => location.reload());
+		} else {
+			Swal.fire('Gagal', result.message, 'error');
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Terjadi kesalahan koneksi server.', 'error');
+	}
+}
+
+async function deleteClient(id, name) {
+	Swal.fire({
+		title: 'Hapus Logo Klien?',
+		text: `Apakah Anda yakin ingin menghapus logo klien "${name}"?`,
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#dc3545',
+		cancelButtonColor: '#6c757d',
+		confirmButtonText: 'Ya, Hapus',
+		cancelButtonText: 'Batal'
+	}).then(async (result) => {
+		if (result.isConfirmed) {
+			try {
+				const res = await fetch(`/api/clients/${id}`, { method: 'DELETE' });
+				const resultData = await res.json();
+				if (resultData.success) {
+					Swal.fire({
+						icon: 'success',
+						title: 'Terhapus',
+						text: 'Logo klien telah berhasil dihapus.',
+						timer: 1500,
+						showConfirmButton: false
+					}).then(() => location.reload());
+				} else {
+					Swal.fire('Gagal', resultData.message, 'error');
+				}
+			} catch (e) {
+				Swal.fire('Error', 'Gagal memproses penghapusan.', 'error');
+			}
+		}
+	});
+}
+</script>

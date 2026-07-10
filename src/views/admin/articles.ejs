@@ -1,0 +1,422 @@
+<!-- Page Header -->
+<div class="page-header mb-4">
+	<div class="row align-items-center">
+		<div class="col">
+			<h3 class="page-title fw-bold text-dark">Manajemen Artikel Blog</h3>
+			<ul class="breadcrumb">
+				<li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+				<li class="breadcrumb-item active">Artikel</li>
+			</ul>
+		</div>
+		<div class="col-auto">
+			<button class="btn btn-primary d-inline-flex align-items-center" data-bs-toggle="modal" data-bs-target="#addArticleModal">
+				<i class="ti ti-plus me-2"></i>Tambah Artikel
+			</button>
+		</div>
+	</div>
+</div>
+<!-- /Page Header -->
+
+<!-- Quill Rich Text Editor CSS -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+
+<div class="card shadow-sm border-0">
+	<div class="card-body">
+		<div class="table-responsive">
+			<table class="table table-hover align-middle mb-0">
+				<thead class="table-light">
+					<tr>
+						<th>Cover & Judul</th>
+						<th>Kategori</th>
+						<th>Penulis</th>
+						<th>Views</th>
+						<th>Tanggal</th>
+						<th class="text-end">Aksi</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% if (articles && articles.length > 0) { %>
+						<% articles.forEach(function(item) { %>
+							<tr>
+								<td>
+									<div class="d-flex align-items-center">
+										<% if (item.image) { %>
+											<img src="<%= item.image %>" alt="" class="rounded me-3 border" style="width: 60px; height: 42px; object-fit: cover;">
+										<% } else { %>
+											<div class="rounded me-3 border bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 42px;">
+												<i class="ti ti-photo text-muted"></i>
+											</div>
+										<% } %>
+										<div>
+											<div class="fw-bold text-dark"><%= item.title %></div>
+											<div class="text-muted small text-truncate" style="max-width: 300px;"><%= item.excerpt %></div>
+										</div>
+									</div>
+								</td>
+								<td><span class="badge bg-primary text-primary"><%= item.category %></span></td>
+								<td><span class="fw-medium"><%= item.author %></span></td>
+								<td><span class="text-muted"><i class="ti ti-eye me-1"></i><%= item.views %></span></td>
+								<td class="text-muted small"><%= new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></td>
+								<td class="text-end">
+									<button class="btn btn-icon btn-sm btn-primary-subtle text-primary me-1" title="Edit artikel" onclick="openEditArticleModal('<%= item.id %>')">
+										<i class="ti ti-edit"></i>
+									</button>
+									<button class="btn btn-icon btn-sm btn-danger-subtle text-danger" title="Hapus artikel" onclick="deleteArticle('<%= item.id %>', '<%= item.title %>')">
+										<i class="ti ti-trash"></i>
+									</button>
+								</td>
+							</tr>
+						<% }); %>
+					<% } else { %>
+						<tr>
+							<td colspan="6" class="text-center text-muted py-5">
+								<i class="ti ti-file-text fs-1 d-block mb-2 text-secondary"></i>
+								Belum ada artikel yang ditambahkan.
+							</td>
+						</tr>
+					<% } %>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Tambah Artikel -->
+<div class="modal fade" id="addArticleModal" tabindex="-1">
+	<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title fw-bold">Tambah Artikel Baru</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<form id="createArticleForm">
+					<div class="row">
+						<div class="col-md-8 mb-3">
+							<label class="form-label fw-medium">Judul Artikel <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" name="title" required placeholder="Contoh: Pentingnya Transformasi Digital Bagi UMKM">
+						</div>
+						<div class="col-md-4 mb-3">
+							<label class="form-label fw-medium">Kategori <span class="text-danger">*</span></label>
+							<select class="form-select" name="category" required>
+								<option value="Teknologi">Teknologi</option>
+								<option value="Desain Web">Desain Web</option>
+								<option value="Tips Jaringan">Tips Jaringan</option>
+								<option value="Software">Software</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row align-items-end">
+						<div class="col-md-5 mb-3">
+							<label class="form-label fw-medium">Unggah Gambar Cover (.jpg/.png/.webp)</label>
+							<input type="file" class="form-control" id="coverUploadInput" accept="image/*" onchange="uploadCoverFile(event)">
+						</div>
+						<div class="col-md-5 mb-3">
+							<label class="form-label fw-medium">Atau URL Gambar Cover</label>
+							<input type="url" class="form-control" name="image" id="imageUrlInput" placeholder="https://...">
+						</div>
+						<div class="col-md-2 mb-3 text-center">
+							<img id="coverPreview" src="" class="img-fluid rounded border d-none" style="max-height: 48px; object-fit: cover;">
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-medium">Kutipan Singkat (Excerpt) <span class="text-danger">*</span></label>
+						<textarea class="form-control" name="excerpt" rows="2" required placeholder="Ringkasan singkat isi artikel..."></textarea>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-medium">Isi Lengkap Artikel (Rich Text WYSIWYG) <span class="text-danger">*</span></label>
+						<div id="quillEditor" style="height: 250px; background: #fff; border-radius: 6px;"></div>
+						<input type="hidden" name="content" id="articleContentHidden">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary" onclick="submitCreateArticle()">Simpan & Terbitkan</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Edit Artikel -->
+<div class="modal fade" id="editArticleModal" tabindex="-1">
+	<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title fw-bold">Edit Artikel</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<form id="editArticleForm">
+					<input type="hidden" name="id" id="editArticleId">
+					<div class="row">
+						<div class="col-md-8 mb-3">
+							<label class="form-label fw-medium">Judul Artikel <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" name="title" id="editTitleInput" required>
+						</div>
+						<div class="col-md-4 mb-3">
+							<label class="form-label fw-medium">Kategori <span class="text-danger">*</span></label>
+							<select class="form-select" name="category" id="editCategoryInput" required>
+								<option value="Teknologi">Teknologi</option>
+								<option value="Desain Web">Desain Web</option>
+								<option value="Tips Jaringan">Tips Jaringan</option>
+								<option value="Software">Software</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row align-items-end">
+						<div class="col-md-5 mb-3">
+							<label class="form-label fw-medium">Unggah Gambar Cover Baru (.jpg/.png/.webp)</label>
+							<input type="file" class="form-control" accept="image/*" onchange="uploadEditCoverFile(event)">
+						</div>
+						<div class="col-md-5 mb-3">
+							<label class="form-label fw-medium">URL Gambar Cover</label>
+							<input type="url" class="form-control" name="image" id="editImageUrlInput">
+						</div>
+						<div class="col-md-2 mb-3 text-center">
+							<img id="editCoverPreview" src="" class="img-fluid rounded border d-none" style="max-height: 48px; object-fit: cover;">
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-medium">Kutipan Singkat (Excerpt) <span class="text-danger">*</span></label>
+						<textarea class="form-control" name="excerpt" id="editExcerptInput" rows="2" required></textarea>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-medium">Isi Lengkap Artikel (Rich Text WYSIWYG) <span class="text-danger">*</span></label>
+						<div id="quillEditEditor" style="height: 250px; background: #fff; border-radius: 6px;"></div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary" onclick="submitEditArticle()">Simpan Perubahan</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Quill JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+let quill, quillEdit;
+const articlesList = <%- JSON.stringify(typeof articles !== 'undefined' ? articles : []) %>;
+
+document.addEventListener("DOMContentLoaded", function() {
+	quill = new Quill('#quillEditor', {
+		theme: 'snow',
+		placeholder: 'Tulis isi lengkap artikel di sini dengan pemformatan...',
+		modules: {
+			toolbar: [
+				[{ 'header': [2, 3, false] }],
+				['bold', 'italic', 'underline', 'blockquote'],
+				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+				['link', 'clean']
+			]
+		}
+	});
+
+	quillEdit = new Quill('#quillEditEditor', {
+		theme: 'snow',
+		placeholder: 'Edit isi artikel...',
+		modules: {
+			toolbar: [
+				[{ 'header': [2, 3, false] }],
+				['bold', 'italic', 'underline', 'blockquote'],
+				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+				['link', 'clean']
+			]
+		}
+	});
+});
+
+async function uploadCoverFile(e) {
+	const file = e.target.files[0];
+	if (!file) return;
+
+	const formData = new FormData();
+	formData.append('image', file);
+
+	// Tampilkan loading loading kecil di preview
+	const previewImg = document.getElementById('coverPreview');
+	previewImg.classList.add('d-none');
+
+	try {
+		const res = await fetch('/api/upload', {
+			method: 'POST',
+			body: formData
+		});
+		const result = await res.json();
+		if (result.success) {
+			document.getElementById('imageUrlInput').value = result.url;
+			previewImg.src = result.url;
+			previewImg.classList.remove('d-none');
+		} else {
+			Swal.fire('Gagal', result.message, 'error');
+		}
+	} catch (err) {
+		Swal.fire('Error', 'Gagal mengunggah gambar', 'error');
+	}
+}
+
+async function submitCreateArticle() {
+	const form = document.getElementById('createArticleForm');
+	const formData = new FormData(form);
+	const data = Object.fromEntries(formData.entries());
+
+	// Ambil HTML dari editor Quill
+	data.content = quill.root.innerHTML;
+
+	if (!data.title || !data.excerpt || data.content === "<p><br></p>") {
+		Swal.fire('Peringatan', 'Harap isi semua kolom wajib (*).', 'warning');
+		return;
+	}
+
+	try {
+		const res = await fetch('/api/articles', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Berhasil',
+				text: 'Artikel baru telah berhasil diterbitkan.',
+				timer: 1500,
+				showConfirmButton: false
+			}).then(() => location.reload());
+		} else {
+			Swal.fire('Gagal', result.message || 'Gagal menyimpan artikel', 'error');
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Terjadi kesalahan koneksi server.', 'error');
+	}
+}
+
+async function deleteArticle(id, title) {
+	Swal.fire({
+		title: 'Hapus Artikel?',
+		text: `Apakah Anda yakin ingin menghapus artikel "${title}"?`,
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#dc3545',
+		cancelButtonColor: '#6c757d',
+		confirmButtonText: 'Ya, Hapus',
+		cancelButtonText: 'Batal'
+	}).then(async (result) => {
+		if (result.isConfirmed) {
+			try {
+				const res = await fetch(`/api/articles/${id}`, { method: 'DELETE' });
+				const resultData = await res.json();
+				if (resultData.success) {
+					Swal.fire({
+						icon: 'success',
+						title: 'Terhapus',
+						text: 'Artikel telah berhasil dihapus.',
+						timer: 1500,
+						showConfirmButton: false
+					}).then(() => location.reload());
+				} else {
+					Swal.fire('Gagal', resultData.message, 'error');
+				}
+			} catch (e) {
+				Swal.fire('Error', 'Terjadi kesalahan koneksi server.', 'error');
+			}
+		}
+	});
+}
+
+function openEditArticleModal(id) {
+	const article = articlesList.find(a => a.id === id);
+	if (!article) return;
+
+	document.getElementById('editArticleId').value = article.id;
+	document.getElementById('editTitleInput').value = article.title;
+	document.getElementById('editCategoryInput').value = article.category;
+	document.getElementById('editImageUrlInput').value = article.image || '';
+	document.getElementById('editExcerptInput').value = article.excerpt || '';
+
+	const previewImg = document.getElementById('editCoverPreview');
+	if (article.image) {
+		previewImg.src = article.image;
+		previewImg.classList.remove('d-none');
+	} else {
+		previewImg.classList.add('d-none');
+	}
+
+	quillEdit.root.innerHTML = article.content || '';
+
+	new bootstrap.Modal(document.getElementById('editArticleModal')).show();
+}
+
+async function uploadEditCoverFile(e) {
+	const file = e.target.files[0];
+	if (!file) return;
+
+	const formData = new FormData();
+	formData.append('image', file);
+
+	const previewImg = document.getElementById('editCoverPreview');
+	previewImg.classList.add('d-none');
+
+	try {
+		const res = await fetch('/api/upload', {
+			method: 'POST',
+			body: formData
+		});
+		const result = await res.json();
+		if (result.success) {
+			document.getElementById('editImageUrlInput').value = result.url;
+			previewImg.src = result.url;
+			previewImg.classList.remove('d-none');
+		} else {
+			Swal.fire('Gagal', result.message, 'error');
+		}
+	} catch (err) {
+		Swal.fire('Error', 'Gagal mengunggah gambar', 'error');
+	}
+}
+
+async function submitEditArticle() {
+	const id = document.getElementById('editArticleId').value;
+	const title = document.getElementById('editTitleInput').value;
+	const category = document.getElementById('editCategoryInput').value;
+	const excerpt = document.getElementById('editExcerptInput').value;
+	const image = document.getElementById('editImageUrlInput').value;
+	const content = quillEdit.root.innerHTML;
+
+	if (!title || !excerpt || content === "<p><br></p>") {
+		Swal.fire('Peringatan', 'Harap isi kolom utama artikel.', 'warning');
+		return;
+	}
+
+	try {
+		const res = await fetch(`/api/articles/${id}`, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ title, category, excerpt, image, content })
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Berhasil',
+				text: 'Perubahan artikel berhasil disimpan.',
+				timer: 1500,
+				showConfirmButton: false
+			}).then(() => location.reload());
+		} else {
+			Swal.fire('Gagal', result.message || 'Gagal memperbarui artikel', 'error');
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Terjadi kesalahan koneksi server.', 'error');
+	}
+}
+</script>

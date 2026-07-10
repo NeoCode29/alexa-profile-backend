@@ -1,0 +1,153 @@
+<!-- Page Header -->
+<div class="page-header">
+	<div class="row align-items-center">
+		<div class="col">
+			<h3 class="page-title">Kotak Pesan Kontak & Konsultasi</h3>
+			<ul class="breadcrumb">
+				<li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+				<li class="breadcrumb-item active">Pesan Masuk</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<!-- /Page Header -->
+
+<div class="card shadow-sm border-0">
+	<div class="card-body">
+		<div class="table-responsive">
+			<table class="table table-hover align-middle mb-0">
+				<thead class="table-light">
+					<tr>
+						<th>Pengirim</th>
+						<th>Subjek & Cuplikan Pesan</th>
+						<th>Status</th>
+						<th>Tanggal</th>
+						<th class="text-end">Aksi</th>
+					</tr>
+				</thead>
+				<tbody>
+					<% if (inquiries && inquiries.length > 0) { %>
+						<% inquiries.forEach(function(item) { %>
+							<tr>
+								<td>
+									<div class="fw-bold text-dark"><%= item.name %></div>
+									<div class="text-muted small"><%= item.email %></div>
+								</td>
+								<td>
+									<div class="fw-medium text-dark"><%= item.subject %></div>
+									<div class="text-muted small text-truncate" style="max-width: 320px;"><%= item.message %></div>
+								</td>
+								<td>
+									<% if (item.status === 'NEW') { %>
+										<span class="badge bg-danger">Baru</span>
+									<% } else if (item.status === 'READ') { %>
+										<span class="badge bg-secondary">Dibaca</span>
+									<% } else { %>
+										<span class="badge bg-success">Dibalas</span>
+									<% } %>
+								</td>
+								<td class="text-muted small"><%= new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %></td>
+								<td class="text-end">
+									<button class="btn btn-sm btn-outline-primary me-1" onclick="viewInquiryDetail('<%= encodeURIComponent(JSON.stringify(item)) %>')">
+										<i class="ti ti-eye me-1"></i>Detail
+									</button>
+									<button class="btn btn-icon btn-sm btn-light" title="Tandai Dibaca" onclick="updateStatus('<%= item.id %>', 'READ')">
+										<i class="ti ti-check"></i>
+									</button>
+								</td>
+							</tr>
+						<% }); %>
+					<% } else { %>
+						<tr>
+							<td colspan="5" class="text-center text-muted py-5">
+								<i class="ti ti-inbox fs-1 d-block mb-2 text-secondary"></i>
+								Belum ada pesan kontak masuk.
+							</td>
+						</tr>
+					<% } %>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Detail Pesan -->
+<div class="modal fade" id="inquiryDetailModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Detail Pesan Kontak</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<div class="mb-3 border-bottom pb-3">
+					<small class="text-muted d-block">Dari Pengirim:</small>
+					<h5 class="fw-bold mb-0" id="inqSenderName">-</h5>
+					<span class="text-primary small" id="inqSenderEmail">-</span>
+				</div>
+				<div class="mb-3 border-bottom pb-3">
+					<small class="text-muted d-block">Subjek Konsultasi:</small>
+					<h6 class="fw-bold text-dark mb-0" id="inqSubject">-</h6>
+				</div>
+				<div class="mb-3">
+					<small class="text-muted d-block">Isi Pesan:</small>
+					<div class="p-3 bg-light rounded text-dark" id="inqMessage" style="white-space: pre-wrap;">-</div>
+				</div>
+			</div>
+			<div class="modal-footer justify-content-between">
+				<a href="#" id="inqReplyBtn" class="btn btn-outline-primary">
+					<i class="ti ti-mail-forward me-1"></i>Balas via Email Client
+				</a>
+				<button type="button" class="btn btn-success" id="inqMarkRespondedBtn">
+					<i class="ti ti-check me-1"></i>Tandai Sudah Dibalas
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+function viewInquiryDetail(encodedData) {
+	const item = JSON.parse(decodeURIComponent(encodedData));
+	document.getElementById('inqSenderName').innerText = item.name;
+	document.getElementById('inqSenderEmail').innerText = item.email;
+	document.getElementById('inqSubject').innerText = item.subject;
+	document.getElementById('inqMessage').innerText = item.message;
+
+	document.getElementById('inqReplyBtn').href = `mailto:${item.email}?subject=Re: ${encodeURIComponent(item.subject)}`;
+	document.getElementById('inqMarkRespondedBtn').onclick = () => updateStatus(item.id, 'RESPONDED');
+
+	// Otomatis tandai READ jika masih NEW
+	if (item.status === 'NEW') {
+		fetch(`/api/inquiries/${item.id}/status`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ status: 'READ' })
+		});
+	}
+
+	new bootstrap.Modal(document.getElementById('inquiryDetailModal')).show();
+}
+
+async function updateStatus(id, status) {
+	try {
+		const res = await fetch(`/api/inquiries/${id}/status`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ status })
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Status Diperbarui',
+				text: `Pesan ditandai sebagai ${status}`,
+				timer: 1500,
+				showConfirmButton: false
+			}).then(() => location.reload());
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Gagal memperbarui status', 'error');
+	}
+}
+</script>

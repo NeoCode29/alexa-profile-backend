@@ -1,0 +1,250 @@
+/* ==========================================================================
+   ALEXA COMPUTINDO GROUP — ADMIN PANEL CORPORATE THEME (FRONTEND PALETTE)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
+:root {
+  /* Strict Corporate Geometric Palette Tokens (Sesuai Frontend CONTEXT-DESIGN.md) */
+  --color-dark: #1D2A35;
+  --color-green: #3BAE7C;
+  --color-green-hover: #2E9668;
+  --color-light-gray: #F4F6F8;
+  --color-border: #E5E7EB;
+  --color-white: #FFFFFF;
+
+  /* Bootstrap & Template Override Tokens */
+  --bs-primary: #3BAE7C;
+  --bs-primary-rgb: 59, 174, 124;
+  --primary: #3BAE7C;
+  --primary-hover: #2E9668;
+}
+
+/* Base Body & Typography */
+::selection {
+  background-color: #3BAE7C !important;
+  color: #FFFFFF !important;
+}
+::-moz-selection {
+  background-color: #3BAE7C !important;
+  color: #FFFFFF !important;
+}
+input, textarea, select {
+  caret-color: #3BAE7C !important;
+}
+body {
+  font-family: 'Roboto', sans-serif !important;
+  background-color: var(--color-light-gray) !important;
+  color: var(--color-dark) !important;
+}
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'Roboto', sans-serif !important;
+  color: var(--color-dark);
+}
+
+/* Page Wrapper & Content Area */
+.page-wrapper,
+.main-wrapper {
+  background-color: var(--color-light-gray) !important;
+}
+
+/* ==========================================================================
+   HEADER BAR
+   ========================================================================== */
+.header {
+  background-color: var(--color-white) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  box-shadow: 0 1px 4px rgba(29, 42, 53, 0.05) !important;
+}
+
+.header-left {
+  background-color: var(--color-white) !important;
+  border-right: 1px solid var(--color-border) !important;
+}
+
+.header-left .logo-text {
+  color: var(--color-dark) !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.5px;
+}
+
+.header-left .logo-text .text-primary {
+  color: var(--color-green) !important;
+}
+
+/* ==========================================================================
+   SIDEBAR NAV (WHITE SIDEBAR DENGAN MENU AKTIF HIJAU ALEXA #3BAE7C)
+   ========================================================================== */
+.sidebar {
+  background-color: #FFFFFF !important;
+  border-right: 1px solid #E5E7EB !important;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.04) !important;
+}
+
+.sidebar-menu ul li.menu-title span {
+  color: #8B9BB0 !important;
+  font-weight: 700 !important;
+  font-size: 11px !important;
+  letter-spacing: 1.2px !important;
+  text-transform: uppercase !important;
+}
+
+.sidebar-menu ul li a {
+  color: #374151 !important;
+  font-weight: 500 !important;
+  transition: all 0.25s ease !important;
+}
+
+.sidebar-menu ul li a i,
+.sidebar-menu ul li a svg {
+  color: #6B7280 !important;
+  transition: all 0.25s ease !important;
+}
+
+.sidebar-menu ul li a:hover {
+  background-color: rgba(59, 174, 124, 0.1) !important;
+  color: var(--color-green) !important;
+}
+
+.sidebar-menu ul li a:hover i,
+.sidebar-menu ul li a:hover svg {
+  color: var(--color-green) !important;
+}
+
+/* Active Menu Item */
+.sidebar-menu ul li.active > a,
+.sidebar .sidebar-menu > ul > li > a.active {
+  background-color: var(--color-green) !important;
+  color: var(--color-white) !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 12px rgba(59, 174, 124, 0.25) !important;
+}
+
+.sidebar-menu ul li.active > a i,
+.sidebar-menu ul li.active > a span,
+.sidebar .sidebar-menu > ul > li > a.active i,
+.sidebar .sidebar-menu > ul > li > a.active span {
+  color: var(--color-white) !important;
+}
+
+/* Mobile Sidebar Logo Header */
+#sidebar-menu .border-bottom {
+  border-color: #243442 !important;
+}
+#sidebar-menu .text-dark {
+  color: var(--color-white) !important;
+}
+
+/* ==========================================================================
+   BUTTONS & ACCENTS (AG GROUP GREEN #3BAE7C)
+   ========================================================================== */
+.btn-primary {
+  background-color: var(--color-green) !important;
+  border-color: var(--color-green) !important;
+  color: var(--color-white) !important;
+  font-weight: 600 !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--color-green-hover) !important;
+  border-color: var(--color-green-hover) !important;
+  color: var(--color-white) !important;
+  box-shadow: 0 4px 12px rgba(59, 174, 124, 0.3) !important;
+}
+
+.btn-outline-primary {
+  color: var(--color-green) !important;
+  border-color: var(--color-green) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--color-green) !important;
+  color: var(--color-white) !important;
+}
+
+.text-primary {
+  color: var(--color-green) !important;
+}
+
+.bg-primary {
+  background-color: var(--color-green) !important;
+}
+
+.bg-primary-light {
+  background-color: rgba(59, 174, 124, 0.12) !important;
+  color: var(--color-green) !important;
+}
+
+.border-primary {
+  border-color: var(--color-green) !important;
+}
+
+/* ==========================================================================
+   CARDS, TABLES & STRUCTURAL ELEMENTS
+   ========================================================================== */
+.card {
+  background-color: var(--color-white) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: 0 2px 8px rgba(29, 42, 53, 0.04) !important;
+}
+
+.card-header {
+  background-color: var(--color-white) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.table thead th {
+  background-color: #F8FAFC !important;
+  color: var(--color-dark) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid var(--color-border) !important;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid var(--color-border) !important;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(244, 246, 248, 0.6) !important;
+}
+
+/* Badges */
+.badge.bg-primary {
+  background-color: var(--color-green) !important;
+}
+
+/* Pagination */
+.page-item.active .page-link {
+  background-color: var(--color-green) !important;
+  border-color: var(--color-green) !important;
+}
+
+.page-link {
+  color: var(--color-dark);
+}
+
+.page-link:hover {
+  color: var(--color-green);
+}
+
+/* Form Controls & Inputs */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-green) !important;
+  box-shadow: 0 0 0 0.2rem rgba(59, 174, 124, 0.2) !important;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--color-white) !important;
+  border-top: 1px solid var(--color-border) !important;
+  color: var(--color-dark) !important;
+}

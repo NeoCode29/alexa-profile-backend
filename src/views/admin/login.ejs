@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+	<title>Login Admin Panel — Alexa Computindo CMS</title>
+	<link rel="shortcut icon" type="image/x-icon" href="/assets/img/favicon.png">
+
+	<link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+
+	<!-- Tabler Icons Webfont CDN -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
+	<!-- Bootstrap Icons CDN -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+	<!-- Font Awesome CDN -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+	<link rel="stylesheet" href="/assets/css/style.css">
+	<style>
+		.btn-primary,
+		.bg-primary,
+		.text-primary {
+			color: #3BAE7C !important;
+		}
+
+		.btn-primary {
+			background-color: #3BAE7C !important;
+			border-color: #3BAE7C !important;
+			color: #ffffff !important;
+		}
+
+		.login-icon-badge {
+			width: 64px;
+			height: 64px;
+			background: linear-gradient(135deg, #1D2A35 0%, #3BAE7C 100%);
+			box-shadow: 0 10px 20px rgba(59, 174, 124, 0.25);
+		}
+
+		.input-group-text {
+			cursor: pointer;
+		}
+	</style>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body class="login-page bg-light">
+
+	<!-- Main Wrapper -->
+	<div class="main-wrapper">
+		<div class="container-fluid">
+			<div class="w-100 overflow-hidden position-relative flex-wrap d-block vh-100">
+				<div class="row justify-content-center align-items-center vh-100 overflow-auto flex-wrap">
+					<div class="col-lg-5 col-md-7 mx-auto">
+						<form id="loginForm" onsubmit="handleLogin(event)" class="p-4">
+							<div class="card authentication-card mb-0 shadow border-0 rounded-4">
+								<div class="card-body p-5">
+									<div class="text-center mb-4">
+										<h4 class="mb-1 fw-bold text-dark">Selamat Datang Kembali</h4>
+										<p class="mb-0 text-muted small">Silakan masukkan kredensial akun admin Anda</p>
+									</div>
+									<div class="mb-3">
+										<label class="form-label fw-medium">Email Admin <span
+												class="text-danger">*</span></label>
+										<div class="input-group">
+											<span class="input-group-text bg-white border-end-0">
+												<i class="bi bi-envelope text-muted"></i>
+											</span>
+											<input type="email" id="email" value="admin@alexagroup.co.id"
+												class="form-control border-start-0 ps-0" required
+												placeholder="admin@alexagroup.co.id">
+										</div>
+									</div>
+									<div class="mb-4">
+										<label class="form-label fw-medium">Password <span
+												class="text-danger">*</span></label>
+										<div class="input-group">
+											<span class="input-group-text bg-white border-end-0">
+												<i class="bi bi-lock text-muted"></i>
+											</span>
+											<input type="password" id="password" value="admin123"
+												class="form-control border-start-0 border-end-0 ps-0" required
+												placeholder="••••••••">
+											<span class="input-group-text bg-white border-start-0"
+												onclick="togglePasswordVisibility()"
+												title="Tampilkan/Sembunyikan Password">
+												<i class="bi bi-eye text-muted" id="togglePasswordIcon"></i>
+											</span>
+										</div>
+									</div>
+									<div class="mt-4">
+										<button type="submit"
+											class="btn btn-dark w-100 py-3 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center"
+											id="btnLoginSubmit">
+											<i class="bi bi-box-arrow-in-right me-2"></i> Login ke Panel
+										</button>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Main Wrapper -->
+
+	<script>
+		function togglePasswordVisibility() {
+			const pwdInput = document.getElementById('password');
+			const eyeIcon = document.getElementById('togglePasswordIcon');
+			if (pwdInput.type === 'password') {
+				pwdInput.type = 'text';
+				eyeIcon.className = 'bi bi-eye-slash text-primary';
+			} else {
+				pwdInput.type = 'password';
+				eyeIcon.className = 'bi bi-eye text-muted';
+			}
+		}
+
+		async function handleLogin(e) {
+			e.preventDefault();
+			const email = document.getElementById('email').value;
+			const password = document.getElementById('password').value;
+			const btn = document.getElementById('btnLoginSubmit');
+
+			btn.disabled = true;
+			btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Memproses...`;
+
+			try {
+				const res = await fetch('/api/auth/login', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email, password })
+				});
+				const data = await res.json();
+
+				if (data.success) {
+					localStorage.setItem('alexa_admin_token', data.token);
+
+					Swal.fire({
+						icon: 'success',
+						title: 'Login Berhasil',
+						text: 'Selamat datang kembali, ' + data.user.name + '!',
+						timer: 1200,
+						showConfirmButton: false
+					}).then(() => {
+						window.location.href = '/admin';
+					});
+				} else {
+					btn.disabled = false;
+					btn.innerHTML = `<i class="bi bi-box-arrow-in-right me-2"></i> Login ke Panel`;
+					Swal.fire({
+						icon: 'error',
+						title: 'Login Gagal',
+						text: data.message || 'Kredensial tidak valid.'
+					});
+				}
+			} catch (err) {
+				btn.disabled = false;
+				btn.innerHTML = `<i class="bi bi-box-arrow-in-right me-2"></i> Login ke Panel`;
+				Swal.fire({
+					icon: 'error',
+					title: 'Kesalahan Sistem',
+					text: 'Gagal menghubungi server backend.'
+				});
+			}
+		}
+	</script>
+</body>
+
+</html>
