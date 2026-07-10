@@ -3,11 +3,15 @@ import slugify from 'slugify';
 
 const prisma = new PrismaClient();
 
-// Public: Ambil semua artikel
+// Public: Ambil semua artikel (atau semua termasuk draf jika all=true)
 export const getAllArticles = async (req, res) => {
   try {
-    const { category, search } = req.query;
-    const where = { isPublished: true };
+    const { category, search, all } = req.query;
+    const where = {};
+
+    if (all !== 'true' && all !== true) {
+      where.isPublished = true;
+    }
 
     if (category && category !== 'Semua') {
       where.category = category;
@@ -37,13 +41,19 @@ export const getAllArticles = async (req, res) => {
   }
 };
 
-// Public: Ambil detail artikel by slug
+// Public & Admin: Ambil detail artikel by slug atau ID
 export const getArticleBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    const article = await prisma.article.findUnique({
+    let article = await prisma.article.findUnique({
       where: { slug }
     });
+
+    if (!article) {
+      article = await prisma.article.findUnique({
+        where: { id: slug }
+      });
+    }
 
     if (!article) {
       return res.status(404).json({
@@ -54,7 +64,7 @@ export const getArticleBySlug = async (req, res) => {
 
     // Tambah views counter
     await prisma.article.update({
-      where: { slug },
+      where: { id: article.id },
       data: { views: { increment: 1 } }
     });
 
@@ -73,14 +83,17 @@ export const getArticleBySlug = async (req, res) => {
 // Admin (RBAC: articles.manage): Buat Artikel Baru
 export const createArticle = async (req, res) => {
   try {
-    const { title, category, excerpt, content, image } = req.body;
+    const { title, category, excerpt, content, image, author, metaTitle, metaDescription, metaKeywords } = req.body;
 
-    if (!title || !category || !excerpt || !content) {
+    if (!title || !category || !content) {
       return res.status(400).json({
         success: false,
-        message: 'Semua kolom utama wajib diisi.'
+        message: 'Judul, Kategori, dan Isi Artikel wajib diisi.'
       });
     }
+
+    const textContent = content.replace(/<[^>]*>?/gm, '').trim();
+    const finalExcerpt = excerpt || (textContent.length > 180 ? textContent.substring(0, 177) + '...' : textContent);
 
     let slug = slugify(title, { lower: true, strict: true });
     // Cek duplikasi slug
@@ -94,10 +107,13 @@ export const createArticle = async (req, res) => {
         title,
         slug,
         category,
-        excerpt,
+        excerpt: finalExcerpt,
         content,
         image: image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80',
-        author: req.user.name || 'Tim Editorial Alexa'
+        author: author || req.user.name || 'Tim Editorial Alexa',
+        metaTitle: metaTitle || null,
+        metaDescription: metaDescription || null,
+        metaKeywords: metaKeywords || null
       }
     });
 
@@ -118,12 +134,54 @@ export const createArticle = async (req, res) => {
 export const updateArticle = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, category, excerpt, content, image, isPublished } = req.body;
+    const { title, slug, category, author, excerpt, content, image, isPublished, views, metaTitle, metaDescription, metaKeywords } = req.body;
 
-    const data = { title, category, excerpt, content, image, isPublished };
+    const data = {};
+    if (title !== undefined) data.title = title;
+    if (category !== undefined) data.category = category;
+    if (author !== undefined) data.author = author;
+    if (content !== undefined) {
+      data.content = content;
+      if (excerpt !== undefined && excerpt.trim() !== '') {
+        data.excerpt = excerpt;
+      } else {
+        const textContent = content.replace(/<[^>]*>?/gm, '').trim();
+        data.excerpt = textContent.length > 180 ? textContent.substring(0, 177) + '...' : textContent;
+      }
+    } else if (excerpt !== undefined) {
+      data.excerpt = excerpt;
+    }
+    if (image !== undefined) data.image = image;
+    if (isPublished !== undefined) data.isPublished = Boolean(isPublished);
+    if (views !== undefined) data.views = Number(views);
+    if (metaTitle !== undefined) data.metaTitle = metaTitle;
+    if (metaDescription !== undefined) data.metaDescription = metaDescription;
+    if (metaKeywords !== undefined) data.metaKeywords = metaKeywords;
 
-    if (title) {
-      data.slug = slugify(title, { lower: true, strict: true });
+    if (slug) {
+      let targetSlug = slugify(slug, { lower: true, strict: true });
+      const existingSlug = await prisma.article.findFirst({
+        where: {
+          slug: targetSlug,
+          NOT: { id }
+        }
+      });
+      if (existingSlug) {
+        targetSlug = `${targetSlug}-${Date.now()}`;
+      }
+      data.slug = targetSlug;
+    } else if (title) {
+      let targetSlug = slugify(title, { lower: true, strict: true });
+      const existingSlug = await prisma.article.findFirst({
+        where: {
+          slug: targetSlug,
+          NOT: { id }
+        }
+      });
+      if (existingSlug) {
+        targetSlug = `${targetSlug}-${Date.now()}`;
+      }
+      data.slug = targetSlug;
     }
 
     const article = await prisma.article.update({

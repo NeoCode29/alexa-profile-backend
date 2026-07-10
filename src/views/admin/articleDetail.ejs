@@ -1,0 +1,624 @@
+<!-- Custom Clean & Minimalist Styling -->
+<style>
+	.clean-card {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 12px;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+	}
+	.clean-card-header {
+		padding: 16px 20px;
+		border-bottom: 1px solid #f1f5f9;
+		background: #fafbfc;
+		border-top-left-radius: 12px;
+		border-top-right-radius: 12px;
+		font-weight: 600;
+		color: #1e293b;
+	}
+	.clean-input {
+		border: 1px solid #cbd5e1;
+		border-radius: 8px;
+		padding: 10px 14px;
+		transition: border-color 0.15s ease;
+	}
+	.clean-input:focus {
+		border-color: #3BAE7C;
+		box-shadow: 0 0 0 3px rgba(59, 174, 124, 0.12);
+	}
+	.title-input {
+		font-size: 1.35rem;
+		font-weight: 700;
+		color: #0f172a;
+	}
+	/* Quill Clean Theme */
+	.ql-toolbar.ql-snow {
+		border: 1px solid #cbd5e1 !important;
+		border-top-left-radius: 8px;
+		border-top-right-radius: 8px;
+		background: #f8fafc;
+	}
+	.ql-container.ql-snow {
+		border: 1px solid #cbd5e1 !important;
+		border-top: none !important;
+		border-bottom-left-radius: 8px;
+		border-bottom-right-radius: 8px;
+		font-family: 'Inter', sans-serif !important;
+		font-size: 15px !important;
+		line-height: 1.7 !important;
+		color: #1e293b !important;
+	}
+	.ql-editor {
+		min-height: 420px;
+		padding: 20px !important;
+	}
+	.ql-editor blockquote,
+	#previewContentContainer blockquote {
+		border-left: 4px solid #3BAE7C !important;
+		background-color: #f0fdf4 !important;
+		padding: 14px 20px !important;
+		margin: 18px 0 !important;
+		border-radius: 0 8px 8px 0 !important;
+		font-style: italic;
+		color: #1e293b !important;
+	}
+	/* Garis Pembatas (Divider) seperti Gambar 2 pada Judul & HR di Editor & Pratinjau */
+	.ql-editor h1, .ql-editor h2,
+	#previewContentContainer h1, #previewContentContainer h2 {
+		font-weight: 700 !important;
+		color: #0f172a !important;
+		border-bottom: 2px solid #e2e8f0 !important;
+		padding-bottom: 10px !important;
+		margin-top: 28px !important;
+		margin-bottom: 16px !important;
+	}
+	.ql-editor hr, #previewContentContainer hr {
+		border: 0;
+		border-top: 2px solid #e2e8f0;
+		margin: 28px 0;
+	}
+	/* Unified Header & Nav Tabs */
+	.header-card {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 12px;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+	}
+	.nav-simple {
+		gap: 24px;
+	}
+	.nav-simple .nav-link {
+		color: #64748b;
+		font-weight: 600;
+		padding: 14px 8px;
+		border: none;
+		border-bottom: 3px solid transparent;
+		margin-bottom: -1px;
+		background: transparent;
+	}
+	.nav-simple .nav-link:hover {
+		color: #1e293b;
+	}
+	.nav-simple .nav-link.active {
+		color: #3BAE7C !important;
+		border-bottom-color: #3BAE7C !important;
+	}
+	/* Reader Preview Minimal */
+	.preview-container {
+		max-width: 760px;
+		margin: 0 auto;
+		background: #fff;
+		padding: 36px;
+		border-radius: 12px;
+		border: 1px solid #e2e8f0;
+	}
+</style>
+
+<!-- Unified Top Action Bar & Navigation Tabs -->
+<div class="header-card mb-4 overflow-hidden">
+	<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 p-4 pb-3">
+		<div class="d-flex align-items-center">
+			<a href="/admin/articles" class="btn btn-light border btn-sm rounded-2 me-3 d-flex align-items-center">
+				<i class="ti ti-arrow-left me-1"></i> Kembali
+			</a>
+			<div>
+				<div class="d-flex align-items-center gap-2">
+					<h4 class="fw-bold mb-0 text-dark">Sunting Artikel</h4>
+					<% if (article.isPublished) { %>
+						<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
+							Terbit
+						</span>
+					<% } else { %>
+						<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">
+							Draf
+						</span>
+					<% } %>
+				</div>
+				<small class="text-muted">ID: <%= article.id %></small>
+			</div>
+		</div>
+
+		<div class="d-flex flex-wrap align-items-center gap-2">
+			<a href="http://localhost:5173/blog/<%= article.id %>" target="_blank" class="btn btn-outline-secondary btn-sm rounded-2 d-inline-flex align-items-center">
+				<i class="ti ti-external-link me-1"></i> Pratinjau Web
+			</a>
+			<button type="button" class="btn <%= article.isPublished ? 'btn-outline-warning' : 'btn-outline-success' %> btn-sm rounded-2 d-inline-flex align-items-center" onclick="togglePublishStatus('<%= article.id %>', <%= article.isPublished %>)">
+				<i class="ti <%= article.isPublished ? 'ti-eye-off' : 'ti-eye' %> me-1"></i>
+				<%= article.isPublished ? 'Jadikan Draf' : 'Terbitkan' %>
+			</button>
+			<button type="button" class="btn btn-primary btn-sm rounded-2 px-3 fw-semibold d-inline-flex align-items-center" onclick="document.getElementById('saveArticleBtn').click()">
+				<i class="ti ti-device-floppy me-1"></i> Simpan Perubahan
+			</button>
+		</div>
+	</div>
+
+	<!-- Integrated Clean Navigation Tabs -->
+	<div class="px-4 bg-light bg-opacity-50 border-top">
+		<ul class="nav nav-simple" id="articleTabs" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active py-3" id="editor-tab" data-bs-toggle="tab" data-bs-target="#editor-pane" type="button" role="tab">
+					<i class="ti ti-edit me-1"></i> Sunting Konten
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link py-3" id="preview-tab" data-bs-toggle="tab" data-bs-target="#preview-pane" type="button" role="tab">
+					<i class="ti ti-eye me-1"></i> Pratinjau Artikel
+				</button>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<!-- Quill Rich Text Editor CSS -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+
+<div class="tab-content" id="articleTabsContent">
+	<!-- =====================================
+	     TAB 1: SUNTING KONTEN (SIMPLE 2 COL)
+	===================================== -->
+	<div class="tab-pane fade show active" id="editor-pane" role="tabpanel">
+		<form id="updateArticleForm" onsubmit="handleUpdateArticle(event)">
+			<div class="row g-4">
+				<!-- Main Editor Column (Left - 8 Col) -->
+				<div class="col-lg-8">
+					<div class="clean-card p-4 mb-4">
+						<!-- Judul -->
+						<div class="mb-3">
+							<label class="form-label small fw-semibold text-muted">JUDUL ARTIKEL</label>
+							<input type="text" class="form-control clean-input title-input" id="inputTitle" name="title" value="<%= article.title %>" required placeholder="Judul artikel...">
+						</div>
+
+						<!-- Slug -->
+						<div class="mb-3">
+							<label class="form-label small fw-semibold text-muted">SLUG URL</label>
+							<div class="input-group">
+								<span class="input-group-text bg-light text-muted small border-end-0">/blog/</span>
+								<input type="text" class="form-control clean-input border-start-0 ps-0" id="inputSlug" name="slug" value="<%= article.slug %>" placeholder="slug-artikel">
+							</div>
+						</div>
+
+						<!-- Rich Text Editor -->
+						<div class="mb-2">
+							<div class="d-flex justify-content-between align-items-center mb-1">
+								<label class="form-label small fw-semibold text-muted mb-0">ISI ARTIKEL</label>
+								<button type="button" class="btn btn-sm btn-light border text-secondary py-0 px-2 small fw-medium" onclick="insertDividerLine()" title="Sisipkan garis pembatas horizontal (<hr>) di editor">
+									<i class="ti ti-minus me-1"></i>Sisipkan Garis Pembatas
+								</button>
+							</div>
+							<div id="quillDetailEditor"></div>
+							<input type="hidden" name="content" id="hiddenContentInput">
+						</div>
+					</div>
+				</div>
+
+				<!-- Settings Sidebar (Right - 4 Col) -->
+				<div class="col-lg-4">
+					<!-- Card 1: Pengaturan Publikasi -->
+					<div class="clean-card mb-4">
+						<div class="clean-card-header">
+							<i class="ti ti-settings me-1"></i> Pengaturan Publikasi
+						</div>
+						<div class="p-3">
+							<div class="mb-3">
+								<label class="form-label small fw-semibold text-muted">STATUS</label>
+								<select class="form-select clean-input" id="inputIsPublished" name="isPublished">
+									<option value="true" <%= article.isPublished ? 'selected' : '' %>>Terbit (Published)</option>
+									<option value="false" <%= !article.isPublished ? 'selected' : '' %>>Draf (Unpublished)</option>
+								</select>
+							</div>
+
+							<div class="mb-3">
+								<label class="form-label small fw-semibold text-muted">KATEGORI</label>
+								<input type="text" class="form-control clean-input" id="inputCategory" name="category" list="categoryOptionsList" value="<%= article.category %>" required>
+								<datalist id="categoryOptionsList">
+									<option value="Teknologi">
+									<option value="Desain Web">
+									<option value="Tips Jaringan">
+									<option value="Software">
+									<option value="Berita Perusahaan">
+								</datalist>
+							</div>
+
+							<div class="mb-4">
+								<label class="form-label small fw-semibold text-muted">PENULIS / AUTHOR</label>
+								<input type="text" class="form-control clean-input" id="inputAuthor" name="author" value="<%= article.author %>" required>
+							</div>
+
+							<button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-2" id="saveArticleBtn">
+								<i class="ti ti-device-floppy me-1"></i> Simpan Perubahan
+							</button>
+						</div>
+					</div>
+
+					<!-- Card 2: Gambar Cover -->
+					<div class="clean-card mb-4">
+						<div class="clean-card-header">
+							<i class="ti ti-photo me-1"></i> Gambar Cover
+						</div>
+						<div class="p-3">
+							<div class="mb-3 text-center bg-light rounded-2 overflow-hidden border" style="aspect-ratio: 16/9;">
+								<img id="detailCoverPreview" src="<%= article.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80' %>" alt="Cover" class="w-100 h-100" style="object-fit: cover;">
+							</div>
+
+							<div class="mb-2">
+								<input type="file" class="form-control form-control-sm clean-input" id="detailCoverUploadInput" accept="image/*" onchange="handleDetailCoverFile(event)">
+							</div>
+
+							<div>
+								<input type="text" class="form-control form-control-sm clean-input" id="inputImage" name="image" value="<%= article.image || '' %>" placeholder="Path / URL Gambar (/uploads/... atau https://...)">
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 3: Pengaturan SEO Khusus Artikel -->
+					<div class="clean-card mb-4">
+						<div class="clean-card-header d-flex justify-content-between align-items-center">
+							<span><i class="ti ti-seo me-1"></i> Pengaturan SEO</span>
+							<span class="badge bg-light text-secondary border fw-normal" style="font-size: 10px;">Per Artikel</span>
+						</div>
+						<div class="p-3">
+							<div class="mb-3">
+								<label class="form-label small fw-semibold text-muted mb-1">JUDUL SEO (META TITLE)</label>
+								<input type="text" class="form-control form-control-sm clean-input" id="inputMetaTitle" name="metaTitle" value="<%= article.metaTitle || '' %>" placeholder="Kosongkan = otomatis pakai judul utama">
+								<small class="text-muted d-block mt-1" style="font-size: 11px;">Judul yang muncul di hasil pencarian Google.</small>
+							</div>
+
+							<div class="mb-3">
+								<label class="form-label small fw-semibold text-muted mb-1">DESKRIPSI SEO (META DESCRIPTION)</label>
+								<textarea class="form-control form-control-sm clean-input" id="inputMetaDescription" name="metaDescription" rows="2" placeholder="Kosongkan = otomatis pakai kutipan ringkas"><%= article.metaDescription || '' %></textarea>
+								<small class="text-muted d-block mt-1" style="font-size: 11px;">Cuplikan singkat di mesin pencari (maks 160 karakter).</small>
+							</div>
+
+							<div class="mb-0">
+								<label class="form-label small fw-semibold text-muted mb-1">KATA KUNCI (META KEYWORDS)</label>
+								<input type="text" class="form-control form-control-sm clean-input" id="inputMetaKeywords" name="metaKeywords" value="<%= article.metaKeywords || '' %>" placeholder="contoh: transformasi digital, umkm, teknologi">
+								<small class="text-muted d-block mt-1" style="font-size: 11px;">Pisahkan kata kunci dengan tanda koma.</small>
+							</div>
+						</div>
+					</div>
+
+					<!-- Card 4: Informasi & Aksi -->
+					<div class="clean-card">
+						<div class="p-3 small text-muted">
+							<div class="d-flex justify-content-between mb-2 pb-2 border-bottom">
+								<span>Dilihat</span>
+								<span class="fw-semibold text-dark" id="viewsCounterDisplay">
+									<%= article.views.toLocaleString('id-ID') %> x
+									<a href="javascript:void(0)" onclick="resetViewsCounter('<%= article.id %>')" class="text-primary ms-1" title="Reset ke 0">[Reset]</a>
+								</span>
+							</div>
+							<div class="d-flex justify-content-between mb-2">
+								<span>Dibuat</span>
+								<span class="fw-semibold text-dark"><%= new Date(article.createdAt).toLocaleDateString('id-ID') %></span>
+							</div>
+							<div class="d-flex justify-content-between mb-3">
+								<span>Diperbarui</span>
+								<span class="fw-semibold text-dark"><%= new Date(article.updatedAt).toLocaleDateString('id-ID') %></span>
+							</div>
+
+							<button type="button" class="btn btn-outline-danger btn-sm w-100 rounded-2" onclick="deleteArticleDetail('<%= article.id %>', '<%= article.title.replace(/'/g, "\\'") %>')">
+								<i class="ti ti-trash me-1"></i> Hapus Artikel Ini
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<!-- =====================================
+	     TAB 2: PRATINJAU ARTIKEL
+	===================================== -->
+	<div class="tab-pane fade" id="preview-pane" role="tabpanel">
+		<div class="preview-container">
+			<div class="mb-3">
+				<span class="badge bg-primary px-3 py-1 rounded-pill" id="previewCategory"><%= article.category %></span>
+			</div>
+
+			<h1 class="fw-bold text-dark mb-3" style="font-size: 2rem; line-height: 1.3;" id="previewTitle"><%= article.title %></h1>
+
+			<div class="d-flex justify-content-between align-items-center text-muted small border-bottom pb-3 mb-4">
+				<div>Oleh <strong class="text-dark" id="previewAuthor"><%= article.author %></strong></div>
+				<div><%= new Date(article.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) %></div>
+			</div>
+
+			<div class="mb-4 text-center">
+				<img id="previewCoverImg" src="<%= article.image || 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&q=80' %>" alt="" class="img-fluid rounded-3 w-100" style="max-height: 420px; object-fit: cover;">
+			</div>
+
+			<div class="lh-lg text-dark" id="previewContentContainer">
+				<%- article.content %>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Quill & SweetAlert JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+	const ARTICLE_DATA = <%- JSON.stringify(article) %>;
+	let quillDetail;
+
+	document.addEventListener('DOMContentLoaded', function() {
+		quillDetail = new Quill('#quillDetailEditor', {
+			theme: 'snow',
+			modules: {
+				toolbar: [
+					[{ 'header': [1, 2, 3, false] }],
+					['bold', 'italic', 'underline', 'strike'],
+					[{ 'color': [] }, { 'background': [] }],
+					[{ 'align': [] }],
+					[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+					['blockquote', 'link', 'image', 'clean']
+				]
+			},
+			placeholder: 'Tuliskan isi artikel di sini...'
+		});
+
+		if (ARTICLE_DATA.content) {
+			quillDetail.root.innerHTML = ARTICLE_DATA.content;
+		}
+
+		quillDetail.on('text-change', function() {
+			const container = document.getElementById('previewContentContainer');
+			if (container) {
+				container.innerHTML = quillDetail.root.innerHTML;
+			}
+		});
+
+		document.getElementById('inputTitle').addEventListener('input', function(e) {
+			document.getElementById('previewTitle').innerText = e.target.value || 'Judul Artikel';
+		});
+
+		document.getElementById('inputAuthor').addEventListener('input', function(e) {
+			document.getElementById('previewAuthor').innerText = e.target.value || 'Tim Editorial';
+		});
+
+		document.getElementById('inputCategory').addEventListener('input', function(e) {
+			document.getElementById('previewCategory').innerText = e.target.value || 'Kategori';
+		});
+
+		document.getElementById('inputImage').addEventListener('input', function(e) {
+			const url = e.target.value;
+			if (url) {
+				document.getElementById('detailCoverPreview').src = url;
+				document.getElementById('previewCoverImg').src = url;
+			}
+		});
+	});
+
+	// Sisipkan garis pembatas horizontal (<hr>) di editor Quill
+	function insertDividerLine() {
+		if (!quillDetail) return;
+		const range = quillDetail.getSelection(true);
+		const index = range ? range.index : quillDetail.getLength();
+		quillDetail.clipboard.dangerouslyPasteHTML(index, '<hr><p><br></p>');
+	}
+
+	// Unggah file cover
+	async function handleDetailCoverFile(e) {
+		const file = e.target.files[0];
+		if (!file) return;
+
+		const formData = new FormData();
+		formData.append('image', file);
+
+		try {
+			Swal.fire({
+				title: 'Mengunggah gambar...',
+				allowOutsideClick: false,
+				didOpen: () => Swal.showLoading()
+			});
+
+			const res = await fetch('/api/upload', {
+				method: 'POST',
+				body: formData
+			});
+			const result = await res.json();
+			Swal.close();
+
+			if (result.success && result.url) {
+				document.getElementById('inputImage').value = result.url;
+				document.getElementById('detailCoverPreview').src = result.url;
+				document.getElementById('previewCoverImg').src = result.url;
+				Swal.fire({
+					icon: 'success',
+					title: 'Cover Berhasil Diunggah',
+					toast: true,
+					position: 'top-end',
+					showConfirmButton: false,
+					timer: 2000
+				});
+			} else {
+				Swal.fire('Gagal', result.message || 'Gagal mengunggah file', 'error');
+			}
+		} catch (err) {
+			Swal.close();
+			Swal.fire('Gagal', 'Terjadi kesalahan saat mengunggah gambar', 'error');
+		}
+	}
+
+	// Simpan perubahan artikel
+	async function handleUpdateArticle(event) {
+		event.preventDefault();
+
+		const contentHtml = quillDetail.root.innerHTML;
+		if (!contentHtml || contentHtml.trim() === '<p><br></p>') {
+			Swal.fire('Peringatan', 'Isi artikel tidak boleh kosong.', 'warning');
+			return;
+		}
+
+		const btn = document.getElementById('saveArticleBtn');
+		const originalText = btn.innerHTML;
+		btn.disabled = true;
+		btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...';
+
+		const payload = {
+			title: document.getElementById('inputTitle').value.trim(),
+			slug: document.getElementById('inputSlug').value.trim(),
+			category: document.getElementById('inputCategory').value.trim(),
+			author: document.getElementById('inputAuthor').value.trim(),
+			content: contentHtml,
+			image: document.getElementById('inputImage').value.trim(),
+			isPublished: document.getElementById('inputIsPublished').value === 'true',
+			metaTitle: (document.getElementById('inputMetaTitle')?.value || '').trim(),
+			metaDescription: (document.getElementById('inputMetaDescription')?.value || '').trim(),
+			metaKeywords: (document.getElementById('inputMetaKeywords')?.value || '').trim()
+		};
+
+		try {
+			const response = await fetch(`/api/articles/${ARTICLE_DATA.id}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload)
+			});
+
+			const json = await response.json();
+			if (json.success) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Berhasil Disimpan',
+					timer: 1500,
+					showConfirmButton: false
+				}).then(() => {
+					window.location.reload();
+				});
+			} else {
+				Swal.fire('Gagal', json.message || 'Gagal menyimpan perubahan.', 'error');
+			}
+		} catch (error) {
+			Swal.fire('Error', 'Gagal menghubungkan ke server.', 'error');
+		} finally {
+			btn.disabled = false;
+			btn.innerHTML = originalText;
+		}
+	}
+
+	// Ubah status publikasi
+	async function togglePublishStatus(articleId, currentStatus) {
+		const newStatus = !currentStatus;
+		const actionText = newStatus ? 'menerbitkan' : 'jadikan draf';
+
+		const confirm = await Swal.fire({
+			title: 'Ubah Status Publikasi?',
+			text: `Yakin ingin ${actionText} artikel ini?`,
+			icon: 'question',
+			showCancelButton: true,
+			confirmButtonColor: '#3BAE7C',
+			confirmButtonText: 'Ya, Ubah',
+			cancelButtonText: 'Batal'
+		});
+
+		if (!confirm.isConfirmed) return;
+
+		try {
+			const res = await fetch(`/api/articles/${articleId}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ isPublished: newStatus })
+			});
+			const json = await res.json();
+			if (json.success) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Status Diperbarui',
+					toast: true,
+					position: 'top-end',
+					showConfirmButton: false,
+					timer: 1500
+				}).then(() => window.location.reload());
+			} else {
+				Swal.fire('Gagal', json.message || 'Gagal mengubah status', 'error');
+			}
+		} catch (err) {
+			Swal.fire('Error', 'Gagal menghubungi server', 'error');
+		}
+	}
+
+	// Reset jumlah tayang
+	async function resetViewsCounter(articleId) {
+		const confirm = await Swal.fire({
+			title: 'Reset Jumlah Tayang?',
+			text: 'Jumlah pembaca akan diulang menjadi 0.',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			confirmButtonText: 'Ya, Reset',
+			cancelButtonText: 'Batal'
+		});
+
+		if (!confirm.isConfirmed) return;
+
+		try {
+			const res = await fetch(`/api/articles/${articleId}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ views: 0 })
+			});
+			const json = await res.json();
+			if (json.success) {
+				document.getElementById('viewsCounterDisplay').innerHTML = '0 x <a href="javascript:void(0)" onclick="resetViewsCounter(\'' + articleId + '\')" class="text-primary ms-1">[Reset]</a>';
+				Swal.fire('Berhasil', 'Jumlah tayang direset ke 0.', 'success');
+			}
+		} catch (err) {
+			Swal.fire('Error', 'Gagal mereset jumlah tayang.', 'error');
+		}
+	}
+
+	// Hapus Artikel
+	async function deleteArticleDetail(articleId, title) {
+		const confirm = await Swal.fire({
+			title: 'Hapus Artikel?',
+			text: `Artikel "${title}" akan dihapus permanen.`,
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#d33',
+			confirmButtonText: 'Ya, Hapus',
+			cancelButtonText: 'Batal'
+		});
+
+		if (!confirm.isConfirmed) return;
+
+		try {
+			const res = await fetch(`/api/articles/${articleId}`, {
+				method: 'DELETE'
+			});
+			const json = await res.json();
+			if (json.success) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Terhapus!',
+					timer: 1500,
+					showConfirmButton: false
+				}).then(() => {
+					window.location.href = '/admin/articles';
+				});
+			} else {
+				Swal.fire('Gagal', json.message || 'Gagal menghapus artikel', 'error');
+			}
+		} catch (err) {
+			Swal.fire('Error', 'Gagal menghubungi server.', 'error');
+		}
+	}
+</script>
