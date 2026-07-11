@@ -189,7 +189,8 @@ const saveToPageTable = async (pageName, mergedData) => {
         teamSectionTitle: mergedData.teamSectionTitle,
         teamList: typeof mergedData.teamList === 'object' ? JSON.stringify(mergedData.teamList) : mergedData.teamList,
         visionText: mergedData.visionText,
-        missionList: typeof mergedData.missionList === 'object' ? JSON.stringify(mergedData.missionList) : mergedData.missionList
+        missionList: typeof mergedData.missionList === 'object' ? JSON.stringify(mergedData.missionList) : mergedData.missionList,
+        missionRichText: mergedData.missionRichText
       };
       await prisma.pageAbout.upsert({
         where: { id: 'about' },

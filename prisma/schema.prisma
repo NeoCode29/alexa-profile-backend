@@ -335,6 +335,7 @@ model PageAbout {
   teamList         String?  // JSON string
   visionText       String?
   missionList      String?  // JSON string
+  missionRichText  String?
   updatedAt        DateTime @updatedAt
 }
 
