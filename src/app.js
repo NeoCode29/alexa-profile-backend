@@ -28,7 +28,8 @@ app.set('layout', 'layouts/admin');
 // Security middleware (non-blocking for inline Bootstrap scripts in admin panel)
 app.use(
   helmet({
-    contentSecurityPolicy: false
+    contentSecurityPolicy: false,
+    crossOriginResourcePolicy: { policy: 'cross-origin' }
   })
 );
 
