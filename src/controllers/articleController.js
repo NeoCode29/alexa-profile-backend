@@ -62,11 +62,8 @@ export const getArticleBySlug = async (req, res) => {
       });
     }
 
-    // Tambah views counter
-    await prisma.article.update({
-      where: { id: article.id },
-      data: { views: { increment: 1 } }
-    });
+    // View counter dipindah ke endpoint terpisah (POST) agar tidak double-count
+    // karena React StrictMode atau refresh berulang.
 
     return res.json({
       success: true,
@@ -77,6 +74,28 @@ export const getArticleBySlug = async (req, res) => {
       success: false,
       message: 'Gagal mengambil artikel.'
     });
+  }
+};
+
+// Public: Tambah view counter artikel
+export const incrementArticleView = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    let article = await prisma.article.findUnique({ where: { slug } });
+    if (!article) {
+      article = await prisma.article.findUnique({ where: { id: slug } });
+    }
+    
+    if (article) {
+      await prisma.article.update({
+        where: { id: article.id },
+        data: { views: { increment: 1 } }
+      });
+    }
+    
+    return res.json({ success: true });
+  } catch (error) {
+    return res.status(500).json({ success: false });
   }
 };
 
