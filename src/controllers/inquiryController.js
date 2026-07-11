@@ -78,3 +78,21 @@ export const updateInquiryStatus = async (req, res) => {
     });
   }
 };
+
+// Admin: Delete inquiry
+export const deleteInquiry = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.inquiry.delete({ where: { id } });
+    return res.json({
+      success: true,
+      message: 'Pesan berhasil dihapus.'
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Gagal menghapus pesan.'
+    });
+  }
+};
+

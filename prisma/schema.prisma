@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -66,7 +66,6 @@ model RolePermission {
 // ==========================================
 
 model Article {
-<<<<<<< HEAD
   id          String   @id @default(uuid())
   title       String
   slug        String   @unique
@@ -76,9 +75,12 @@ model Article {
   image       String?
   excerpt     String
   content     String
-  isPublished Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  isPublished     Boolean  @default(true)
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Service {
@@ -247,8 +249,8 @@ model Contact {
   whatsapp  String?
   email     String?
   address   String?
-  latitude  Decimal? @db.Decimal(10, 8)
-  longitude Decimal? @db.Decimal(11, 8)
+  latitude  Float?
+  longitude Float?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -282,4 +284,91 @@ model Timeline {
   orderNumber Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ------------------------------------------
+// TABEL KHUSUS PER HALAMAN FRONTEND
+// ------------------------------------------
+
+model PageHome {
+  id                    String   @id @default("home")
+  seoTitle              String?
+  seoDescription        String?
+  seoKeywords           String?
+  seoOgImage            String?
+  heroTitleLine1        String?
+  heroTitleHighlight    String?
+  heroDesc              String?
+  ctaPrimaryText        String?
+  ctaPrimaryLink        String?
+  ctaSecondaryText      String?
+  ctaSecondaryLink      String?
+  introTitle            String?
+  introDesc             String?
+  stat1Number           String?
+  stat1Label            String?
+  stat2Number           String?
+  stat2Label            String?
+  stat3Number           String?
+  stat3Label            String?
+  servicesSectionTitle  String?
+  servicesSectionSubtitle String?
+  clientsSectionTitle   String?
+  articlesSectionTitle  String?
+  updatedAt             DateTime @updatedAt
+}
+
+model PageAbout {
+  id               String   @id @default("about")
+  seoTitle         String?
+  seoDescription   String?
+  seoKeywords      String?
+  seoOgImage       String?
+  heroTitle        String?
+  heroDesc         String?
+  historyTitle     String?
+  historyContent   String?
+  historyPar1      String?
+  historyPar2      String?
+  timelineList     String?  // JSON string
+  teamSectionTitle String?
+  teamList         String?  // JSON string
+  visionText       String?
+  missionList      String?  // JSON string
+  updatedAt        DateTime @updatedAt
+}
+
+model PageServices {
+  id                String   @id @default("services")
+  seoTitle          String?
+  seoDescription    String?
+  seoKeywords       String?
+  seoOgImage        String?
+  heroTitle         String?
+  heroSubtitle      String?
+  sectionTitle      String?
+  sectionSubtitle   String?
+  testiSectionTitle String?
+  updatedAt         DateTime @updatedAt
+}
+
+model PageContact {
+  id             String   @id @default("contact")
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String?
+  seoOgImage     String?
+  heroTitle      String?
+  heroSubtitle   String?
+  addressTitle   String?
+  addressText    String?
+  phoneTitle     String?
+  phoneText      String?
+  emailTitle     String?
+  emailText      String?
+  mapEmbedUrl    String?
+  faqTitle       String?
+  faqSubtitle    String?
+  faqList        String?  // JSON string
+  updatedAt      DateTime @updatedAt
 }

@@ -52,6 +52,40 @@ export const createClient = async (req, res) => {
   }
 };
 
+export const updateClient = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, image, order } = req.body;
+
+    if (!name || !image) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nama klien dan logo wajib diisi.'
+      });
+    }
+
+    const client = await prisma.client.update({
+      where: { id },
+      data: {
+        name,
+        image,
+        order: order !== undefined && order !== '' ? parseInt(order) : 0
+      }
+    });
+
+    return res.json({
+      success: true,
+      message: 'Klien berhasil diperbarui.',
+      data: client
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: 'Gagal memperbarui data klien.'
+    });
+  }
+};
+
 export const deleteClient = async (req, res) => {
   try {
     const { id } = req.params;

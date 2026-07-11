@@ -1,412 +1,1030 @@
-<div class="row mb-4 align-items-center">
-  <div class="col-md-8">
-    <h3 class="fw-bold text-dark mb-1">Pengaturan Konten Halaman Frontend</h3>
-    <p class="text-muted mb-0">Kelola dan ubah teks, judul, statistik, visi-misi, serta informasi kontak pada setiap halaman website PT. Alexa Computindo Group secara langsung.</p>
-  </div>
+<!-- Quill Rich Text Editor CSS -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+
+<!-- Custom Clean & Minimalist Styling (Konsisten dengan manajemen detail layanan / serviceDetail.ejs) -->
+<style>
+	.ql-toolbar.ql-snow {
+		border-top-left-radius: 8px;
+		border-top-right-radius: 8px;
+		border-color: #e2e8f0 !important;
+		background: #f8fafc;
+	}
+	.ql-container.ql-snow {
+		border-bottom-left-radius: 8px;
+		border-bottom-right-radius: 8px;
+		border-color: #e2e8f0 !important;
+		background: #ffffff;
+		font-family: inherit;
+		font-size: 0.95rem;
+	}
+	.clean-card {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 12px;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+		overflow: hidden;
+		margin-bottom: 24px;
+	}
+	.clean-card-header {
+		padding: 16px 20px;
+		border-bottom: 1px solid #f1f5f9;
+		background: #fafbfc;
+		font-weight: 600;
+		color: #1e293b;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.header-card {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 12px;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+		overflow: hidden;
+	}
+	.nav-simple {
+		gap: 16px;
+		padding: 0 20px;
+	}
+	.nav-simple .nav-link {
+		color: #64748b;
+		font-weight: 600;
+		padding: 14px 12px;
+		border: none;
+		border-bottom: 3px solid transparent;
+		margin-bottom: -1px;
+		background: transparent;
+		display: inline-flex;
+		align-items: center;
+		font-size: 0.95rem;
+		transition: all 0.15s ease;
+	}
+	.nav-simple .nav-link:hover {
+		color: #1e293b;
+	}
+	.nav-simple .nav-link.active {
+		color: #3BAE7C !important;
+		border-bottom-color: #3BAE7C !important;
+	}
+	.seo-badge {
+		font-size: 0.72rem;
+		font-weight: 600;
+		padding: 3px 8px;
+		border-radius: 6px;
+	}
+	.seo-preview-box {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 10px;
+		padding: 16px;
+		box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+	}
+	.google-preview-title {
+		color: #1a0dab;
+		font-size: 1.1rem;
+		font-weight: 500;
+		margin-bottom: 2px;
+		line-height: 1.3;
+	}
+	.google-preview-url {
+		color: #006621;
+		font-size: 0.85rem;
+		margin-bottom: 4px;
+	}
+	.google-preview-desc {
+		color: #4d5156;
+		font-size: 0.875rem;
+		line-height: 1.4;
+	}
+	.form-label-desc {
+		font-size: 0.8rem;
+		color: #64748b;
+		margin-top: 2px;
+	}
+</style>
+
+<!-- Unified Header Card with Navigation Tabs -->
+<div class="header-card mb-4">
+	<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 p-4 pb-3">
+		<div>
+			<div class="d-flex align-items-center gap-2 mb-1">
+				<h4 class="fw-bold mb-0 text-dark">Manajemen Halaman & SEO Frontend</h4>
+			</div>
+			<p class="text-muted mb-0 small">Kelola teks konten, deskripsi halaman, dan pengaturan SEO (Title, Meta Description, OpenGraph) untuk setiap halaman website secara real-time.</p>
+		</div>
+	</div>
+
+	<!-- Simple Tabs Navigation -->
+	<ul class="nav nav-simple border-top" id="pageCMSNav" role="tablist">
+		<li class="nav-item" role="presentation">
+			<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#tab-home" type="button" role="tab">
+				<i class="ti ti-home me-2"></i>Beranda (Home)
+			</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#tab-about" type="button" role="tab">
+				<i class="ti ti-building me-2"></i>Tentang Kami (About)
+			</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="services-tab" data-bs-toggle="tab" data-bs-target="#tab-services" type="button" role="tab">
+				<i class="ti ti-briefcase me-2"></i>Layanan & Divisi (Services)
+			</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#tab-contact" type="button" role="tab">
+				<i class="ti ti-phone me-2"></i>Kontak (Contact)
+			</button>
+		</li>
+	</ul>
 </div>
 
-<!-- Nav Tabs Halaman -->
-<ul class="nav nav-tabs nav-tabs-custom mb-4 border-bottom" id="pageTabs" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active fw-bold px-4 py-3 d-flex align-items-center" id="home-tab" data-bs-toggle="tab" data-bs-target="#tab-home" type="button" role="tab">
-      <i class="ti ti-home me-2 fs-5"></i>Halaman Beranda (Home)
-    </button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link fw-bold px-4 py-3 d-flex align-items-center" id="about-tab" data-bs-toggle="tab" data-bs-target="#tab-about" type="button" role="tab">
-      <i class="ti ti-building me-2 fs-5"></i>Halaman Tentang Kami (About)
-    </button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link fw-bold px-4 py-3 d-flex align-items-center" id="services-tab" data-bs-toggle="tab" data-bs-target="#tab-services" type="button" role="tab">
-      <i class="ti ti-briefcase me-2 fs-5"></i>Halaman Layanan (Services)
-    </button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link fw-bold px-4 py-3 d-flex align-items-center" id="contact-tab" data-bs-toggle="tab" data-bs-target="#tab-contact" type="button" role="tab">
-      <i class="ti ti-phone me-2 fs-5"></i>Halaman Kontak (Contact)
-    </button>
-  </li>
-</ul>
+<div class="tab-content" id="pageCMSContent">
 
-<div class="tab-content" id="pageTabsContent">
+	<!-- ========================================== -->
+	<!-- TAB 1: BERANDA (HOME) -->
+	<!-- ========================================== -->
+	<div class="tab-pane fade show active" id="tab-home" role="tabpanel">
+		<form id="form-home" onsubmit="savePageContent(event, 'home')">
 
-  <!-- ========================================== -->
-  <!-- TAB 1: HALAMAN BERANDA (HOME) -->
-  <!-- ========================================== -->
-  <div class="tab-pane fade show active" id="tab-home" role="tabpanel">
-    <form id="form-home" onsubmit="savePageContent(event, 'home')">
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
-          <i class="ti ti-layout-navbar text-primary fs-4 me-2"></i>
-          <h5 class="card-title fw-bold mb-0">Hero Section Utama</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Judul Hero Baris 1</label>
-              <input type="text" class="form-control" name="heroTitleLine1" value="<%= pagesData.home.heroTitleLine1 %>" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Judul Hero Baris 2 (Teks Highlight Hijau)</label>
-              <input type="text" class="form-control" name="heroTitleHighlight" value="<%= pagesData.home.heroTitleHighlight %>" required>
-            </div>
-            <div class="col-12 mb-3">
-              <label class="form-label fw-medium">Deskripsi Hero</label>
-              <textarea class="form-control" name="heroDesc" rows="3" required><%= pagesData.home.heroDesc %></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Teks Tombol CTA Utama</label>
-              <input type="text" class="form-control" name="ctaPrimaryText" value="<%= pagesData.home.ctaPrimaryText %>" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Teks Tombol CTA Sekunder</label>
-              <input type="text" class="form-control" name="ctaSecondaryText" value="<%= pagesData.home.ctaSecondaryText %>" required>
-            </div>
-          </div>
-        </div>
-      </div>
+			<!-- SEO & Meta Tags Card -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-seo text-primary fs-5 me-2"></i>
+						<span>Pengaturan SEO & Meta Tags — Halaman Beranda</span>
+					</div>
+					<span class="badge bg-primary-subtle text-primary seo-badge">SEO OPTIMIZATION</span>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-7">
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Title (Judul Tab & Hasil Pencarian)</label>
+								<input type="text" class="form-control" name="seoTitle" id="home-seoTitle" value="<%= pagesData.home.seoTitle || '' %>" oninput="updateGooglePreview('home')" placeholder="Contoh: Beranda — PT. Alexa Computindo Group">
+								<div class="form-label-desc">Disarankan 50-60 karakter agar tampil sempurna di Google.</div>
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Description (Deskripsi Singkat SEO)</label>
+								<textarea class="form-control" name="seoDescription" id="home-seoDesc" rows="3" oninput="updateGooglePreview('home')" placeholder="Deskripsi halaman yang muncul di bawah judul Google..."><%= pagesData.home.seoDescription || '' %></textarea>
+								<div class="form-label-desc">Disarankan 140-160 karakter untuk menarik klik pengunjung.</div>
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Keywords (Kata Kunci)</label>
+								<input type="text" class="form-control chip-input" name="seoKeywords" value="<%= pagesData.home.seoKeywords || '' %>" placeholder="alexa computindo, isp, software enterprise">
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">OpenGraph Image URL</label>
+								<input type="text" class="form-control" name="seoOgImage" value="<%= pagesData.home.seoOgImage || '' %>" placeholder="/assets/img/og-home.png">
+							</div>
+						</div>
+						<div class="col-md-5">
+							<label class="form-label fw-medium text-dark mb-2">Simulasi Tampilan Pencarian Google:</label>
+							<div class="seo-preview-box">
+								<div class="google-preview-url">https://alexagroup.com/</div>
+								<div class="google-preview-title" id="home-preview-title"><%= pagesData.home.seoTitle || 'PT. Alexa Computindo Group' %></div>
+								<div class="google-preview-desc" id="home-preview-desc"><%= pagesData.home.seoDescription || 'Solusi teknologi terintegrasi untuk perusahaan dan infrastruktur digital.' %></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
-          <i class="ti ti-info-circle text-primary fs-4 me-2"></i>
-          <h5 class="card-title fw-bold mb-0">Intro Section (Fundamen Solid & Statistik)</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="mb-3">
-            <label class="form-label fw-medium">Judul Intro</label>
-            <input type="text" class="form-control" name="introTitle" value="<%= pagesData.home.introTitle %>" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-medium">Deskripsi Intro Perusahaan</label>
-            <textarea class="form-control" name="introDesc" rows="3" required><%= pagesData.home.introDesc %></textarea>
-          </div>
+			<!-- Hero Section Card -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-layout-navbar text-primary fs-5 me-2"></i>
+						<span>Hero Section Utama (Banner Beranda)</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Hero Baris 1</label>
+							<input type="text" class="form-control" name="heroTitleLine1" value="<%= pagesData.home.heroTitleLine1 || '' %>" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Hero Baris 2 <span class="text-success fw-bold">(Sorotan Warna Hijau)</span></label>
+							<input type="text" class="form-control" name="heroTitleHighlight" value="<%= pagesData.home.heroTitleHighlight || '' %>" required>
+						</div>
+						<div class="col-12">
+							<label class="form-label fw-medium text-dark">Deskripsi Utama Hero</label>
+							<textarea class="form-control" name="heroDesc" rows="3" required><%= pagesData.home.heroDesc || '' %></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
 
-          <h6 class="fw-bold mt-4 mb-3 border-top pt-3">3 Kotak Statistik Pencapaian</h6>
-          <div class="row">
-            <div class="col-md-4 mb-3">
-              <div class="p-3 border rounded bg-light">
-                <label class="form-label fw-bold">Statistik 1 - Angka</label>
-                <input type="text" class="form-control mb-2" name="stat1Number" value="<%= pagesData.home.stat1Number %>">
-                <label class="form-label fw-medium small">Label</label>
-                <input type="text" class="form-control" name="stat1Label" value="<%= pagesData.home.stat1Label %>">
-              </div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <div class="p-3 border rounded bg-light">
-                <label class="form-label fw-bold">Statistik 2 - Angka</label>
-                <input type="text" class="form-control mb-2" name="stat2Number" value="<%= pagesData.home.stat2Number %>">
-                <label class="form-label fw-medium small">Label</label>
-                <input type="text" class="form-control" name="stat2Label" value="<%= pagesData.home.stat2Label %>">
-              </div>
-            </div>
-            <div class="col-md-4 mb-3">
-              <div class="p-3 border rounded bg-light">
-                <label class="form-label fw-bold">Statistik 3 - Angka</label>
-                <input type="text" class="form-control mb-2" name="stat3Number" value="<%= pagesData.home.stat3Number %>">
-                <label class="form-label fw-medium small">Label</label>
-                <input type="text" class="form-control" name="stat3Label" value="<%= pagesData.home.stat3Label %>">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+			<!-- Intro & Statistik Card -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-chart-bar text-primary fs-5 me-2"></i>
+						<span>Intro & Pencapaian Statistik Perusahaan</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="row g-3 mb-4">
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Bagian Intro</label>
+							<input type="text" class="form-control" name="introTitle" value="<%= pagesData.home.introTitle || '' %>" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Deskripsi Bagian Intro</label>
+							<textarea class="form-control" name="introDesc" rows="2" required><%= pagesData.home.introDesc || '' %></textarea>
+						</div>
+					</div>
+					<h6 class="fw-bold mb-3 text-dark border-top pt-3">3 Pilar Statistik Pencapaian</h6>
+					<div class="row g-3">
+						<div class="col-md-4">
+							<div class="p-3 border rounded-3 bg-light">
+								<label class="form-label fw-bold small text-muted">STATISTIK 1</label>
+								<input type="text" class="form-control mb-2" name="stat1Number" value="<%= pagesData.home.stat1Number || '' %>" placeholder="8+">
+								<input type="text" class="form-control form-control-sm" name="stat1Label" value="<%= pagesData.home.stat1Label || '' %>" placeholder="Tahun Pengalaman">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="p-3 border rounded-3 bg-light">
+								<label class="form-label fw-bold small text-muted">STATISTIK 2</label>
+								<input type="text" class="form-control mb-2" name="stat2Number" value="<%= pagesData.home.stat2Number || '' %>" placeholder="99.9%">
+								<input type="text" class="form-control form-control-sm" name="stat2Label" value="<%= pagesData.home.stat2Label || '' %>" placeholder="Uptime Server">
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="p-3 border rounded-3 bg-light">
+								<label class="form-label fw-bold small text-muted">STATISTIK 3</label>
+								<input type="text" class="form-control mb-2" name="stat3Number" value="<%= pagesData.home.stat3Number || '' %>" placeholder="200+">
+								<input type="text" class="form-control form-control-sm" name="stat3Label" value="<%= pagesData.home.stat3Label || '' %>" placeholder="Klien Enterprise">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom d-flex align-items-center">
-          <i class="ti ti-briefcase text-primary fs-4 me-2"></i>
-          <h5 class="card-title fw-bold mb-0">Judul Bagian Divisi Layanan</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Judul Section Divisi</label>
-              <input type="text" class="form-control" name="servicesSectionTitle" value="<%= pagesData.home.servicesSectionTitle %>" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Subjudul Section Divisi</label>
-              <input type="text" class="form-control" name="servicesSectionSubtitle" value="<%= pagesData.home.servicesSectionSubtitle %>" required>
-            </div>
-          </div>
-        </div>
-      </div>
+			<!-- Divisi Section Card -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-sitemap text-primary fs-5 me-2"></i>
+						<span>Pengaturan Bagian Divisi Layanan (Services Section)</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Bagian Divisi</label>
+							<input type="text" class="form-control" name="servicesSectionTitle" value="<%= pagesData.home.servicesSectionTitle || '' %>" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Subjudul Bagian Divisi</label>
+							<input type="text" class="form-control" name="servicesSectionSubtitle" value="<%= pagesData.home.servicesSectionSubtitle || '' %>" required>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div class="text-end mb-5">
-        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
-          <i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Halaman Beranda
-        </button>
-      </div>
-    </form>
-  </div>
+			<!-- Klien & Berita Section Card -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-briefcase text-primary fs-5 me-2"></i>
+						<span>Pengaturan Bagian Klien & Berita Insight</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Bagian Klien Enterprise</label>
+							<input type="text" class="form-control" name="clientsSectionTitle" value="<%= pagesData.home.clientsSectionTitle || 'DIPERCAYA OLEH PERUSAHAAN TERKEMUKA' %>" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Bagian Berita & Insight</label>
+							<input type="text" class="form-control" name="articlesSectionTitle" value="<%= pagesData.home.articlesSectionTitle || 'Berita & Insight' %>" required>
+						</div>
+					</div>
+				</div>
+			</div>
 
-  <!-- ========================================== -->
-  <!-- TAB 2: HALAMAN TENTANG KAMI (ABOUT) -->
-  <!-- ========================================== -->
-  <div class="tab-pane fade" id="tab-about" role="tabpanel">
-    <form id="form-about" onsubmit="savePageContent(event, 'about')">
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="card-title fw-bold mb-0">Hero About & Profil Singkat</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="mb-3">
-            <label class="form-label fw-medium">Judul Halaman</label>
-            <input type="text" class="form-control" name="heroTitle" value="<%= pagesData.about.heroTitle %>" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-medium">Deskripsi Hero Profil</label>
-            <textarea class="form-control" name="heroDesc" rows="3" required><%= pagesData.about.heroDesc %></textarea>
-          </div>
-        </div>
-      </div>
+			<div class="d-flex justify-content-end gap-2 mb-5">
+				<button type="submit" class="btn btn-primary px-4 py-2 fw-semibold shadow-sm">
+					<i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Beranda
+				</button>
+			</div>
+		</form>
+	</div>
 
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="card-title fw-bold mb-0">Sejarah Perusahaan</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="mb-3">
-            <label class="form-label fw-medium">Judul Bagian Sejarah</label>
-            <input type="text" class="form-control" name="historyTitle" value="<%= pagesData.about.historyTitle %>" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-medium">Paragraf Sejarah 1</label>
-            <textarea class="form-control" name="historyPar1" rows="3" required><%= pagesData.about.historyPar1 %></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-medium">Paragraf Sejarah 2</label>
-            <textarea class="form-control" name="historyPar2" rows="3" required><%= pagesData.about.historyPar2 %></textarea>
-          </div>
+	<!-- ========================================== -->
+	<!-- TAB 2: TENTANG KAMI (ABOUT) -->
+	<!-- ========================================== -->
+	<div class="tab-pane fade" id="tab-about" role="tabpanel">
+		<form id="form-about" onsubmit="savePageContent(event, 'about')">
 
-          <h6 class="fw-bold mt-4 mb-3 border-top pt-3">Kartu Timeline Sejarah (Kanan)</h6>
-          <div class="row">
-            <% const timelines = pagesData.about.timelineList || [
-                 { year: '2018', title: 'PENDIRIAN WEBMEDIA', desc: 'Fokus awal pada arsitektur sistem informasi enterprise.' },
-                 { year: '2020', title: 'EKSPANSI INETMEDIA', desc: 'Memperoleh lisensi ISP nasional untuk infrastruktur jaringan.' },
-                 { year: '2023', title: 'AKUISISI MEDIAKAMPUNG', desc: 'Membentuk pilar media digital yang kuat.' }
-               ]; %>
-            <% timelines.forEach(function(tl, index) { %>
-              <div class="col-md-4 mb-3">
-                <div class="p-3 border rounded bg-light">
-                  <label class="form-label fw-bold">Tahun Timeline <%= index + 1 %></label>
-                  <input type="text" class="form-control mb-2" name="timelineYear_<%= index %>" value="<%= tl.year %>" required>
-                  <label class="form-label fw-medium small">Judul Timeline</label>
-                  <input type="text" class="form-control mb-2" name="timelineTitle_<%= index %>" value="<%= tl.title %>" required>
-                  <label class="form-label fw-medium small">Deskripsi Singkat</label>
-                  <textarea class="form-control" name="timelineDesc_<%= index %>" rows="2" required><%= tl.desc %></textarea>
-                </div>
-              </div>
-            <% }); %>
-          </div>
-        </div>
-      </div>
+			<!-- SEO & Meta Tags Card -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-seo text-primary fs-5 me-2"></i>
+						<span>Pengaturan SEO & Meta Tags — Halaman Tentang Kami</span>
+					</div>
+					<span class="badge bg-primary-subtle text-primary seo-badge">SEO OPTIMIZATION</span>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-7">
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Title (Judul Tab Browser)</label>
+								<input type="text" class="form-control" name="seoTitle" id="about-seoTitle" value="<%= pagesData.about.seoTitle || '' %>" oninput="updateGooglePreview('about')">
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Description</label>
+								<textarea class="form-control" name="seoDescription" id="about-seoDesc" rows="3" oninput="updateGooglePreview('about')"><%= pagesData.about.seoDescription || '' %></textarea>
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Keywords</label>
+								<input type="text" class="form-control chip-input" name="seoKeywords" value="<%= pagesData.about.seoKeywords || '' %>">
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">OpenGraph Image URL</label>
+								<input type="text" class="form-control" name="seoOgImage" value="<%= pagesData.about.seoOgImage || '' %>">
+							</div>
+						</div>
+						<div class="col-md-5">
+							<label class="form-label fw-medium text-dark mb-2">Simulasi Tampilan Pencarian Google:</label>
+							<div class="seo-preview-box">
+								<div class="google-preview-url">https://alexagroup.com/about</div>
+								<div class="google-preview-title" id="about-preview-title"><%= pagesData.about.seoTitle || 'Tentang Kami — PT. Alexa Computindo Group' %></div>
+								<div class="google-preview-desc" id="about-preview-desc"><%= pagesData.about.seoDescription || 'Profil, sejarah, dan visi misi PT. Alexa Computindo Group.' %></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="card-title fw-bold mb-0">Visi & Misi Perusahaan</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="mb-4">
-            <label class="form-label fw-medium">Visi Perusahaan</label>
-            <textarea class="form-control" name="visionText" rows="3" required><%= pagesData.about.visionText %></textarea>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-medium">Misi 1</label>
-            <input type="text" class="form-control mb-2" name="mission0" value="<%= pagesData.about.missionList[0] || '' %>">
-            <label class="form-label fw-medium">Misi 2</label>
-            <input type="text" class="form-control mb-2" name="mission1" value="<%= pagesData.about.missionList[1] || '' %>">
-            <label class="form-label fw-medium">Misi 3</label>
-            <input type="text" class="form-control" name="mission2" value="<%= pagesData.about.missionList[2] || '' %>">
-          </div>
-        </div>
-      </div>
+			<!-- Hero & Sejarah Perusahaan -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-building text-primary fs-5 me-2"></i>
+						<span>Hero & Sejarah Perusahaan</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-4">
+							<label class="form-label fw-medium text-dark">Judul Utama Halaman</label>
+							<input type="text" class="form-control" name="heroTitle" value="<%= pagesData.about.heroTitle || '' %>" required>
+						</div>
+						<div class="col-md-8">
+							<label class="form-label fw-medium text-dark">Subjudul / Deskripsi Pembuka</label>
+							<textarea class="form-control" name="heroDesc" rows="2" required><%= pagesData.about.heroDesc || '' %></textarea>
+						</div>
+						<div class="col-12 mt-3 border-top pt-3">
+							<h6 class="fw-bold text-dark mb-3">Narasi Sejarah Perusahaan (Satu Rich Text Editor)</h6>
+						</div>
+						<div class="col-md-12 mb-2">
+							<label class="form-label fw-medium text-dark">Judul Bagian Sejarah</label>
+							<input type="text" class="form-control" name="historyTitle" value="<%= pagesData.about.historyTitle || '' %>" required>
+						</div>
+						<div class="col-md-12">
+							<label class="form-label fw-medium text-dark">Konten Narasi Sejarah Perusahaan</label>
+							<% 
+								let initialHistory = pagesData.about.historyContent || pagesData.about.historyPar1 || '';
+								if (!pagesData.about.historyContent && pagesData.about.historyPar2) {
+									initialHistory += ' ' + pagesData.about.historyPar2;
+								}
+							%>
+							<input type="hidden" name="historyContent" id="input-historyContent" value="<%= initialHistory %>">
+							<input type="hidden" name="historyPar1" value="<%= initialHistory %>">
+							<input type="hidden" name="historyPar2" value="">
+							<div id="editor-historyContent" style="height: 220px;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div class="text-end mb-5">
-        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
-          <i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Halaman About
-        </button>
-      </div>
-    </form>
-  </div>
+			<!-- Visi & Misi Perusahaan (Rich Text Editor) -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-target text-primary fs-5 me-2"></i>
+						<span>Visi & Misi Perusahaan (Rich Text Editor)</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="mb-4">
+						<label class="form-label fw-bold text-dark">Pernyataan Visi Utama</label>
+						<input type="hidden" name="visionText" id="input-visionText" value="<%= pagesData.about.visionText || '' %>">
+						<div id="editor-visionText" style="height: 120px;"></div>
+					</div>
+					<div class="mb-2">
+						<label class="form-label fw-bold text-dark">Misi Perusahaan</label>
+						<% 
+							let initialMissionRich = pagesData.about.missionRichText || '';
+							if (!initialMissionRich && pagesData.about.missionList && pagesData.about.missionList.length > 0) {
+								initialMissionRich = '<ul>' + pagesData.about.missionList.map(m => `<li>${m}</li>`).join('') + '</ul>';
+							}
+						%>
+						<input type="hidden" name="missionRichText" id="input-missionRichText" value="<%= initialMissionRich %>">
+						<div id="editor-missionRichText" style="height: 150px;"></div>
+					</div>
+				</div>
+			</div>
 
-  <!-- ========================================== -->
-  <!-- TAB 3: HALAMAN LAYANAN (SERVICES) -->
-  <!-- ========================================== -->
-  <div class="tab-pane fade" id="tab-services" role="tabpanel">
-    <form id="form-services" onsubmit="savePageContent(event, 'services')">
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="card-title fw-bold mb-0">Hero Halaman Layanan</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="mb-3">
-            <label class="form-label fw-medium">Judul Utama Layanan</label>
-            <input type="text" class="form-control" name="heroTitle" value="<%= pagesData.services.heroTitle %>" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-medium">Subjudul Pengantar Layanan</label>
-            <textarea class="form-control" name="heroSubtitle" rows="2" required><%= pagesData.services.heroSubtitle %></textarea>
-          </div>
-        </div>
-      </div>
+			<!-- Timeline Sejarah (Dinamis) -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-timeline text-primary fs-5 me-2"></i>
+						<span>Milestone / Timeline Sejarah (Dinamis)</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div id="timeline-container" class="row g-3"></div>
+					<div class="mt-4 border-top pt-3">
+						<button type="button" class="btn btn-primary btn-sm px-3 py-2 fw-semibold d-inline-flex align-items-center shadow-sm" style="font-size: 0.875rem; border-radius: 6px;" onclick="addTimelineItem()">
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+							<span>Tambah Milestone / Timeline Baru</span>
+						</button>
+					</div>
+				</div>
+			</div>
 
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="card-title fw-bold mb-0">Bagian Daftar Divisi Layanan</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="mb-3">
-            <label class="form-label fw-medium">Judul Bagian Divisi</label>
-            <input type="text" class="form-control" name="sectionTitle" value="<%= pagesData.services.sectionTitle || 'Eksplorasi Divisi AG Group' %>" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-medium">Subjudul Bagian Divisi</label>
-            <textarea class="form-control" name="sectionSubtitle" rows="2" required><%= pagesData.services.sectionSubtitle || 'Pilih divisi layanan di bawah ini untuk melihat deskripsi mendalam, spesifikasi paket harga, dan portofolio proyek.' %></textarea>
-          </div>
-        </div>
-      </div>
+			<!-- Manajemen Inti (Tim Manajemen Dinamis) -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-users text-primary fs-5 me-2"></i>
+						<span>Manajemen Inti (Tim Manajemen Dinamis)</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="mb-4">
+						<label class="form-label fw-medium text-dark">Judul Bagian Manajemen Inti</label>
+						<input type="text" class="form-control" name="teamSectionTitle" value="<%= pagesData.about.teamSectionTitle || 'MANAJEMEN INTI' %>" required>
+					</div>
+					<div id="team-container" class="row g-3"></div>
+					<div class="mt-4 border-top pt-3">
+						<button type="button" class="btn btn-primary btn-sm px-3 py-2 fw-semibold d-inline-flex align-items-center shadow-sm" style="font-size: 0.875rem; border-radius: 6px;" onclick="addTeamItem()">
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+							<span>Tambah Anggota Manajemen Inti</span>
+						</button>
+					</div>
+				</div>
+			</div>
 
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="card-title fw-bold mb-0">Bagian Testimonial Klien</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="mb-3">
-            <label class="form-label fw-medium">Judul Bagian Testimonial</label>
-            <input type="text" class="form-control" name="testiSectionTitle" value="<%= pagesData.services.testiSectionTitle || 'Kata Klien Kami' %>" required>
-          </div>
-          <small class="text-muted">Daftar kartu divisi layanan dan paket dapat dikelola di menu <b>Divisi & Layanan</b>.</small>
-        </div>
-      </div>
+			<div class="d-flex justify-content-end gap-2 mb-5">
+				<button type="submit" class="btn btn-primary px-4 py-2 fw-semibold shadow-sm">
+					<i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Tentang Kami
+				</button>
+			</div>
+		</form>
+	</div>
 
-      <div class="text-end mb-5">
-        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
-          <i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Halaman Layanan
-        </button>
-      </div>
-    </form>
-  </div>
+	<!-- ========================================== -->
+	<!-- TAB 3: LAYANAN (SERVICES) -->
+	<!-- ========================================== -->
+	<div class="tab-pane fade" id="tab-services" role="tabpanel">
+		<form id="form-services" onsubmit="savePageContent(event, 'services')">
 
-  <!-- ========================================== -->
-  <!-- TAB 4: HALAMAN KONTAK (CONTACT) -->
-  <!-- ========================================== -->
-  <div class="tab-pane fade" id="tab-contact" role="tabpanel">
-    <form id="form-contact" onsubmit="savePageContent(event, 'contact')">
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="card-title fw-bold mb-0">Hero Halaman Kontak</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="mb-3">
-            <label class="form-label fw-medium">Judul Halaman Kontak</label>
-            <input type="text" class="form-control" name="heroTitle" value="<%= pagesData.contact.heroTitle %>" required>
-          </div>
-          <div class="mb-3">
-            <label class="form-label fw-medium">Subjudul Halaman Kontak</label>
-            <input type="text" class="form-control" name="heroSubtitle" value="<%= pagesData.contact.heroSubtitle %>" required>
-          </div>
-        </div>
-      </div>
+			<!-- SEO & Meta Tags Card -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-seo text-primary fs-5 me-2"></i>
+						<span>Pengaturan SEO & Meta Tags — Halaman Layanan</span>
+					</div>
+					<span class="badge bg-primary-subtle text-primary seo-badge">SEO OPTIMIZATION</span>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-7">
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Title</label>
+								<input type="text" class="form-control" name="seoTitle" id="services-seoTitle" value="<%= pagesData.services.seoTitle || '' %>" oninput="updateGooglePreview('services')">
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Description</label>
+								<textarea class="form-control" name="seoDescription" id="services-seoDesc" rows="3" oninput="updateGooglePreview('services')"><%= pagesData.services.seoDescription || '' %></textarea>
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Keywords</label>
+								<input type="text" class="form-control chip-input" name="seoKeywords" value="<%= pagesData.services.seoKeywords || '' %>">
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">OpenGraph Image URL</label>
+								<input type="text" class="form-control" name="seoOgImage" value="<%= pagesData.services.seoOgImage || '' %>">
+							</div>
+						</div>
+						<div class="col-md-5">
+							<label class="form-label fw-medium text-dark mb-2">Simulasi Tampilan Pencarian Google:</label>
+							<div class="seo-preview-box">
+								<div class="google-preview-url">https://alexagroup.com/services</div>
+								<div class="google-preview-title" id="services-preview-title"><%= pagesData.services.seoTitle || 'Layanan & Divisi — PT. Alexa Computindo Group' %></div>
+								<div class="google-preview-desc" id="services-preview-desc"><%= pagesData.services.seoDescription || 'Daftar layanan divisi WebMedia, InetMedia, dan MediaKampung.' %></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="card-title fw-bold mb-0">Informasi Alamat & Kontak Resmi</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Judul Box Alamat</label>
-              <input type="text" class="form-control" name="addressTitle" value="<%= pagesData.contact.addressTitle %>" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Detail Alamat Kantor (Gunakan Enter untuk baris baru)</label>
-              <textarea class="form-control" name="addressText" rows="2" required><%= pagesData.contact.addressText %></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Judul Box Telepon</label>
-              <input type="text" class="form-control" name="phoneTitle" value="<%= pagesData.contact.phoneTitle %>" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Nomor Telepon / WhatsApp</label>
-              <textarea class="form-control" name="phoneText" rows="2" required><%= pagesData.contact.phoneText %></textarea>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Judul Box Email</label>
-              <input type="text" class="form-control" name="emailTitle" value="<%= pagesData.contact.emailTitle %>" required>
-            </div>
-            <div class="col-md-6 mb-3">
-              <label class="form-label fw-medium">Alamat Email Resmi</label>
-              <textarea class="form-control" name="emailText" rows="2" required><%= pagesData.contact.emailText %></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
+			<!-- Hero & Header Layanan -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-briefcase text-primary fs-5 me-2"></i>
+						<span>Teks Hero & Judul Bagian Halaman Layanan</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Hero Utama</label>
+							<input type="text" class="form-control" name="heroTitle" value="<%= pagesData.services.heroTitle || '' %>" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Subjudul Hero Utama</label>
+							<input type="text" class="form-control" name="heroSubtitle" value="<%= pagesData.services.heroSubtitle || '' %>" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Bagian Eksplorasi Divisi</label>
+							<input type="text" class="form-control" name="sectionTitle" value="<%= pagesData.services.sectionTitle || '' %>" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Deskripsi Bagian Eksplorasi Divisi</label>
+							<textarea class="form-control" name="sectionSubtitle" rows="2" required><%= pagesData.services.sectionSubtitle || '' %></textarea>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Bagian Testimoni Klien</label>
+							<input type="text" class="form-control" name="testiSectionTitle" value="<%= pagesData.services.testiSectionTitle || '' %>" required>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-white py-3 border-bottom">
-          <h5 class="card-title fw-bold mb-0">URL Embed Google Maps</h5>
-        </div>
-        <div class="card-body p-4">
-          <div class="mb-2">
-            <label class="form-label fw-medium">Link URL iframe Google Maps (src)</label>
-            <input type="url" class="form-control" name="mapEmbedUrl" value="<%= pagesData.contact.mapEmbedUrl %>" required>
-          </div>
-          <small class="text-muted">Masukkan link URL embed resmi dari Google Maps.</small>
-        </div>
-      </div>
+			<div class="d-flex justify-content-end gap-2 mb-5">
+				<button type="submit" class="btn btn-primary px-4 py-2 fw-semibold shadow-sm">
+					<i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Layanan
+				</button>
+			</div>
+		</form>
+	</div>
 
-      <div class="text-end mb-5">
-        <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
-          <i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Halaman Kontak
-        </button>
-      </div>
-    </form>
-  </div>
+	<!-- ========================================== -->
+	<!-- TAB 4: KONTAK (CONTACT) -->
+	<!-- ========================================== -->
+	<div class="tab-pane fade" id="tab-contact" role="tabpanel">
+		<form id="form-contact" onsubmit="savePageContent(event, 'contact')">
+
+			<!-- SEO & Meta Tags Card -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-seo text-primary fs-5 me-2"></i>
+						<span>Pengaturan SEO & Meta Tags — Halaman Kontak</span>
+					</div>
+					<span class="badge bg-primary-subtle text-primary seo-badge">SEO OPTIMIZATION</span>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-7">
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Title</label>
+								<input type="text" class="form-control" name="seoTitle" id="contact-seoTitle" value="<%= pagesData.contact.seoTitle || '' %>" oninput="updateGooglePreview('contact')">
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Description</label>
+								<textarea class="form-control" name="seoDescription" id="contact-seoDesc" rows="3" oninput="updateGooglePreview('contact')"><%= pagesData.contact.seoDescription || '' %></textarea>
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">Meta Keywords</label>
+								<input type="text" class="form-control chip-input" name="seoKeywords" value="<%= pagesData.contact.seoKeywords || '' %>">
+							</div>
+							<div class="mb-3">
+								<label class="form-label fw-medium text-dark">OpenGraph Image URL</label>
+								<input type="text" class="form-control" name="seoOgImage" value="<%= pagesData.contact.seoOgImage || '' %>">
+							</div>
+						</div>
+						<div class="col-md-5">
+							<label class="form-label fw-medium text-dark mb-2">Simulasi Tampilan Pencarian Google:</label>
+							<div class="seo-preview-box">
+								<div class="google-preview-url">https://alexagroup.com/contact</div>
+								<div class="google-preview-title" id="contact-preview-title"><%= pagesData.contact.seoTitle || 'Hubungi Kami — PT. Alexa Computindo Group' %></div>
+								<div class="google-preview-desc" id="contact-preview-desc"><%= pagesData.contact.seoDescription || 'Hubungi PT. Alexa Computindo Group untuk konsultasi solusi digital.' %></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Hero & Informasi Kontak -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-phone text-primary fs-5 me-2"></i>
+						<span>Hero & Informasi Alamat Kontak Resmi</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="row g-3">
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Halaman Kontak</label>
+							<input type="text" class="form-control" name="heroTitle" value="<%= pagesData.contact.heroTitle || '' %>" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Subjudul Halaman Kontak</label>
+							<input type="text" class="form-control" name="heroSubtitle" value="<%= pagesData.contact.heroSubtitle || '' %>" required>
+						</div>
+						<div class="col-md-4">
+							<div class="p-3 border rounded-3 bg-light">
+								<label class="form-label fw-bold text-dark mb-1">BOX 1: ALAMAT</label>
+								<input type="text" class="form-control mb-2 form-control-sm" name="addressTitle" value="<%= pagesData.contact.addressTitle || '' %>" placeholder="Kantor Pusat">
+								<textarea class="form-control form-control-sm" name="addressText" rows="3" required placeholder="Jl. Teknologi No. 45..."><%= pagesData.contact.addressText || '' %></textarea>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="p-3 border rounded-3 bg-light">
+								<label class="form-label fw-bold text-dark mb-1">BOX 2: TELEPON / WA</label>
+								<input type="text" class="form-control mb-2 form-control-sm" name="phoneTitle" value="<%= pagesData.contact.phoneTitle || '' %>" placeholder="Telepon">
+								<textarea class="form-control form-control-sm" name="phoneText" rows="3" required placeholder="(021) 555-0198..."><%= pagesData.contact.phoneText || '' %></textarea>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="p-3 border rounded-3 bg-light">
+								<label class="form-label fw-bold text-dark mb-1">BOX 3: EMAIL</label>
+								<input type="text" class="form-control mb-2 form-control-sm" name="emailTitle" value="<%= pagesData.contact.emailTitle || '' %>" placeholder="Email">
+								<textarea class="form-control form-control-sm" name="emailText" rows="3" required placeholder="info@alexagroup.com..."><%= pagesData.contact.emailText || '' %></textarea>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Google Maps Embed Card -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-map-pin text-primary fs-5 me-2"></i>
+						<span>URL Embed Google Maps</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="mb-2">
+						<label class="form-label fw-medium text-dark">Link URL iframe Google Maps (src)</label>
+						<input type="url" class="form-control" name="mapEmbedUrl" value="<%= pagesData.contact.mapEmbedUrl || '' %>" required>
+					</div>
+					<small class="text-muted">Masukkan link embed (URL src iframe) resmi dari Google Maps lokasi kantor perusahaan Anda.</small>
+				</div>
+			</div>
+
+			<!-- Pengaturan FAQ (Frequently Asked Questions) Dinamis -->
+			<div class="clean-card">
+				<div class="clean-card-header">
+					<div class="d-flex align-items-center">
+						<i class="ti ti-help text-primary fs-5 me-2"></i>
+						<span>Pengaturan FAQ (Frequently Asked Questions) Dinamis</span>
+					</div>
+				</div>
+				<div class="p-4">
+					<div class="row g-3 mb-4">
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Judul Bagian FAQ</label>
+							<input type="text" class="form-control" name="faqTitle" value="<%= pagesData.contact.faqTitle || 'Frequently Asked Questions' %>" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label fw-medium text-dark">Subjudul Bagian FAQ</label>
+							<input type="text" class="form-control" name="faqSubtitle" value="<%= pagesData.contact.faqSubtitle || 'Pertanyaan umum mengenai layanan korporat kami.' %>" required>
+						</div>
+					</div>
+					<div id="faq-container" class="row g-3"></div>
+					<div class="mt-4 border-top pt-3">
+						<button type="button" class="btn btn-primary btn-sm px-3 py-2 fw-semibold d-inline-flex align-items-center shadow-sm" style="font-size: 0.875rem; border-radius: 6px;" onclick="addFaqItem()">
+							<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="me-2"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
+							<span>Tambah Pertanyaan FAQ Baru</span>
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="d-flex justify-content-end gap-2 mb-5">
+				<button type="submit" class="btn btn-primary px-4 py-2 fw-semibold shadow-sm">
+					<i class="ti ti-device-floppy me-2"></i>Simpan Perubahan Kontak
+				</button>
+			</div>
+		</form>
+	</div>
 
 </div>
+
+<!-- Quill JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
 
 <script>
-async function savePageContent(e, pageName) {
-  e.preventDefault();
-  const form = document.getElementById(`form-${pageName}`);
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData.entries());
+let quillHistory, quillVision, quillMission;
+let timelineItems = <%- JSON.stringify(pagesData.about.timelineList && pagesData.about.timelineList.length > 0 ? pagesData.about.timelineList : [
+	{ year: "2018", title: "Pendirian WebMedia", desc: "Fokus awal pada arsitektur sistem informasi enterprise." },
+	{ year: "2020", title: "Ekspansi InetMedia", desc: "Memperoleh lisensi ISP nasional untuk infrastruktur jaringan." },
+	{ year: "2023", title: "Akuisisi MediaKampung", desc: "Membentuk pilar media digital yang kuat." }
+]) %>;
 
-  if (pageName === 'about') {
-    data.missionList = [data.mission0, data.mission1, data.mission2].filter(Boolean);
-    delete data.mission0;
-    delete data.mission1;
-    delete data.mission2;
+let teamItems = <%- JSON.stringify(pagesData.about.teamList && pagesData.about.teamList.length > 0 ? pagesData.about.teamList : [
+	{ name: 'Budi Santoso', role: 'Chief Executive Officer', bio: 'Berpengalaman 15 tahun di industri IT dan manajemen strategis.', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80' },
+	{ name: 'Siti Aminah', role: 'Chief Operating Officer', bio: 'Ahli dalam operasional bisnis dan pengembangan produk digital.', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80' },
+	{ name: 'Andi Pratama', role: 'CTO / Head of Engineering', bio: 'Pakar arsitektur cloud, keamanan siber, dan jaringan berskala besar.', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&q=80' }
+]) %>;
 
-    data.timelineList = [
-      { year: data.timelineYear_0, title: data.timelineTitle_0, desc: data.timelineDesc_0 },
-      { year: data.timelineYear_1, title: data.timelineTitle_1, desc: data.timelineDesc_1 },
-      { year: data.timelineYear_2, title: data.timelineTitle_2, desc: data.timelineDesc_2 }
-    ];
-    delete data.timelineYear_0; delete data.timelineTitle_0; delete data.timelineDesc_0;
-    delete data.timelineYear_1; delete data.timelineTitle_1; delete data.timelineDesc_1;
-    delete data.timelineYear_2; delete data.timelineTitle_2; delete data.timelineDesc_2;
-  }
+let faqItems = <%- JSON.stringify(pagesData.contact.faqList && pagesData.contact.faqList.length > 0 ? pagesData.contact.faqList : [
+	{ q: 'Dimana lokasi operasional PT. Alexa Computindo Group?', a: 'Kantor pusat kami berlokasi di Jl. Teknologi No. 45, Jakarta Selatan. Kami melayani kunjungan klien enterprise pada hari kerja (Senin - Jumat), pukul 09:00 - 17:00 WIB.' },
+	{ q: 'Apakah layanan pengembangan software (WebMedia) termasuk maintenance?', a: 'Ya, seluruh proyek perangkat lunak dari WebMedia memiliki SLA dan masa maintenance mulai dari 3 hingga 12 bulan, yang dapat diperpanjang melalui kontrak support enterprise.' },
+	{ q: 'Berapa lama proses pemasangan internet corporate InetMedia?', a: 'Proses survei, penarikan kabel fiber optik, dan aktivasi internet khusus corporate rata-rata memakan waktu 3-5 hari kerja setelah SPK disetujui.' }
+]) %>;
 
-  try {
-    const res = await fetch(`/api/pages/${pageName}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content: data })
-    });
-    const result = await res.json();
-    if (result.success) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Tersimpan!',
-        text: result.message || 'Konten halaman berhasil disimpan.',
-        confirmButtonColor: '#3BAE7C'
-      });
-    } else {
-      Swal.fire('Gagal', result.message || 'Gagal menyimpan data', 'error');
-    }
-  } catch (err) {
-    Swal.fire('Error', 'Terjadi kesalahan koneksi server', 'error');
-  }
+document.addEventListener("DOMContentLoaded", function() {
+	const toolbarOptions = [
+		['bold', 'italic', 'underline'],
+		[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+		['clean']
+	];
+
+	if (document.getElementById('editor-historyContent')) {
+		quillHistory = new Quill('#editor-historyContent', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+		quillHistory.root.innerHTML = document.getElementById('input-historyContent').value;
+	}
+	if (document.getElementById('editor-visionText')) {
+		quillVision = new Quill('#editor-visionText', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+		quillVision.root.innerHTML = document.getElementById('input-visionText').value;
+	}
+	if (document.getElementById('editor-missionRichText')) {
+		quillMission = new Quill('#editor-missionRichText', { theme: 'snow', modules: { toolbar: toolbarOptions } });
+		quillMission.root.innerHTML = document.getElementById('input-missionRichText').value;
+	}
+
+	renderTimelineItems();
+	renderTeamItems();
+	renderFaqItems();
+});
+
+function renderTimelineItems() {
+	const container = document.getElementById('timeline-container');
+	if (!container) return;
+	container.innerHTML = timelineItems.map((item, idx) => `
+		<div class="col-md-4 timeline-item-box" data-index="${idx}">
+			<div class="p-3 border rounded-3 bg-light position-relative h-100 shadow-sm">
+				<div class="d-flex justify-content-between align-items-center mb-2">
+					<span class="fw-bold small text-primary">MILESTONE #${idx + 1}</span>
+					<button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center px-2 py-1" onclick="removeTimelineItem(${idx})" title="Hapus Milestone Ini">
+						<i class="ti ti-trash me-1"></i>Hapus
+					</button>
+				</div>
+				<div class="mb-2">
+					<label class="form-label small mb-1">Tahun</label>
+					<input type="text" class="form-control form-control-sm timeline-year" value="${item.year || ''}" placeholder="2018" onchange="updateTimelineArray()">
+				</div>
+				<div class="mb-2">
+					<label class="form-label small mb-1">Judul Pencapaian</label>
+					<input type="text" class="form-control form-control-sm timeline-title" value="${item.title || ''}" placeholder="Pendirian WebMedia" onchange="updateTimelineArray()">
+				</div>
+				<div>
+					<label class="form-label small mb-1">Deskripsi Singkat</label>
+					<textarea class="form-control form-control-sm timeline-desc" rows="2" placeholder="Jelaskan pencapaian..." onchange="updateTimelineArray()">${item.desc || ''}</textarea>
+				</div>
+			</div>
+		</div>
+	`).join('');
 }
+
+function updateTimelineArray() {
+	const boxes = document.querySelectorAll('#timeline-container .timeline-item-box');
+	timelineItems = Array.from(boxes).map(box => ({
+		year: box.querySelector('.timeline-year')?.value || '',
+		title: box.querySelector('.timeline-title')?.value || '',
+		desc: box.querySelector('.timeline-desc')?.value || ''
+	}));
+}
+
+function addTimelineItem() {
+	updateTimelineArray();
+	timelineItems.push({ year: '', title: '', desc: '' });
+	renderTimelineItems();
+}
+
+function removeTimelineItem(idx) {
+	updateTimelineArray();
+	timelineItems.splice(idx, 1);
+	renderTimelineItems();
+}
+
+function renderTeamItems() {
+	const container = document.getElementById('team-container');
+	if (!container) return;
+	container.innerHTML = teamItems.map((item, idx) => `
+		<div class="col-md-4 team-item-box" data-index="${idx}">
+			<div class="p-3 border rounded-3 bg-light position-relative h-100 shadow-sm">
+				<div class="d-flex justify-content-between align-items-center mb-2">
+					<span class="fw-bold small text-primary">ANGGOTA TIM #${idx + 1}</span>
+					<button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center px-2 py-1" onclick="removeTeamItem(${idx})" title="Hapus Anggota Ini">
+						<i class="ti ti-trash me-1"></i>Hapus
+					</button>
+				</div>
+				<div class="mb-2">
+					<label class="form-label small mb-1">Nama Lengkap</label>
+					<input type="text" class="form-control form-control-sm team-name" value="${item.name || ''}" placeholder="Budi Santoso" onchange="updateTeamArray()">
+				</div>
+				<div class="mb-2">
+					<label class="form-label small mb-1">Jabatan / Role</label>
+					<input type="text" class="form-control form-control-sm team-role" value="${item.role || ''}" placeholder="Chief Executive Officer" onchange="updateTeamArray()">
+				</div>
+				<div class="mb-2">
+					<label class="form-label small mb-1">Foto Profil</label>
+					<div class="d-flex align-items-center gap-2 mb-2">
+						<img src="${item.image || 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80'}" alt="Preview" class="rounded border bg-white shadow-sm" style="width: 52px; height: 52px; object-fit: cover;">
+						<div class="flex-grow-1">
+							<input type="file" class="form-control form-control-sm mb-1" accept="image/*" onchange="uploadTeamPhoto(event, ${idx})">
+							<input type="text" class="form-control form-control-sm team-image" value="${item.image || ''}" placeholder="Atau ketik URL foto..." onchange="updateTeamArray()">
+						</div>
+					</div>
+				</div>
+				<div>
+					<label class="form-label small mb-1">Bio Singkat</label>
+					<textarea class="form-control form-control-sm team-bio" rows="2" placeholder="Bio singkat..." onchange="updateTeamArray()">${item.bio || ''}</textarea>
+				</div>
+			</div>
+		</div>
+	`).join('');
+}
+
+function updateTeamArray() {
+	const boxes = document.querySelectorAll('#team-container .team-item-box');
+	teamItems = Array.from(boxes).map(box => ({
+		name: box.querySelector('.team-name')?.value || '',
+		role: box.querySelector('.team-role')?.value || '',
+		image: box.querySelector('.team-image')?.value || '',
+		bio: box.querySelector('.team-bio')?.value || ''
+	}));
+}
+
+function addTeamItem() {
+	updateTeamArray();
+	teamItems.push({ name: '', role: '', image: '', bio: '' });
+	renderTeamItems();
+}
+
+function removeTeamItem(idx) {
+	updateTeamArray();
+	teamItems.splice(idx, 1);
+	renderTeamItems();
+}
+
+async function uploadTeamPhoto(e, idx) {
+	const file = e.target.files[0];
+	if (!file) return;
+	updateTeamArray();
+	const formData = new FormData();
+	formData.append('image', file);
+
+	Swal.fire({
+		title: 'Mengunggah Foto...',
+		allowOutsideClick: false,
+		didOpen: () => { Swal.showLoading(); }
+	});
+
+	try {
+		const res = await fetch('/api/upload', { method: 'POST', body: formData });
+		const result = await res.json();
+		if (result.success) {
+			teamItems[idx].image = result.url;
+			renderTeamItems();
+			Swal.fire({
+				icon: 'success',
+				title: 'Foto Terunggah',
+				text: 'Foto profil anggota tim berhasil diunggah.',
+				timer: 1200,
+				showConfirmButton: false
+			});
+		} else {
+			Swal.fire('Gagal Unggah', result.message || 'Gagal mengunggah foto profil', 'error');
+		}
+	} catch (err) {
+		Swal.fire('Error', 'Terjadi gangguan koneksi saat mengunggah foto.', 'error');
+	}
+}
+
+function renderFaqItems() {
+	const container = document.getElementById('faq-container');
+	if (!container) return;
+	container.innerHTML = faqItems.map((item, idx) => `
+		<div class="col-md-12 faq-item-box" data-index="${idx}">
+			<div class="p-3 border rounded-3 bg-light position-relative shadow-sm">
+				<div class="d-flex justify-content-between align-items-center mb-2">
+					<span class="fw-bold small text-primary">PERTANYAAN FAQ #${idx + 1}</span>
+					<button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center px-2 py-1" onclick="removeFaqItem(${idx})" title="Hapus FAQ Ini">
+						<i class="ti ti-trash me-1"></i>Hapus
+					</button>
+				</div>
+				<div class="mb-2">
+					<label class="form-label small mb-1">Pertanyaan (Question)</label>
+					<input type="text" class="form-control form-control-sm faq-q" value="${item.q || ''}" placeholder="Masukkan pertanyaan..." onchange="updateFaqArray()">
+				</div>
+				<div>
+					<label class="form-label small mb-1">Jawaban (Answer)</label>
+					<textarea class="form-control form-control-sm faq-a" rows="2" placeholder="Masukkan jawaban..." onchange="updateFaqArray()">${item.a || ''}</textarea>
+				</div>
+			</div>
+		</div>
+	`).join('');
+}
+
+function updateFaqArray() {
+	const boxes = document.querySelectorAll('#faq-container .faq-item-box');
+	faqItems = Array.from(boxes).map(box => ({
+		q: box.querySelector('.faq-q')?.value || '',
+		a: box.querySelector('.faq-a')?.value || ''
+	}));
+}
+
+function addFaqItem() {
+	updateFaqArray();
+	faqItems.push({ q: '', a: '' });
+	renderFaqItems();
+}
+
+function removeFaqItem(idx) {
+	updateFaqArray();
+	faqItems.splice(idx, 1);
+	renderFaqItems();
+}
+
+// Live update Google search simulation box
+function updateGooglePreview(pageName) {
+	const titleInput = document.getElementById(`${pageName}-seoTitle`);
+	const descInput = document.getElementById(`${pageName}-seoDesc`);
+	const previewTitle = document.getElementById(`${pageName}-preview-title`);
+	const previewDesc = document.getElementById(`${pageName}-preview-desc`);
+
+	if (titleInput && previewTitle) {
+		previewTitle.textContent = titleInput.value.trim() || 'PT. Alexa Computindo Group';
+	}
+	if (descInput && previewDesc) {
+		previewDesc.textContent = descInput.value.trim() || 'Solusi teknologi terintegrasi untuk perusahaan dan infrastruktur digital.';
+	}
+}
+
+async function savePageContent(e, pageName) {
+	e.preventDefault();
+	const form = document.getElementById(`form-${pageName}`);
+	const formData = new FormData(form);
+	const data = Object.fromEntries(formData.entries());
+
+	if (pageName === 'about') {
+		if (quillHistory) {
+			data.historyContent = quillHistory.root.innerHTML;
+			data.historyPar1 = quillHistory.root.innerHTML;
+			data.historyPar2 = "";
+		}
+		if (quillVision) data.visionText = quillVision.root.innerHTML;
+		if (quillMission) data.missionRichText = quillMission.root.innerHTML;
+
+		updateTimelineArray();
+		data.timelineList = timelineItems;
+
+		updateTeamArray();
+		data.teamList = teamItems;
+	}
+
+	if (pageName === 'contact') {
+		updateFaqArray();
+		data.faqList = faqItems;
+	}
+
+	try {
+		const res = await fetch(`/api/pages/${pageName}`, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ content: data })
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Berhasil Disimpan!',
+				text: result.message || `Konten & SEO halaman ${pageName.toUpperCase()} telah diperbarui.`,
+				timer: 1500,
+				showConfirmButton: false
+			});
+		} else {
+			Swal.fire('Gagal', result.message || 'Gagal menyimpan data', 'error');
+		}
+	} catch (err) {
+		Swal.fire('Error', 'Terjadi kesalahan koneksi ke server', 'error');
+	}
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+	if (typeof window.initChipInputs === 'function') window.initChipInputs();
+	document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(btn => {
+		btn.addEventListener('shown.bs.tab', () => {
+			if (typeof window.initChipInputs === 'function') window.initChipInputs();
+		});
+	});
+});
 </script>

@@ -1,86 +1,211 @@
-<!-- Page Header -->
-<div class="page-header mb-4">
-	<div class="row align-items-center">
-		<div class="col">
-			<h3 class="page-title fw-bold text-dark">Manajemen Konten Divisi Layanan & Paket Harga</h3>
-			<ul class="breadcrumb mb-0">
-				<li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
-				<li class="breadcrumb-item active">Layanan & Paket</li>
-			</ul>
-		</div>
-		<div class="col-auto d-flex gap-2">
-			<button class="btn btn-outline-primary d-inline-flex align-items-center fw-semibold" data-bs-toggle="modal" data-bs-target="#addServiceModal">
-				<i class="ti ti-briefcase me-2"></i>+ Tambah Divisi Layanan
-			</button>
-			<button class="btn btn-primary d-inline-flex align-items-center fw-semibold" data-bs-toggle="modal" data-bs-target="#addPackageModal">
-				<i class="ti ti-plus me-2"></i>+ Tambah Paket Harga
-			</button>
-		</div>
+<!-- Custom Clean Table & Page Styling -->
+<style>
+	.services-card {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 14px;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.035);
+		overflow: hidden;
+	}
+	.services-card-header {
+		padding: 18px 24px;
+		background: #ffffff;
+		border-bottom: 1px solid #f1f5f9;
+	}
+	.clean-table {
+		margin-bottom: 0;
+	}
+	.clean-table thead th {
+		background: #fafbfc;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+		color: #64748b;
+		padding: 14px 20px;
+		border-bottom: 1px solid #e2e8f0;
+	}
+	.clean-table tbody td {
+		padding: 16px 20px;
+		vertical-align: middle;
+		border-bottom: 1px solid #f1f5f9;
+		font-size: 0.925rem;
+	}
+	.clean-table tbody tr:last-child td {
+		border-bottom: none;
+	}
+	.clean-table tbody tr {
+		transition: background-color 0.15s ease;
+	}
+	.clean-table tbody tr:hover {
+		background-color: #f8fafc;
+	}
+	.service-cover-thumb {
+		width: 52px;
+		height: 52px;
+		border-radius: 12px;
+		border: 1px solid rgba(59, 174, 124, 0.2);
+		flex-shrink: 0;
+	}
+	.service-title-link {
+		color: #0f172a;
+		transition: color 0.15s ease;
+	}
+	.service-title-link:hover {
+		color: #3BAE7C;
+	}
+	.search-input-wrapper {
+		position: relative;
+		width: 280px;
+	}
+	.search-input-wrapper .search-icon {
+		position: absolute;
+		left: 14px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #94a3b8;
+		pointer-events: none;
+	}
+	.search-input-wrapper input {
+		padding-left: 38px;
+		border-radius: 8px;
+		border: 1px solid #e2e8f0;
+		font-size: 0.88rem;
+	}
+	.search-input-wrapper input:focus {
+		border-color: #3BAE7C;
+		box-shadow: 0 0 0 3px rgba(59, 174, 124, 0.12);
+	}
+</style>
+
+<!-- Page Clean Action Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+	<div>
+		<h3 class="fw-bold text-dark mb-1">Manajemen Konten Divisi Layanan & Paket Harga</h3>
+		<p class="text-muted small mb-0">Kelola daftar divisi layanan, editorial spesifikasi, paket harga, serta showcase proyek dan testimoni</p>
+	</div>
+	<div class="d-flex align-items-center gap-2">
+		<button type="button" class="btn btn-outline-primary rounded-3 px-3 py-2 fw-semibold d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+			<i class="ti ti-briefcase me-1"></i> Tambah Divisi Layanan
+		</button>
+		<button type="button" class="btn btn-primary rounded-3 px-3 py-2 fw-semibold d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#addPackageModal">
+			<i class="ti ti-plus me-1"></i> Tambah Paket Harga
+		</button>
 	</div>
 </div>
-<!-- /Page Header -->
 
-<div class="row">
-	<% if (services && services.length > 0) { %>
-		<% services.forEach(function(svc) { 
-			let svcFeatures = [];
-			let svcPortfolios = [];
-			let svcTestimonials = [];
-			try { svcFeatures = typeof svc.features === 'string' ? JSON.parse(svc.features) : (svc.features || []); } catch (e) {}
-			try { svcPortfolios = typeof svc.portfolios === 'string' ? JSON.parse(svc.portfolios) : (svc.portfolios || []); } catch (e) {}
-			try { svcTestimonials = typeof svc.testimonials === 'string' ? JSON.parse(svc.testimonials) : (svc.testimonials || []); } catch (e) {}
-		%>
-			<div class="col-md-6 d-flex mb-4">
-				<div class="card flex-fill shadow-sm border-0 rounded-4 overflow-hidden h-100">
-					<div class="card-body p-4 d-flex flex-column justify-content-between">
-						<div>
-							<div class="d-flex align-items-center justify-content-between mb-3">
-								<span class="badge bg-primary bg-opacity-10 text-primary fw-bold px-3 py-2 text-uppercase rounded-pill"><%= svc.id %> DIVISION</span>
-								<div class="d-flex gap-1">
-									<button class="btn btn-sm btn-light border" onclick='openEditServiceModal(<%= JSON.stringify(svc) %>)' title="Edit Info Dasar">
-										<i class="bi bi-pencil text-primary"></i> Edit Info
-									</button>
-									<button class="btn btn-sm btn-light border" onclick="deleteServiceAction('<%= svc.id %>', '<%= svc.title %>')" title="Hapus Divisi">
-										<i class="bi bi-trash text-danger"></i>
+<!-- Clean Table Card Container -->
+<div class="services-card mb-4">
+	<!-- Card Header Filter & Search -->
+	<div class="services-card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+		<div class="d-flex align-items-center gap-2">
+			<span class="badge bg-light text-secondary border px-3 py-2 fw-semibold rounded-pill">
+				Total: <%= services ? services.length : 0 %> Divisi Layanan
+			</span>
+		</div>
+		<div class="search-input-wrapper">
+			<i class="ti ti-search search-icon"></i>
+			<input type="text" class="form-control" id="searchServicesInput" placeholder="Cari divisi layanan..." onkeyup="filterServicesTable()">
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table clean-table align-middle">
+			<thead>
+				<tr>
+					<th style="min-width: 320px;">Divisi Layanan</th>
+					<th style="min-width: 280px; max-width: 380px;">Deskripsi Singkat</th>
+					<th style="min-width: 240px;">Komposisi Konten</th>
+					<th class="text-end" style="min-width: 140px;">Aksi</th>
+				</tr>
+			</thead>
+			<tbody id="servicesTableBody">
+				<% if (services && services.length > 0) { %>
+					<% services.forEach(function(svc) { 
+						let svcFeatures = [];
+						let svcPortfolios = [];
+						let svcTestimonials = [];
+						try { svcFeatures = typeof svc.features === 'string' ? JSON.parse(svc.features) : (svc.features || []); } catch (e) {}
+						try { svcPortfolios = typeof svc.portfolios === 'string' ? JSON.parse(svc.portfolios) : (svc.portfolios || []); } catch (e) {}
+						try { svcTestimonials = typeof svc.testimonials === 'string' ? JSON.parse(svc.testimonials) : (svc.testimonials || []); } catch (e) {}
+					%>
+						<tr class="service-row">
+							<td>
+								<div class="d-flex align-items-center py-2">
+									<a href="/admin/services/<%= svc.id %>" class="text-decoration-none me-3">
+										<div class="service-cover-thumb bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; border-radius: 12px;">
+											<% if (svc.icon === 'FaLaptopCode') { %>
+												<i class="ti ti-code fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaWifi') { %>
+												<i class="ti ti-wifi fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaRegNewspaper') { %>
+												<i class="ti ti-news fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaCloud') { %>
+												<i class="ti ti-cloud fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaShieldAlt') { %>
+												<i class="ti ti-shield-lock fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaServer') { %>
+												<i class="ti ti-server fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaDatabase') { %>
+												<i class="ti ti-database fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaMobileAlt') { %>
+												<i class="ti ti-device-mobile fs-3 text-primary"></i>
+											<% } else { %>
+												<i class="ti ti-briefcase fs-3 text-primary"></i>
+											<% } %>
+										</div>
+									</a>
+									<div>
+										<a href="/admin/services/<%= svc.id %>" class="fw-bold text-decoration-none service-title-link d-block mb-1" style="font-size: 1.22rem; color: #0f172a; letter-spacing: -0.3px;">
+											<%= svc.title %>
+										</a>
+										<div class="text-muted small" style="font-size: 0.88rem; color: #64748b;">
+											<%= svc.subtitle || 'Divisi Layanan Alexa' %>
+										</div>
+									</div>
+								</div>
+							</td>
+							<td style="max-width: 380px;">
+								<p class="text-muted small mb-0 pe-2" style="line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+									<%= svc.description %>
+								</p>
+							</td>
+							<td>
+								<div class="d-flex flex-wrap align-items-center gap-2 py-1">
+									<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-1 rounded-pill fw-medium" style="font-size: 12px;">
+										<i class="ti ti-tag me-1"></i><%= svc.packages ? svc.packages.length : 0 %> Paket
+									</span>
+									<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill fw-medium" style="font-size: 12px;">
+										<i class="ti ti-photo me-1"></i><%= svcPortfolios.length %> Showcase
+									</span>
+									<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-3 py-1 rounded-pill fw-medium" style="font-size: 12px;">
+										<i class="ti ti-message-dots me-1"></i><%= svcTestimonials.length %> Testimoni
+									</span>
+								</div>
+							</td>
+							<td class="text-end text-nowrap">
+								<div class="d-flex justify-content-end align-items-center gap-2">
+									<a href="/admin/services/<%= svc.id %>" class="btn btn-sm btn-light border text-primary fw-semibold px-3 py-1 rounded-2 d-inline-flex align-items-center" title="Kelola Detail Lengkap Divisi Ini">
+										<i class="ti ti-edit me-1"></i>Kelola
+									</a>
+									<button type="button" class="btn btn-sm btn-light border text-danger px-2 py-1 rounded-2" onclick="deleteServiceAction('<%= svc.id %>', '<%= svc.title %>')" title="Hapus Divisi">
+										<i class="ti ti-trash"></i>
 									</button>
 								</div>
-							</div>
-
-							<div class="d-flex align-items-center mb-2">
-								<h4 class="card-title fw-bold text-dark mb-0 me-2"><%= svc.title %></h4>
-							</div>
-							<h6 class="text-primary fw-semibold mb-3"><%= svc.subtitle || 'Divisi Layanan Alexa' %></h6>
-							<p class="text-muted small mb-4"><%= svc.description %></p>
-
-							<!-- Summary Counters Badge List -->
-							<div class="d-flex flex-wrap gap-2 mb-4">
-								<span class="badge bg-light text-dark border px-3 py-2">
-									<i class="bi bi-tag-fill text-primary me-1"></i> <%= svc.packages ? svc.packages.length : 0 %> Paket Harga
-								</span>
-								<span class="badge bg-light text-dark border px-3 py-2">
-									<i class="bi bi-images text-success me-1"></i> <%= svcPortfolios.length %> Showcase Proyek
-								</span>
-								<span class="badge bg-light text-dark border px-3 py-2">
-									<i class="bi bi-chat-quote-fill text-warning me-1"></i> <%= svcTestimonials.length %> Testimoni
-								</span>
-							</div>
-						</div>
-
-						<div class="pt-3 border-top mt-auto">
-							<a href="/admin/services/<%= svc.id %>" class="btn btn-primary w-100 py-2 fw-bold d-flex align-items-center justify-content-center">
-								<span>Kelola Detail Lengkap Divisi Ini</span>
-								<i class="bi bi-arrow-right-circle ms-2"></i>
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		<% }); %>
-	<% } else { %>
-		<div class="col-12">
-			<div class="card p-5 text-center text-muted border-0 shadow-sm">Belum ada layanan yang dimuat. Klik tombol "+ Tambah Divisi Layanan" di kanan atas.</div>
-		</div>
-	<% } %>
+							</td>
+						</tr>
+					<% }); %>
+				<% } else { %>
+					<tr>
+						<td colspan="4" class="text-center text-muted py-5">
+							<i class="ti ti-briefcase fs-1 d-block mb-2 text-secondary"></i>
+							Belum ada layanan yang ditambahkan. Klik tombol "+ Tambah Divisi Layanan" di kanan atas.
+						</td>
+					</tr>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <!-- Modal Tambah Divisi Layanan -->
@@ -809,4 +934,15 @@ async function deleteTestimonialAction(serviceId, itemId, name) {
 		if (result.success) location.reload();
 	}
 }
+
+// Filter live table divisi layanan berdasarkan input pencarian
+function filterServicesTable() {
+	const query = (document.getElementById('searchServicesInput')?.value || '').toLowerCase().trim();
+	const rows = document.querySelectorAll('#servicesTableBody tr.service-row');
+	rows.forEach(row => {
+		const textContent = row.textContent.toLowerCase();
+		row.style.display = textContent.includes(query) ? '' : 'none';
+	});
+}
 </script>
+

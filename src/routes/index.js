@@ -7,7 +7,6 @@ import rbacRoutes from './rbacRoutes.js';
 import userRoutes from './userRoutes.js';
 import uploadRoutes from './uploadRoutes.js';
 import clientRoutes from './clientRoutes.js';
-import careerRoutes from './careerRoutes.js';
 import pageContentRoutes from './pageContentRoutes.js';
 
 const router = express.Router();
@@ -21,7 +20,6 @@ router.use('/rbac', rbacRoutes);
 router.use('/users', userRoutes);
 router.use('/upload', uploadRoutes);
 router.use('/clients', clientRoutes);
-router.use('/careers', careerRoutes);
 router.use('/pages', pageContentRoutes);
 
 // Health check endpoint

@@ -11,5 +11,6 @@ router.post('/', InquiryController.createInquiry);
 // Protected Admin Routes
 router.get('/', authenticateJWT, requirePermission('inquiries.manage'), InquiryController.getAllInquiries);
 router.patch('/:id/status', authenticateJWT, requirePermission('inquiries.manage'), InquiryController.updateInquiryStatus);
+router.delete('/:id', authenticateJWT, requirePermission('inquiries.manage'), InquiryController.deleteInquiry);
 
 export default router;

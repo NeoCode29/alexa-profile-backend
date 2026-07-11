@@ -290,7 +290,7 @@
 
 							<div class="mb-0">
 								<label class="form-label small fw-semibold text-muted mb-1">KATA KUNCI (META KEYWORDS)</label>
-								<input type="text" class="form-control form-control-sm clean-input" id="inputMetaKeywords" name="metaKeywords" value="<%= article.metaKeywords || '' %>" placeholder="contoh: transformasi digital, umkm, teknologi">
+								<input type="text" class="form-control form-control-sm clean-input chip-input" id="inputMetaKeywords" name="metaKeywords" value="<%= article.metaKeywords || '' %>" placeholder="contoh: transformasi digital, umkm, teknologi">
 								<small class="text-muted d-block mt-1" style="font-size: 11px;">Pisahkan kata kunci dengan tanda koma.</small>
 							</div>
 						</div>
@@ -621,4 +621,8 @@
 			Swal.fire('Error', 'Gagal menghubungi server.', 'error');
 		}
 	}
+
+	document.addEventListener('DOMContentLoaded', () => {
+		if (typeof window.initChipInputs === 'function') window.initChipInputs();
+	});
 </script>

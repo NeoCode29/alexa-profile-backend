@@ -217,33 +217,11 @@ export const renderClients = async (req, res) => {
   }
 };
 
-// Render Careers Page
-export const renderCareers = async (req, res) => {
-  try {
-    const careers = await prisma.career.findMany({
-      orderBy: { createdAt: 'desc' }
-    });
-    res.render('admin/careers', {
-      title: 'Manajemen Lowongan Pekerjaan',
-      activeMenu: 'careers',
-      careers
-    });
-  } catch (error) {
-    res.status(500).send('Gagal memuat halaman karir');
-  }
-};
-
 // Render Pages Content Manager
 export const renderPages = async (req, res) => {
   try {
-    const { defaultPages } = await import('./pageContentController.js');
-    const rows = await prisma.pageContent.findMany();
-    const pagesData = { ...defaultPages };
-    rows.forEach(row => {
-      try {
-        pagesData[row.pageName] = { ...defaultPages[row.pageName], ...JSON.parse(row.content) };
-      } catch (e) {}
-    });
+    const { getAllPagesMergedData } = await import('./pageContentController.js');
+    const pagesData = await getAllPagesMergedData();
 
     res.render('admin/pages', {
       title: 'Pengaturan Halaman Frontend',

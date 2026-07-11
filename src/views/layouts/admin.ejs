@@ -7,7 +7,8 @@
 	<title><%= typeof title !== 'undefined' ? title : 'Admin Panel' %> — Alexa Computindo CMS</title>
 
 	<!-- Favicon -->
-	<link rel="shortcut icon" type="image/x-icon" href="/assets/img/favicon.png">
+	<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+	<link rel="shortcut icon" href="/assets/img/favicon.svg">
 
 	<!-- Theme Settings Js -->
 	<script src="/assets/js/theme-script.js"></script>
@@ -386,13 +387,6 @@
 									</li>
 								<% } %>
 
-								<% if (hasPerm('careers.manage')) { %>
-									<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'careers' ? 'active' : '' %>">
-										<a href="/admin/careers">
-											<i class="ti ti-user-plus"></i><span>Lowongan Karir</span>
-										</a>
-									</li>
-								<% } %>
 
 								<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'pages' ? 'active' : '' %>">
 									<a href="/admin/pages">
@@ -467,6 +461,7 @@
 
 	<!-- Custom JS -->
 	<script src="/assets/js/script.js"></script>
+	<script src="/assets/js/chip-input.js?v=2.2"></script>
 
 </body>
 
