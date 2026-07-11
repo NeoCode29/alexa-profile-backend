@@ -55,29 +55,31 @@ Berikut daftar endpoint publik yang **tidak memerlukan autentikasi** dan langsun
 
 ---
 
-### A. Konten Halaman Website (CMS Dinamis)
-Digunakan untuk mengisi teks, judul, statistik, visi misi, dan informasi halaman website secara dinamis dari database.
+### A. Konten Halaman Website (CMS Dinamis & Dedicated Table Architecture)
+
+Arsitektur penyimpanan konten frontend kini menggunakan **Tabel Database Terpisah per Halaman (`PageHome`, `PageAbout`, `PageServices`, `PageContact`)** di skema Prisma. Hal ini menjamin tipe data yang eksplisit (*schema-driven*), performa query optimal, serta sinkronisasi otomatis (*dual-write*) dengan sistem administrasi CMS.
 
 #### 1. Ambil Konten Spesifik Halaman
 - **Method:** `GET`
 - **URL:** `/api/pages/:pageName`
 - **Parameter `:pageName`:**
-  - `home` — Konten halaman beranda (Hero, Statistik, CTA, Pengantar)
-  - `about` — Konten halaman tentang kami (Sejarah, Visi, Misi, Timeline)
-  - `services` — Konten pengantar halaman layanan
-  - `contact` — Konten informasi kontak (Alamat, Email, Telepon, Jam Kerja)
-  - `blog` — Konten pengantar halaman artikel/berita
+  - `home` — Mengambil data dari tabel `PageHome` (Hero, Statistik 1-3, CTA Primary/Secondary, Judul Section Layanan & Klien, SEO metadata)
+  - `about` — Mengambil data dari tabel `PageAbout` (Sejarah, Visi, Misi dalam bentuk array/JSON, Timeline, Tim Manajemen, SEO metadata)
+  - `services` — Mengambil data dari tabel `PageServices` (Header, Subtitle, Judul Section Layanan & Testimoni, SEO metadata)
+  - `contact` — Mengambil data dari tabel `PageContact` (Alamat Kantor, Telepon, Email, URL Embed Maps, Daftar FAQ, SEO metadata)
 
 **Contoh Request:**
 ```http
 GET http://localhost:4000/api/pages/home
 ```
 
-**Contoh Respons (`200 OK`):**
+**Contoh Respons (`200 OK` - `home`):**
 ```json
 {
   "success": true,
   "data": {
+    "seoTitle": "Beranda — PT. Alexa Computindo Group | Infrastruktur & Solusi Digital",
+    "seoDescription": "PT. Alexa Computindo Group menyediakan solusi Media Digital, ISP Berkecepatan Tinggi, dan Arsitektur Perangkat Lunak untuk skala Enterprise di Indonesia.",
     "heroTitleLine1": "Membangun Infrastruktur",
     "heroTitleHighlight": "Digital Masa Depan",
     "heroDesc": "PT. Alexa Computindo Group menyediakan solusi Media Digital, ISP Berkecepatan Tinggi, dan Arsitektur Perangkat Lunak untuk skala Enterprise.",
@@ -85,12 +87,44 @@ GET http://localhost:4000/api/pages/home
     "ctaPrimaryLink": "/services",
     "ctaSecondaryText": "Pelajari Lebih Lanjut",
     "ctaSecondaryLink": "/about",
+    "introTitle": "Fundamen Solid. Inovasi Tanpa Henti.",
+    "introDesc": "Didirikan sejak tahun 2018, kami telah bertransformasi...",
     "stat1Number": "8+",
     "stat1Label": "Tahun Pengalaman",
     "stat2Number": "99.9%",
     "stat2Label": "Uptime Server",
     "stat3Number": "200+",
-    "stat3Label": "Klien Enterprise"
+    "stat3Label": "Klien Enterprise",
+    "servicesSectionTitle": "Divisi Utama Kami",
+    "servicesSectionSubtitle": "Tiga pilar strategis yang menggerakkan ekosistem digital kami.",
+    "clientsSectionTitle": "DIPERCAYA OLEH PERUSAHAAN TERKEMUKA",
+    "articlesSectionTitle": "Berita & Insight"
+  }
+}
+```
+
+**Contoh Respons (`200 OK` - `about`):**
+```json
+{
+  "success": true,
+  "data": {
+    "seoTitle": "Tentang Kami — PT. Alexa Computindo Group",
+    "heroTitle": "TENTANG KAMI",
+    "historyTitle": "Sejarah Perusahaan",
+    "historyPar1": "Berdiri pada tahun 2018, kami memulai langkah sebagai perusahaan pengembangan perangkat lunak...",
+    "timelineList": [
+      { "year": "2018", "title": "PENDIRIAN WEBMEDIA", "desc": "Fokus awal pada arsitektur sistem informasi enterprise." },
+      { "year": "2020", "title": "EKSPANSI INETMEDIA", "desc": "Memperoleh lisensi ISP nasional untuk infrastruktur jaringan." }
+    ],
+    "teamSectionTitle": "MANAJEMEN INTI",
+    "teamList": [
+      { "name": "Budi Santoso", "role": "Chief Executive Officer", "bio": "Berpengalaman 15 tahun di industri IT...", "image": "..." }
+    ],
+    "visionText": "Menjadi perusahaan teknologi dan media terdepan di Asia Tenggara...",
+    "missionList": [
+      "Menyediakan akses internet korporat berkecepatan tinggi dengan jaminan uptime 99.9%.",
+      "Mengembangkan arsitektur perangkat lunak berskala enterprise yang aman dan efisien."
+    ]
   }
 }
 ```
@@ -98,6 +132,7 @@ GET http://localhost:4000/api/pages/home
 #### 2. Ambil Semua Konten Halaman Sekaligus
 - **Method:** `GET`
 - **URL:** `/api/pages`
+- **Keterangan:** Mengembalikan sebuah *object map* berisi keseluruhan halaman (`home`, `about`, `services`, `contact`) yang diambil langsung dari masing-masing tabel database terdedikasi.
 
 ---
 
@@ -415,7 +450,25 @@ Jika Frontend kelak juga mengimplementasikan Portal Client / Login Admin berbasi
 | `/api/articles` | `POST` / `PUT` / `DELETE` | Manajemen CRUD artikel | Protected (`articles.manage`) |
 | `/api/services` | `POST` / `PUT` / `DELETE` | Manajemen CRUD layanan | Protected (`services.manage`) |
 | `/api/inquiries` | `GET` / `PATCH` | Lihat & ubah status pesan kontak masuk | Protected (`inquiries.manage`) |
-| `/api/pages/:pageName`| `PUT` | Ubah konten halaman CMS | Protected |
+| `/api/pages/:pageName`| `PUT` | Ubah konten halaman CMS (Disimpan ke tabel `PageHome`, `PageAbout`, `PageServices`, atau `PageContact`) | Protected |
+
+#### Detail Endpoint `PUT /api/pages/:pageName` (Admin CMS)
+- **Method:** `PUT`
+- **URL:** `/api/pages/:pageName` (`home`, `about`, `services`, `contact`)
+- **Autentikasi:** Wajib (Admin JWT Cookie/Header)
+- **Payload Request Body (`application/json`):**
+  Mengirimkan objek yang berisi *field* yang ingin diperbarui (mendukung *partial update*):
+```json
+{
+  "content": {
+    "heroTitleLine1": "Membangun Infrastruktur Terdepan",
+    "stat1Number": "10+"
+  }
+}
+```
+- **Perilaku Penyimpanan (Per Tabel Halaman):**
+  1. Backend secara otomatis memverifikasi dan memperbarui kolom di tabel khusus (`PageHome`, `PageAbout`, `PageServices`, atau `PageContact`).
+  2. Backend juga melakukan *dual-write* ke tabel `PageContent` guna menjaga kompatibilitas penuh dengan sistem *legacy*.
 
 ---
 
