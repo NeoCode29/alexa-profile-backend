@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+	<title><%= typeof title !== 'undefined' ? title : 'Admin Panel' %> — Alexa Computindo CMS</title>
+
+	<!-- Favicon -->
+	<link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+	<link rel="shortcut icon" href="/assets/img/favicon.svg">
+
+	<!-- Theme Settings Js - Di-comment karena file referensi tidak disertakan -->
+	<!-- <script src="/assets/js/theme-script.js"></script> -->
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+	<!-- Tabler Icons Webfont CDN -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
+	<!-- FontAwesome CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+	<!-- Main CSS (Dreamsrent Reference Style) - Di-comment karena file referensi tidak disertakan -->
+	<!-- <link rel="stylesheet" href="/assets/css/style.css"> -->
+	<link rel="stylesheet" href="/assets/css/alexa-theme.css">
+
+	<!-- Custom Style: Warna Utama Hijau Alexa & Override Total Warna Kuning (#FE9F43 / #FFA633) -->
+	<style>
+		:root {
+			--primary: #3BAE7C;
+			--primary-hover: #2E9668;
+			--bs-primary: #3BAE7C;
+			--bs-primary-rgb: 59, 174, 124;
+		}
+		/* SELECTION HIGHLIGHT & CARET CURSOR: Pada saat menyeleksi teks, sorotan berlatar Hijau Alexa bukan kuning */
+		::selection {
+			background-color: #3BAE7C !important;
+			color: #ffffff !important;
+		}
+		::-moz-selection {
+			background-color: #3BAE7C !important;
+			color: #ffffff !important;
+		}
+		input, textarea, select {
+			caret-color: #3BAE7C !important;
+		}
+		/* OVERRIDE TOTAL: SEMUA TOMBOL & HOVER TOMBOL (Hapus kuning #FE9F43 / #FFA633) */
+		.btn-primary, .btn-primary.disabled, .btn-primary:disabled {
+			background-color: #3BAE7C !important;
+			border-color: #3BAE7C !important;
+			color: #ffffff !important;
+		}
+		.btn-primary:hover, .btn-primary:focus, .btn-primary:active,
+		.btn-primary.active, .open > .dropdown-toggle.btn-primary,
+		button.btn-primary:hover, a.btn-primary:hover,
+		.btn-primary:not(:disabled):not(.disabled):active,
+		.btn-primary:not(:disabled):not(.disabled).active,
+		.btn-primary:focus-visible {
+			background-color: #2E9668 !important;
+			border-color: #2E9668 !important;
+			color: #ffffff !important;
+			box-shadow: 0 4px 10px rgba(59, 174, 124, 0.25) !important;
+		}
+		.btn:hover, .btn:focus {
+			outline: none !important;
+			box-shadow: none !important;
+		}
+		/* PERBAIKAN MODAL FOOTER & TOMBOL: Jarak rapi antar tombol Batal & Simpan di semua modal */
+		.modal-footer {
+			display: flex !important;
+			justify-content: flex-end !important;
+			align-items: center !important;
+			gap: 14px !important;
+			padding: 1.1rem 1.5rem !important;
+			border-top: 1px solid #E5E7EB !important;
+		}
+		.modal-footer .btn {
+			margin: 0 !important;
+		}
+		/* Tombol Outline & Aksi */
+		.btn-outline-primary {
+			color: #3BAE7C !important;
+			border-color: #3BAE7C !important;
+		}
+		.btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+			background-color: #3BAE7C !important;
+			border-color: #3BAE7C !important;
+			color: #ffffff !important;
+		}
+		/* Tombol Aksi Tabel / Icon Button saat dihover */
+		.btn-icon:hover, .btn-light:hover, .btn-action:hover,
+		.table tbody tr td .btn:hover {
+			background-color: rgba(59, 174, 124, 0.15) !important;
+			color: #2E9668 !important;
+			border-color: rgba(59, 174, 124, 0.3) !important;
+		}
+		/* Link hover & Text Aktif */
+		a:hover, .text-primary:hover {
+			color: #2E9668 !important;
+		}
+		.text-primary {
+			color: #3BAE7C !important;
+		}
+		.border-primary {
+			border-color: #3BAE7C !important;
+		}
+		/* Pagination Aktif & Hover */
+		.pagination .page-item.active .page-link, .page-link:hover {
+			background-color: #3BAE7C !important;
+			border-color: #3BAE7C !important;
+			color: #ffffff !important;
+		}
+
+		/* HILANGKAN GARIS PEMBATAS / BORDER di bawah header atas & di atas footer */
+		.header {
+			border-bottom: none !important;
+			box-shadow: none !important;
+		}
+		.sidebar-logo-box {
+			border-bottom: none !important;
+		}
+		.footer {
+			border-top: none !important;
+			background: transparent !important;
+		}
+
+
+		/* PERBAIKAN BADGE: Konsisten soft-pill badge agar teks selalu kontras dan jelas */
+		.badge {
+			padding: 0.42em 0.82em !important;
+			font-size: 0.76rem !important;
+			font-weight: 600 !important;
+			border-radius: 50rem !important;
+			display: inline-flex !important;
+			align-items: center !important;
+			line-height: 1.2 !important;
+		}
+		.badge.bg-primary, .badge.bg-primary.text-primary, .badge-soft-primary {
+			background-color: rgba(59, 174, 124, 0.15) !important;
+			color: #1a6342 !important;
+			border: 1px solid rgba(59, 174, 124, 0.35) !important;
+		}
+		.badge.bg-success, .badge.bg-success.text-success, .badge-soft-success {
+			background-color: rgba(40, 167, 69, 0.15) !important;
+			color: #145823 !important;
+			border: 1px solid rgba(40, 167, 69, 0.35) !important;
+		}
+		.badge.bg-danger, .badge.bg-danger.text-danger, .badge-soft-danger {
+			background-color: rgba(220, 53, 69, 0.15) !important;
+			color: #8a1f2b !important;
+			border: 1px solid rgba(220, 53, 69, 0.35) !important;
+		}
+		.badge.bg-warning, .badge.bg-warning.text-warning, .badge-soft-warning {
+			background-color: rgba(255, 193, 7, 0.18) !important;
+			color: #7a5800 !important;
+			border: 1px solid rgba(255, 193, 7, 0.35) !important;
+		}
+		.badge.bg-info, .badge.bg-info.text-info, .badge-soft-info {
+			background-color: rgba(13, 202, 240, 0.15) !important;
+			color: #085869 !important;
+			border: 1px solid rgba(13, 202, 240, 0.35) !important;
+		}
+		.badge.bg-secondary, .badge.bg-secondary.text-secondary, .badge-soft-secondary {
+			background-color: rgba(108, 117, 125, 0.15) !important;
+			color: #3d4246 !important;
+			border: 1px solid rgba(108, 117, 125, 0.35) !important;
+		}
+
+		/* PASTIKAN SIDEBAR BERWARNA PUTIH BERSIH SEPERTI SEBELUMNYA */
+		.sidebar {
+			background-color: #FFFFFF !important;
+			border-right: 1px solid #E5E7EB !important;
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.04) !important;
+		}
+		/* PASTIKAN TEKS LOGO "ALEXA GROUP" SELALU TERLIHAT JELAS (TIDAK MEMUTIH) */
+		.sidebar-logo-box a span,
+		.sidebar .sidebar-logo-box a span {
+			color: #1E293B !important;
+		}
+		.sidebar-logo-box a span span,
+		.sidebar .sidebar-logo-box a span span {
+			color: #3BAE7C !important;
+		}
+		.sidebar-menu ul li a {
+			color: #374151 !important;
+		}
+		.sidebar-menu ul li a i, .sidebar-menu ul li a svg {
+			color: #6B7280 !important;
+		}
+		.sidebar-menu ul li.menu-title span {
+			color: #8B9BB0 !important;
+		}
+
+		/* OVERRIDE TOTAL: SIDEBAR ACTIVE & HOVER (Hapus semua warna kuning #FE9F43) */
+		.sidebar .sidebar-menu > ul > li > a.active,
+		.sidebar .sidebar-menu > ul > li.active > a,
+		.sidebar .sidebar-menu > ul > li > ul > li.active > a,
+		.sidebar .sidebar-menu > ul > li > ul > li > a.active {
+			background-color: #3BAE7C !important;
+			color: #ffffff !important;
+		}
+		.sidebar .sidebar-menu > ul > li > a.active span,
+		.sidebar .sidebar-menu > ul > li > a.active i,
+		.sidebar .sidebar-menu > ul > li > a.active svg,
+		.sidebar .sidebar-menu > ul > li.active > a span,
+		.sidebar .sidebar-menu > ul > li.active > a i,
+		.sidebar .sidebar-menu > ul > li.active > a svg,
+		.sidebar .sidebar-menu > ul > li > ul > li.active > a span,
+		.sidebar .sidebar-menu > ul > li > ul > li.active > a i {
+			color: #ffffff !important;
+		}
+		.sidebar-menu ul li.active::before {
+			background-color: #3BAE7C !important;
+		}
+		.sidebar-menu ul li a:hover,
+		.sidebar .sidebar-menu > ul > li > a:hover span,
+		.sidebar .sidebar-menu > ul > li > a:hover i {
+			color: #3BAE7C !important;
+		}
+
+		/* Sembunyikan header-left di header atas */
+		.header-left {
+			display: none !important;
+		}
+
+		/* Posisikan Sidebar di Atas & Header di Kanan Sidebar pada Desktop */
+		@media (min-width: 992px) {
+			.sidebar {
+				top: 0 !important;
+				height: 100vh !important;
+				z-index: 1050 !important;
+			}
+			.header {
+				left: 240px !important;
+				width: calc(100% - 240px) !important;
+			}
+		}
+		/* Hapus gap 57px dari template dan posisikan logo di pojok atas sidebar */
+		.sidebar {
+			top: 0 !important;
+			margin-top: 0 !important;
+		}
+		.sidebar .slimScrollDiv,
+		.sidebar .sidebar-inner {
+			top: 0 !important;
+			padding-top: 0 !important;
+			margin-top: 0 !important;
+		}
+		.sidebar .sidebar-menu {
+			margin-top: 0 !important;
+			padding-top: 0 !important;
+		}
+		.sidebar-logo-box {
+			height: 57px;
+			min-height: 57px;
+			display: flex !important;
+			align-items: center !important;
+			padding: 0 20px !important;
+			border-bottom: 1px solid #E5E7EB;
+			margin-bottom: 16px !important;
+			background-color: #ffffff;
+		}
+
+		/* BASIC SIDEBAR STYLING FIX (Karena style.css hilang) */
+		.sidebar {
+			width: 240px;
+			position: fixed;
+			left: 0;
+			bottom: 0;
+		}
+		.page-wrapper {
+			margin-left: 240px;
+			padding-top: 65px;
+			min-height: 100vh;
+			background: #f8f9fa;
+		}
+		.header {
+			position: fixed;
+			top: 0;
+			right: 0;
+			left: 240px;
+			z-index: 1000;
+			background: #fff;
+			border-bottom: 1px solid #e5e7eb !important;
+			padding: 10px 20px;
+			height: 60px;
+			display: flex;
+			align-items: center;
+		}
+		.sidebar-menu ul {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+		}
+		.sidebar-menu li.menu-title {
+			padding: 15px 20px 5px;
+			font-size: 11px;
+			font-weight: 700;
+			color: #8B9BB0;
+			letter-spacing: 1px;
+		}
+		.sidebar-menu li a {
+			display: flex;
+			align-items: center;
+			padding: 10px 20px;
+			color: #374151;
+			text-decoration: none;
+			font-size: 15px;
+			font-weight: 500;
+			border-left: 3px solid transparent;
+		}
+		.sidebar-menu li a i {
+			font-size: 20px;
+			margin-right: 10px;
+			color: #6B7280;
+		}
+		.sidebar-menu li a:hover {
+			background: #f8f9fa;
+			color: #3BAE7C !important;
+		}
+		.sidebar-menu li a:hover i {
+			color: #3BAE7C !important;
+		}
+		.sidebar-menu li a.active {
+			background-color: #3BAE7C !important;
+			color: #ffffff !important;
+			border-left: 3px solid #1E293B;
+		}
+		.sidebar-menu li a.active i {
+			color: #ffffff !important;
+		}
+		.main-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+		.content { padding: 30px; }
+	</style>
+
+	<!-- SweetAlert2 -->
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+	<!-- Main Wrapper -->
+	<div class="main-wrapper">
+
+		<!-- Header -->
+		<div class="header">
+			<div class="main-header">
+				<div class="header-left">
+					<a href="/admin" class="logo d-flex align-items-center text-decoration-none">
+						<img src="/assets/img/logo.png" alt="Alexa Computindo Group" style="max-height: 38px;">
+						<span class="ms-2 fw-bolder" style="color: #1E293B !important; font-size: 1.18rem; letter-spacing: 0.5px;">ALEXA <span style="color: #3BAE7C !important;">GROUP</span></span>
+					</a>
+				</div>
+
+				<a id="mobile_btn" class="mobile_btn" href="#sidebar">
+					<span class="bar-icon">
+						<span></span>
+						<span></span>
+						<span></span>
+					</span>
+				</a>
+
+				<div class="header-user">
+					<div class="nav user-menu nav-list">
+						<div class="me-auto d-flex align-items-center">
+							<!-- Sidebar Toggle Dihilangkan -->
+						</div>
+
+						<div class="d-flex align-items-center header-icons">
+							<div class="dropdown profile-dropdown">
+								<a href="javascript:void(0);" class="d-flex align-items-center text-decoration-none py-1 px-2 rounded-pill hover-bg-light" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+									<span class="avatar avatar-sm bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 38px; height: 38px; font-size: 0.95rem;">
+										<%= typeof user !== 'undefined' && user && user.name ? user.name.charAt(0).toUpperCase() : 'A' %>
+									</span>
+									<span class="ms-2 d-none d-md-inline-block fw-semibold text-dark fs-14">
+										<%= typeof user !== 'undefined' && user && user.name ? user.name : 'Administrator' %>
+									</span>
+									<i class="ti ti-chevron-down ms-1 text-muted small"></i>
+								</a>
+								<div class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-4 p-2 mt-2" style="min-width: 240px;">
+									<div class="profileset d-flex align-items-center p-3 border-bottom">
+										<span class="avatar avatar-md bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center fw-bold me-3 shadow-sm" style="width: 44px; height: 44px; font-size: 1.2rem;">
+											<%= typeof user !== 'undefined' && user && user.name ? user.name.charAt(0).toUpperCase() : 'A' %>
+										</span>
+										<div>
+											<h6 class="fw-bold mb-1 text-dark"><%= typeof user !== 'undefined' && user && user.name ? user.name : 'Administrator' %></h6>
+											<p class="fs-13 text-muted mb-0"><%= typeof user !== 'undefined' && user && user.email ? user.email : 'admin@alexagroup.co.id' %></p>
+										</div>
+									</div>
+									<a class="dropdown-item d-flex align-items-center py-2 mt-1 rounded-3" href="/admin">
+										<i class="ti ti-layout-dashboard me-2 text-primary"></i>Dashboard
+									</a>
+									<a class="dropdown-item d-flex align-items-center py-2 rounded-3" href="/admin/profile">
+										<i class="ti ti-user-shield me-2 text-primary"></i>Profil Saya & Keamanan
+									</a>
+									<div class="dropdown-divider my-1"></div>
+									<a class="dropdown-item d-flex align-items-center py-2 text-danger rounded-3" href="/admin/logout">
+										<i class="ti ti-logout me-2"></i>Keluar Sesi
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Header -->
+
+		<!-- Helper Izin Akses RBAC -->
+		<% const hasPerm = (permName) => (typeof user !== 'undefined' && user && (user.roles.includes('Super Admin') || user.permissions.includes(permName))); %>
+
+		<!-- Sidebar -->
+		<div class="sidebar" id="sidebar">
+			<div class="sidebar-inner slimscroll">
+				<div id="sidebar-menu" class="sidebar-menu">
+					<div class="sidebar-logo-box p-3 mb-2 border-bottom d-flex align-items-center">
+						<a href="/admin" class="d-flex align-items-center text-decoration-none">
+							<img src="/assets/img/logo.png" alt="Alexa Computindo Group" style="max-height: 38px;">
+							<span class="ms-2 fw-bolder" style="color: #1E293B !important; font-size: 1.18rem; letter-spacing: 0.5px;">ALEXA <span style="color: #3BAE7C !important;">GROUP</span></span>
+						</a>
+					</div>
+					<ul>
+						<li class="menu-title"><span>UTAMA</span></li>
+						<li>
+							<ul>
+								<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'dashboard' ? 'active' : '' %>">
+									<a href="/admin">
+										<i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
+									</a>
+								</li>
+							</ul>
+						</li>
+
+						<li class="menu-title"><span>MANAJEMEN KONTEN</span></li>
+						<li>
+							<ul>
+								<% if (hasPerm('articles.manage')) { %>
+									<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'articles' ? 'active' : '' %>">
+										<a href="/admin/articles">
+											<i class="ti ti-article"></i><span>Artikel & Blog</span>
+										</a>
+									</li>
+								<% } %>
+
+								<% if (hasPerm('services.manage')) { %>
+									<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'services' ? 'active' : '' %>">
+										<a href="/admin/services">
+											<i class="ti ti-briefcase"></i><span>Layanan & Harga</span>
+										</a>
+									</li>
+									<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'clients' ? 'active' : '' %>">
+										<a href="/admin/clients">
+											<i class="ti ti-users-group"></i><span>Klien & Mitra</span>
+										</a>
+									</li>
+								<% } %>
+
+
+								<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'pages' ? 'active' : '' %>">
+									<a href="/admin/pages">
+										<i class="ti ti-layout-board-split"></i><span>Halaman Frontend</span>
+									</a>
+								</li>
+
+								<% if (hasPerm('inquiries.manage')) { %>
+									<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'inquiries' ? 'active' : '' %>">
+										<a href="/admin/inquiries">
+											<i class="ti ti-mail"></i><span>Pesan Masuk</span>
+										</a>
+									</li>
+								<% } %>
+							</ul>
+						</li>
+
+						<% if (hasPerm('users.manage') || hasPerm('roles.manage')) { %>
+							<li class="menu-title"><span>PENGATURAN & RBAC</span></li>
+							<li>
+								<ul>
+									<% if (hasPerm('users.manage')) { %>
+										<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'users' ? 'active' : '' %>">
+											<a href="/admin/users">
+												<i class="ti ti-users"></i><span>Pengguna Admin</span>
+											</a>
+										</li>
+									<% } %>
+
+									<% if (hasPerm('roles.manage')) { %>
+										<li class="<%= typeof activeMenu !== 'undefined' && activeMenu === 'roles' ? 'active' : '' %>">
+											<a href="/admin/roles">
+												<i class="ti ti-shield-lock"></i><span>Role & Permission</span>
+											</a>
+										</li>
+									<% } %>
+								</ul>
+							</li>
+						<% } %>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<!-- /Sidebar -->
+
+		<!-- Page Wrapper -->
+		<div class="page-wrapper">
+			<div class="content pb-0">
+				<%- body %>
+			</div>
+
+			<!-- Footer -->
+			<div class="footer d-sm-flex align-items-center justify-content-between border-top bg-white p-3">
+				<p class="mb-0 text-muted small">2026 &copy; PT. Alexa Computindo Group. CMS Admin Panel.</p>
+				<p class="mb-0 text-muted small">Powered by <span class="text-primary fw-medium">Dreamsrent UI & Express.js</span></p>
+			</div>
+			<!-- /Footer -->
+		</div>
+		<!-- /Page Wrapper -->
+
+	</div>
+	<!-- /Main Wrapper -->
+
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+	<!-- Bootstrap Core JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Slimscroll JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-slimScroll/1.3.8/jquery.slimscroll.min.js"></script>
+
+	<!-- Custom JS - Di-comment karena file referensi tidak disertakan -->
+	<!-- <script src="/assets/js/script.js"></script> -->
+	<script src="/assets/js/chip-input.js?v=2.2"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,391 @@
+<%
+	const totalCount = inquiries ? inquiries.length : 0;
+	const newCount = inquiries ? inquiries.filter(i => i.status === 'NEW').length : 0;
+	const readCount = inquiries ? inquiries.filter(i => i.status === 'READ').length : 0;
+	const respondedCount = inquiries ? inquiries.filter(i => i.status === 'RESPONDED').length : 0;
+%>
+
+<!-- Custom Clean Table & Page Styling (Konsisten persis halaman Manajemen Service) -->
+<style>
+	.inquiries-card {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 14px;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.035);
+		overflow: hidden;
+	}
+	.inquiries-card-header {
+		padding: 18px 24px;
+		background: #ffffff;
+		border-bottom: 1px solid #f1f5f9;
+	}
+	.clean-table {
+		margin-bottom: 0;
+	}
+	.clean-table thead th {
+		background: #fafbfc;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+		color: #64748b;
+		padding: 14px 20px;
+		border-bottom: 1px solid #e2e8f0;
+	}
+	.clean-table tbody td {
+		padding: 16px 20px;
+		vertical-align: middle;
+		border-bottom: 1px solid #f1f5f9;
+		font-size: 0.925rem;
+	}
+	.clean-table tbody tr:last-child td {
+		border-bottom: none;
+	}
+	.clean-table tbody tr {
+		transition: background-color 0.15s ease;
+	}
+	.clean-table tbody tr:hover {
+		background-color: #f8fafc;
+	}
+	.clean-table tbody tr.status-new {
+		background-color: rgba(239, 68, 68, 0.025);
+	}
+	.avatar-circle {
+		width: 44px;
+		height: 44px;
+		border-radius: 12px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-weight: 700;
+		font-size: 16px;
+		flex-shrink: 0;
+	}
+	.search-input-wrapper {
+		position: relative;
+		width: 280px;
+	}
+	.search-input-wrapper .search-icon {
+		position: absolute;
+		left: 14px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #94a3b8;
+		pointer-events: none;
+	}
+	.search-input-wrapper input {
+		padding-left: 38px;
+		border-radius: 8px;
+		border: 1px solid #e2e8f0;
+		font-size: 0.88rem;
+	}
+	.search-input-wrapper input:focus {
+		border-color: #3BAE7C;
+		box-shadow: 0 0 0 3px rgba(59, 174, 124, 0.12);
+	}
+	.filter-btn {
+		transition: all 0.15s ease;
+	}
+</style>
+
+<!-- Page Clean Action Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+	<div>
+		<h3 class="fw-bold text-dark mb-1">Kotak Pesan Kontak & Konsultasi</h3>
+		<p class="text-muted small mb-0">Pantau, kelola, dan balas pesan kontak atau pertanyaan dari pengunjung website secara real-time</p>
+	</div>
+</div>
+
+<!-- Clean Table Card Container -->
+<div class="inquiries-card mb-4">
+	<!-- Card Header Filter & Search -->
+	<div class="inquiries-card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+		<div class="d-flex flex-wrap align-items-center gap-2">
+			<button type="button" class="btn btn-sm btn-primary rounded-pill px-3 py-1 fw-semibold filter-btn active" data-filter="ALL">
+				Semua Pesan (<%= totalCount %>)
+			</button>
+			<button type="button" class="btn btn-sm btn-light border text-secondary rounded-pill px-3 py-1 fw-medium filter-btn" data-filter="NEW">
+				Pesan Baru (<%= newCount %>)
+			</button>
+			<button type="button" class="btn btn-sm btn-light border text-secondary rounded-pill px-3 py-1 fw-medium filter-btn" data-filter="READ">
+				Sudah Dibaca (<%= readCount %>)
+			</button>
+			<button type="button" class="btn btn-sm btn-light border text-secondary rounded-pill px-3 py-1 fw-medium filter-btn" data-filter="RESPONDED">
+				Sudah Dibalas (<%= respondedCount %>)
+			</button>
+		</div>
+		<div class="search-input-wrapper">
+			<i class="ti ti-search search-icon"></i>
+			<input type="text" class="form-control" id="searchInquiryInput" placeholder="Cari nama, email, subjek...">
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table clean-table align-middle">
+			<thead>
+				<tr>
+					<th style="min-width: 250px;">Pengirim</th>
+					<th style="min-width: 320px;">Subjek & Cuplikan Pesan</th>
+					<th style="min-width: 140px;">Status</th>
+					<th style="min-width: 150px;">Waktu Masuk</th>
+					<th class="text-end" style="min-width: 160px;">Aksi</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% if (inquiries && inquiries.length > 0) { %>
+					<% inquiries.forEach(function(item) { 
+						const initial = (item.name || 'P').charAt(0).toUpperCase();
+						const colors = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-secondary'];
+						const colorClass = colors[(item.name || '').length % colors.length];
+					%>
+						<tr class="inquiry-row <%= item.status === 'NEW' ? 'status-new' : '' %>" data-status="<%= item.status %>" data-search="<%= (item.name + ' ' + item.email + ' ' + item.subject + ' ' + item.message).toLowerCase() %>">
+							<td>
+								<div class="d-flex align-items-center gap-3 py-1">
+									<div class="avatar-circle <%= colorClass %> bg-opacity-10 text-primary">
+										<%= initial %>
+									</div>
+									<div>
+										<div class="fw-bold text-dark"><%= item.name %></div>
+										<a href="mailto:<%= item.email %>" class="text-muted small text-decoration-none d-flex align-items-center gap-1 mt-1">
+											<i class="ti ti-mail" style="font-size: 13px;"></i> <%= item.email %>
+										</a>
+									</div>
+								</div>
+							</td>
+							<td>
+								<div class="fw-bold text-dark mb-1"><%= item.subject %></div>
+								<div class="text-muted small text-truncate" style="max-width: 380px; line-height: 1.5;">
+									<%= item.message %>
+								</div>
+							</td>
+							<td>
+								<% if (item.status === 'NEW') { %>
+									<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-1 rounded-pill fw-semibold">
+										Baru
+									</span>
+								<% } else if (item.status === 'READ') { %>
+									<span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-3 py-1 rounded-pill fw-semibold">
+										Dibaca
+									</span>
+								<% } else { %>
+									<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill fw-semibold">
+										Dibalas
+									</span>
+								<% } %>
+							</td>
+							<td class="text-muted small">
+								<div class="d-flex align-items-center gap-1">
+									<i class="ti ti-calendar text-secondary"></i>
+									<%= new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+								</div>
+								<div class="text-muted small mt-1">
+									<i class="ti ti-clock me-1"></i><%= new Date(item.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) %> WIB
+								</div>
+							</td>
+							<td class="text-end">
+								<button type="button" class="btn btn-sm btn-outline-primary rounded-2 px-3 fw-semibold me-1" onclick="viewInquiryDetail('<%= encodeURIComponent(JSON.stringify(item)) %>')">
+									<i class="ti ti-eye me-1"></i> Detail & Balas
+								</button>
+								<button type="button" class="btn btn-sm btn-light text-danger rounded-2 border" title="Hapus Pesan" onclick="confirmDeleteInquiry('<%= item.id %>', '<%= item.name %>')">
+									<i class="ti ti-trash"></i>
+								</button>
+							</td>
+						</tr>
+					<% }); %>
+				<% } else { %>
+					<tr>
+						<td colspan="5" class="text-center py-5">
+							<div class="py-4">
+								<div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light border text-secondary mb-3" style="width: 72px; height: 72px;">
+									<i class="ti ti-inbox fs-2"></i>
+								</div>
+								<h6 class="fw-bold text-dark mb-1">Belum Ada Pesan Masuk</h6>
+								<p class="text-muted small mx-auto mb-0" style="max-width: 400px;">
+									Setiap pesan atau konsultasi yang dikirim pengunjung melalui formulir kontak di website frontend akan otomatis muncul di sini.
+								</p>
+							</div>
+						</td>
+					</tr>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- Modal Detail Pesan Kontak -->
+<div class="modal fade" id="inquiryDetailModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+		<div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+			<div class="modal-header bg-light p-4 border-bottom">
+				<div class="d-flex align-items-center gap-3">
+					<div class="avatar-circle bg-primary bg-opacity-10 text-primary fs-5" id="inqAvatar">P</div>
+					<div>
+						<h5 class="fw-bold text-dark mb-0" id="inqSenderName">-</h5>
+						<a href="#" class="text-muted small text-decoration-none" id="inqSenderEmailLink">-</a>
+					</div>
+				</div>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<div class="p-3 bg-light rounded-3 mb-4 border d-flex align-items-center justify-content-between">
+					<div>
+						<small class="text-muted d-block fw-semibold text-uppercase" style="font-size: 11px;">Subjek Konsultasi</small>
+						<h6 class="fw-bold text-dark mb-0 mt-1" id="inqSubject">-</h6>
+					</div>
+					<span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill" id="inqStatusBadge">STATUS</span>
+				</div>
+
+				<div class="mb-4">
+					<label class="form-label small fw-bold text-muted text-uppercase mb-2">Isi Pesan / Pertanyaan:</label>
+					<div class="p-4 bg-white border rounded-3 text-dark shadow-sm" id="inqMessage" style="white-space: pre-wrap; line-height: 1.7; font-size: 14px;">-</div>
+				</div>
+			</div>
+			<div class="modal-footer bg-light p-3 px-4 justify-content-between">
+				<div class="d-flex gap-2">
+					<button type="button" class="btn btn-outline-secondary btn-sm rounded-2 px-3" id="inqToggleReadBtn">
+						<i class="ti ti-eye me-1"></i> Tandai Dibaca
+					</button>
+					<button type="button" class="btn btn-outline-danger btn-sm rounded-2 px-3" id="inqDeleteBtn">
+						<i class="ti ti-trash me-1"></i> Hapus Pesan
+					</button>
+				</div>
+				<div class="d-flex gap-2">
+					<button type="button" class="btn btn-success btn-sm rounded-2 px-3 fw-semibold" id="inqMarkRespondedBtn">
+						<i class="ti ti-check me-1"></i> Tandai Sudah Dibalas
+					</button>
+					<a href="#" id="inqReplyBtn" class="btn btn-primary btn-sm rounded-2 px-4 fw-semibold" target="_blank">
+						<i class="ti ti-mail-forward me-1"></i> Balas via Email
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+let currentFilter = 'ALL';
+
+document.addEventListener('DOMContentLoaded', () => {
+	const searchInput = document.getElementById('searchInquiryInput');
+	const filterBtns = document.querySelectorAll('.filter-btn');
+
+	if (searchInput) {
+		searchInput.addEventListener('input', () => filterRows());
+	}
+
+	filterBtns.forEach(btn => {
+		btn.addEventListener('click', () => {
+			filterBtns.forEach(b => {
+				b.classList.remove('btn-primary', 'active', 'fw-semibold');
+				b.classList.add('btn-light', 'border', 'text-secondary', 'fw-medium');
+			});
+			btn.classList.remove('btn-light', 'border', 'text-secondary', 'fw-medium');
+			btn.classList.add('btn-primary', 'active', 'fw-semibold');
+
+			currentFilter = btn.dataset.filter;
+			filterRows();
+		});
+	});
+});
+
+function filterRows() {
+	const query = (document.getElementById('searchInquiryInput')?.value || '').toLowerCase().trim();
+	const rows = document.querySelectorAll('.clean-table tbody tr.inquiry-row');
+
+	rows.forEach(row => {
+		const status = row.dataset.status;
+		const textSearch = row.dataset.search || '';
+
+		const matchFilter = (currentFilter === 'ALL' || status === currentFilter);
+		const matchSearch = (!query || textSearch.includes(query));
+
+		row.style.display = (matchFilter && matchSearch) ? '' : 'none';
+	});
+}
+
+function viewInquiryDetail(encodedData) {
+	const item = JSON.parse(decodeURIComponent(encodedData));
+	document.getElementById('inqSenderName').innerText = item.name;
+	document.getElementById('inqAvatar').innerText = (item.name || 'P').charAt(0).toUpperCase();
+	
+	const emailLink = document.getElementById('inqSenderEmailLink');
+	emailLink.innerText = item.email;
+	emailLink.href = `mailto:${item.email}`;
+
+	document.getElementById('inqSubject').innerText = item.subject;
+	document.getElementById('inqMessage').innerText = item.message;
+
+	const statusBadge = document.getElementById('inqStatusBadge');
+	statusBadge.innerText = item.status === 'NEW' ? 'PESAN BARU' : (item.status === 'READ' ? 'SUDAH DIBACA' : 'SUDAH DIBALAS');
+
+	document.getElementById('inqReplyBtn').href = `mailto:${item.email}?subject=Re: ${encodeURIComponent(item.subject)}&body=Halo ${encodeURIComponent(item.name)},%0D%0A%0D%0ATerima kasih telah menghubungi PT. Alexa Computindo Group.%0D%0A`;
+	document.getElementById('inqMarkRespondedBtn').onclick = () => updateStatus(item.id, 'RESPONDED');
+	document.getElementById('inqToggleReadBtn').onclick = () => updateStatus(item.id, 'READ');
+	document.getElementById('inqDeleteBtn').onclick = () => confirmDeleteInquiry(item.id, item.name);
+
+	// Otomatis ubah status dari NEW ke READ ketika dibuka
+	if (item.status === 'NEW') {
+		fetch(`/api/inquiries/${item.id}/status`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ status: 'READ' })
+		});
+	}
+
+	new bootstrap.Modal(document.getElementById('inquiryDetailModal')).show();
+}
+
+async function updateStatus(id, status) {
+	try {
+		const res = await fetch(`/api/inquiries/${id}/status`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ status })
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Status Diperbarui',
+				text: `Pesan ditandai sebagai ${status === 'RESPONDED' ? 'Sudah Dibalas' : 'Sudah Dibaca'}`,
+				timer: 1500,
+				showConfirmButton: false
+			}).then(() => location.reload());
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Gagal memperbarui status pesan', 'error');
+	}
+}
+
+async function confirmDeleteInquiry(id, name) {
+	const res = await Swal.fire({
+		title: 'Hapus Pesan?',
+		text: `Apakah Anda yakin ingin menghapus pesan dari "${name}"?`,
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#dc3545',
+		confirmButtonText: 'Ya, Hapus',
+		cancelButtonText: 'Batal'
+	});
+
+	if (res.isConfirmed) {
+		try {
+			const response = await fetch(`/api/inquiries/${id}`, { method: 'DELETE' });
+			const result = await response.json();
+			if (result.success) {
+				Swal.fire({
+					icon: 'success',
+					title: 'Terhapus!',
+					text: 'Pesan berhasil dihapus.',
+					timer: 1500,
+					showConfirmButton: false
+				}).then(() => location.reload());
+			} else {
+				Swal.fire('Gagal', result.message || 'Gagal menghapus pesan', 'error');
+			}
+		} catch (e) {
+			Swal.fire('Error', 'Terjadi kesalahan koneksi', 'error');
+		}
+	}
+}
+</script>

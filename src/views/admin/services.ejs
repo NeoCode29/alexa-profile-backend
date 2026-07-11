@@ -1,0 +1,948 @@
+<!-- Custom Clean Table & Page Styling -->
+<style>
+	.services-card {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 14px;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.035);
+		overflow: hidden;
+	}
+	.services-card-header {
+		padding: 18px 24px;
+		background: #ffffff;
+		border-bottom: 1px solid #f1f5f9;
+	}
+	.clean-table {
+		margin-bottom: 0;
+	}
+	.clean-table thead th {
+		background: #fafbfc;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+		color: #64748b;
+		padding: 14px 20px;
+		border-bottom: 1px solid #e2e8f0;
+	}
+	.clean-table tbody td {
+		padding: 16px 20px;
+		vertical-align: middle;
+		border-bottom: 1px solid #f1f5f9;
+		font-size: 0.925rem;
+	}
+	.clean-table tbody tr:last-child td {
+		border-bottom: none;
+	}
+	.clean-table tbody tr {
+		transition: background-color 0.15s ease;
+	}
+	.clean-table tbody tr:hover {
+		background-color: #f8fafc;
+	}
+	.service-cover-thumb {
+		width: 52px;
+		height: 52px;
+		border-radius: 12px;
+		border: 1px solid rgba(59, 174, 124, 0.2);
+		flex-shrink: 0;
+	}
+	.service-title-link {
+		color: #0f172a;
+		transition: color 0.15s ease;
+	}
+	.service-title-link:hover {
+		color: #3BAE7C;
+	}
+	.search-input-wrapper {
+		position: relative;
+		width: 280px;
+	}
+	.search-input-wrapper .search-icon {
+		position: absolute;
+		left: 14px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #94a3b8;
+		pointer-events: none;
+	}
+	.search-input-wrapper input {
+		padding-left: 38px;
+		border-radius: 8px;
+		border: 1px solid #e2e8f0;
+		font-size: 0.88rem;
+	}
+	.search-input-wrapper input:focus {
+		border-color: #3BAE7C;
+		box-shadow: 0 0 0 3px rgba(59, 174, 124, 0.12);
+	}
+</style>
+
+<!-- Page Clean Action Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+	<div>
+		<h3 class="fw-bold text-dark mb-1">Manajemen Konten Divisi Layanan & Paket Harga</h3>
+		<p class="text-muted small mb-0">Kelola daftar divisi layanan, editorial spesifikasi, paket harga, serta showcase proyek dan testimoni</p>
+	</div>
+	<div class="d-flex align-items-center gap-2">
+		<button type="button" class="btn btn-outline-primary rounded-3 px-3 py-2 fw-semibold d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+			<i class="ti ti-briefcase me-1"></i> Tambah Divisi Layanan
+		</button>
+		<button type="button" class="btn btn-primary rounded-3 px-3 py-2 fw-semibold d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#addPackageModal">
+			<i class="ti ti-plus me-1"></i> Tambah Paket Harga
+		</button>
+	</div>
+</div>
+
+<!-- Clean Table Card Container -->
+<div class="services-card mb-4">
+	<!-- Card Header Filter & Search -->
+	<div class="services-card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+		<div class="d-flex align-items-center gap-2">
+			<span class="badge bg-light text-secondary border px-3 py-2 fw-semibold rounded-pill">
+				Total: <%= services ? services.length : 0 %> Divisi Layanan
+			</span>
+		</div>
+		<div class="search-input-wrapper">
+			<i class="ti ti-search search-icon"></i>
+			<input type="text" class="form-control" id="searchServicesInput" placeholder="Cari divisi layanan..." onkeyup="filterServicesTable()">
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table clean-table align-middle">
+			<thead>
+				<tr>
+					<th style="min-width: 320px;">Divisi Layanan</th>
+					<th style="min-width: 280px; max-width: 380px;">Deskripsi Singkat</th>
+					<th style="min-width: 240px;">Komposisi Konten</th>
+					<th class="text-end" style="min-width: 140px;">Aksi</th>
+				</tr>
+			</thead>
+			<tbody id="servicesTableBody">
+				<% if (services && services.length > 0) { %>
+					<% services.forEach(function(svc) { 
+						let svcFeatures = [];
+						let svcPortfolios = [];
+						let svcTestimonials = [];
+						try { svcFeatures = typeof svc.features === 'string' ? JSON.parse(svc.features) : (svc.features || []); } catch (e) {}
+						try { svcPortfolios = typeof svc.portfolios === 'string' ? JSON.parse(svc.portfolios) : (svc.portfolios || []); } catch (e) {}
+						try { svcTestimonials = typeof svc.testimonials === 'string' ? JSON.parse(svc.testimonials) : (svc.testimonials || []); } catch (e) {}
+					%>
+						<tr class="service-row">
+							<td>
+								<div class="d-flex align-items-center py-2">
+									<a href="/admin/services/<%= svc.id %>" class="text-decoration-none me-3">
+										<div class="service-cover-thumb bg-primary bg-opacity-10 d-flex align-items-center justify-content-center" style="width: 52px; height: 52px; border-radius: 12px;">
+											<% if (svc.icon === 'FaLaptopCode') { %>
+												<i class="ti ti-code fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaWifi') { %>
+												<i class="ti ti-wifi fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaRegNewspaper') { %>
+												<i class="ti ti-news fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaCloud') { %>
+												<i class="ti ti-cloud fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaShieldAlt') { %>
+												<i class="ti ti-shield-lock fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaServer') { %>
+												<i class="ti ti-server fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaDatabase') { %>
+												<i class="ti ti-database fs-3 text-primary"></i>
+											<% } else if (svc.icon === 'FaMobileAlt') { %>
+												<i class="ti ti-device-mobile fs-3 text-primary"></i>
+											<% } else { %>
+												<i class="ti ti-briefcase fs-3 text-primary"></i>
+											<% } %>
+										</div>
+									</a>
+									<div>
+										<a href="/admin/services/<%= svc.id %>" class="fw-bold text-decoration-none service-title-link d-block mb-1" style="font-size: 1.22rem; color: #0f172a; letter-spacing: -0.3px;">
+											<%= svc.title %>
+										</a>
+										<div class="text-muted small" style="font-size: 0.88rem; color: #64748b;">
+											<%= svc.subtitle || 'Divisi Layanan Alexa' %>
+										</div>
+									</div>
+								</div>
+							</td>
+							<td style="max-width: 380px;">
+								<p class="text-muted small mb-0 pe-2" style="line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+									<%= svc.description %>
+								</p>
+							</td>
+							<td>
+								<div class="d-flex flex-wrap align-items-center gap-2 py-1">
+									<span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-1 rounded-pill fw-medium" style="font-size: 12px;">
+										<i class="ti ti-tag me-1"></i><%= svc.packages ? svc.packages.length : 0 %> Paket
+									</span>
+									<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1 rounded-pill fw-medium" style="font-size: 12px;">
+										<i class="ti ti-photo me-1"></i><%= svcPortfolios.length %> Showcase
+									</span>
+									<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-3 py-1 rounded-pill fw-medium" style="font-size: 12px;">
+										<i class="ti ti-message-dots me-1"></i><%= svcTestimonials.length %> Testimoni
+									</span>
+								</div>
+							</td>
+							<td class="text-end text-nowrap">
+								<div class="d-flex justify-content-end align-items-center gap-2">
+									<a href="/admin/services/<%= svc.id %>" class="btn btn-sm btn-light border text-primary fw-semibold px-3 py-1 rounded-2 d-inline-flex align-items-center" title="Kelola Detail Lengkap Divisi Ini">
+										<i class="ti ti-edit me-1"></i>Kelola
+									</a>
+									<button type="button" class="btn btn-sm btn-light border text-danger px-2 py-1 rounded-2" onclick="deleteServiceAction('<%= svc.id %>', '<%= svc.title %>')" title="Hapus Divisi">
+										<i class="ti ti-trash"></i>
+									</button>
+								</div>
+							</td>
+						</tr>
+					<% }); %>
+				<% } else { %>
+					<tr>
+						<td colspan="4" class="text-center text-muted py-5">
+							<i class="ti ti-briefcase fs-1 d-block mb-2 text-secondary"></i>
+							Belum ada layanan yang ditambahkan. Klik tombol "+ Tambah Divisi Layanan" di kanan atas.
+						</td>
+					</tr>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- Modal Tambah Divisi Layanan -->
+<div class="modal fade" id="addServiceModal" tabindex="-1">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header bg-white border-bottom">
+				<h5 class="modal-title fw-bold">Tambah Divisi Layanan Baru</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<form id="createServiceForm">
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label class="form-label fw-medium">ID / Kode Slug <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" name="id" required placeholder="Contoh: cloudmedia (tanpa spasi)">
+						</div>
+						<div class="col-md-6 mb-3">
+							<label class="form-label fw-medium">Pilihan Ikon Divisi <span class="text-danger">*</span></label>
+							<select class="form-select" name="icon" required>
+								<option value="FaLaptopCode">FaLaptopCode (Software/Web)</option>
+								<option value="FaWifi">FaWifi (Jaringan/ISP)</option>
+								<option value="FaRegNewspaper">FaRegNewspaper (Media/Berita)</option>
+								<option value="FaCloud">FaCloud (Cloud Server)</option>
+								<option value="FaShieldAlt">FaShieldAlt (Cyber Security)</option>
+								<option value="FaServer">FaServer (Data Center)</option>
+								<option value="FaDatabase">FaDatabase (Database Solutions)</option>
+								<option value="FaMobileAlt">FaMobileAlt (Mobile App)</option>
+							</select>
+						</div>
+						<div class="col-md-6 mb-3">
+							<label class="form-label fw-medium">Judul Divisi <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" name="title" required placeholder="Contoh: CloudMedia">
+						</div>
+						<div class="col-md-6 mb-3">
+							<label class="form-label fw-medium">Subjudul / Tagline Divisi</label>
+							<input type="text" class="form-control" name="subtitle" placeholder="Contoh: Enterprise Cloud & DevOps">
+						</div>
+						<div class="col-12 mb-3">
+							<label class="form-label fw-medium">Deskripsi Singkat (Kartu di Halaman Beranda) <span class="text-danger">*</span></label>
+							<textarea class="form-control" name="description" rows="2" required placeholder="Jelaskan secara ringkas keunggulan layanan ini..."></textarea>
+						</div>
+						<div class="col-12 mb-3">
+							<label class="form-label fw-medium">Deskripsi Lengkap (Untuk Halaman Detail Layanan)</label>
+							<textarea class="form-control" name="fullDesc" rows="3" placeholder="Paragraf pengantar lengkap yang akan tampil saat pengguna membuka halaman detail divisi ini..."></textarea>
+						</div>
+						<div class="col-12 mb-3">
+							<label class="form-label fw-medium">Key Features / Fitur Unggulan Layanan</label>
+							<textarea class="form-control" name="featuresInput" rows="3" placeholder="Satu fitur per baris (Tekan Enter untuk baris baru)&#10;Contoh:&#10;SLA Support 24/7 & Uptime 99.9%&#10;Arsitektur Cloud High Availability&#10;Dukungan Engineer Tersertifikasi"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer bg-light">
+				<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary px-4" onclick="submitCreateService()">Simpan Layanan Baru</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Edit Divisi Layanan -->
+<div class="modal fade" id="editServiceModal" tabindex="-1">
+	<div class="modal-dialog modal-lg modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header bg-white border-bottom">
+				<h5 class="modal-title fw-bold">Edit Konten Halaman Divisi Layanan</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<form id="editServiceForm">
+					<input type="hidden" name="id" id="editSvcId">
+					<div class="row">
+						<div class="col-md-6 mb-3">
+							<label class="form-label fw-medium">Judul Divisi <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" name="title" id="editSvcTitle" required>
+						</div>
+						<div class="col-md-6 mb-3">
+							<label class="form-label fw-medium">Ikon Divisi <span class="text-danger">*</span></label>
+							<select class="form-select" name="icon" id="editSvcIcon" required>
+								<option value="FaLaptopCode">FaLaptopCode (Software/Web)</option>
+								<option value="FaWifi">FaWifi (Jaringan/ISP)</option>
+								<option value="FaRegNewspaper">FaRegNewspaper (Media/Berita)</option>
+								<option value="FaCloud">FaCloud (Cloud Server)</option>
+								<option value="FaShieldAlt">FaShieldAlt (Cyber Security)</option>
+								<option value="FaServer">FaServer (Data Center)</option>
+								<option value="FaDatabase">FaDatabase (Database Solutions)</option>
+								<option value="FaMobileAlt">FaMobileAlt (Mobile App)</option>
+							</select>
+						</div>
+						<div class="col-12 mb-3">
+							<label class="form-label fw-medium">Subjudul / Tagline Divisi</label>
+							<input type="text" class="form-control" name="subtitle" id="editSvcSubtitle">
+						</div>
+						<div class="col-12 mb-3">
+							<label class="form-label fw-medium">Deskripsi Singkat (Tampil di Kartu Layanan Beranda) <span class="text-danger">*</span></label>
+							<textarea class="form-control" name="description" id="editSvcDescription" rows="2" required></textarea>
+						</div>
+						<div class="col-12 mb-3">
+							<label class="form-label fw-medium">Deskripsi Hero & Detail (Tampil di Halaman Detail Layanan)</label>
+							<textarea class="form-control" name="fullDesc" id="editSvcFullDesc" rows="3"></textarea>
+							<small class="text-muted">Paragraf pengantar yang tampil di halaman detail divisi saat dibuka pengunjung.</small>
+						</div>
+						<div class="col-12 mb-3">
+							<label class="form-label fw-medium">Key Features / Keunggulan Divisi</label>
+							<textarea class="form-control" name="featuresInput" id="editSvcFeaturesInput" rows="4" placeholder="Satu fitur per baris"></textarea>
+							<small class="text-muted">Setiap baris teks akan menjadi poin Keunggulan Divisi di Halaman Detail.</small>
+						</div>
+						<div class="col-12 mb-3">
+							<label class="form-label fw-medium">Showcase Proyek Divisi (Format JSON Array)</label>
+							<textarea class="form-control font-monospace small" name="portfoliosInput" id="editSvcPortfoliosInput" rows="4"></textarea>
+							<small class="text-muted">Daftar kartu showcase proyek di halaman detail divisi ini.</small>
+						</div>
+						<div class="col-12 mb-3">
+							<label class="form-label fw-medium">Testimoni & Komentar Klien Divisi (Format JSON Array)</label>
+							<textarea class="form-control font-monospace small" name="testimonialsInput" id="editSvcTestimonialsInput" rows="4"></textarea>
+							<small class="text-muted">Daftar komentar klien untuk divisi ini.</small>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer bg-light">
+				<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary px-4" onclick="submitEditService()">Simpan Perubahan Divisi</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Tambah Paket Harga -->
+<div class="modal fade" id="addPackageModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header bg-white border-bottom">
+				<h5 class="modal-title fw-bold">Tambah Paket Harga Baru</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<form id="createPackageForm">
+					<div class="mb-3">
+						<label class="form-label fw-medium">Divisi Layanan <span class="text-danger">*</span></label>
+						<select class="form-select" name="serviceId" id="pkgServiceIdSelect" required>
+							<% if (services && services.length > 0) { %>
+								<% services.forEach(function(s) { %>
+									<option value="<%= s.id %>"><%= s.title %></option>
+								<% }); %>
+							<% } %>
+						</select>
+					</div>
+					<div class="mb-3">
+						<label class="form-label fw-medium">Nama Paket <span class="text-danger">*</span></label>
+						<input type="text" class="form-control" name="name" required placeholder="Contoh: SOHO PLAN / BUSINESS PRO">
+					</div>
+					<div class="mb-3">
+						<label class="form-label fw-medium">Harga Display <span class="text-danger">*</span></label>
+						<input type="text" class="form-control" name="price" required placeholder="Contoh: Rp 850.000 / bln">
+					</div>
+					<div class="mb-3">
+						<label class="form-label fw-medium">Key Features Paket Harga (Satu per baris)</label>
+						<textarea class="form-control" name="featuresInput" rows="4" placeholder="Contoh:&#10;Speed Up to 150 Mbps&#10;Unlimited Quota FUP Free&#10;1 IP Public Statis Gratis&#10;SLA Uptime 99.5%"></textarea>
+					</div>
+					<div class="form-check form-switch mb-2">
+						<input class="form-check-input" type="checkbox" name="isPopular" id="isPopularSwitch">
+						<label class="form-check-label fw-medium" for="isPopularSwitch">Tandai sebagai Paket Terpopuler (Popular / Rekomendasi Badge)</label>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer bg-light">
+				<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary px-4" onclick="submitCreatePackage()">Simpan Paket</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Edit Paket Harga -->
+<div class="modal fade" id="editPackageModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header bg-white border-bottom">
+				<h5 class="modal-title fw-bold">Edit Paket Harga & Fitur</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<form id="editPackageForm">
+					<input type="hidden" name="id" id="editPkgId">
+					<div class="mb-3">
+						<label class="form-label fw-medium">Nama Paket <span class="text-danger">*</span></label>
+						<input type="text" class="form-control" id="editPkgName" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label fw-medium">Harga Display <span class="text-danger">*</span></label>
+						<input type="text" class="form-control" id="editPkgPrice" required>
+					</div>
+					<div class="mb-3">
+						<label class="form-label fw-medium">Key Features Paket Harga (Satu per baris)</label>
+						<textarea class="form-control" id="editPkgFeaturesInput" rows="4"></textarea>
+					</div>
+					<div class="form-check form-switch mb-2">
+						<input class="form-check-input" type="checkbox" id="editPkgIsPopularSwitch">
+						<label class="form-check-label fw-medium" for="editPkgIsPopularSwitch">Tandai sebagai Paket Terpopuler (Popular / Rekomendasi Badge)</label>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer bg-light">
+				<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary px-4" onclick="submitEditPackage()">Simpan Perubahan Paket</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Tambah Showcase Proyek -->
+<div class="modal fade" id="addPortfolioModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header bg-white border-bottom">
+				<h5 class="modal-title fw-bold">Tambah Showcase Proyek</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<input type="hidden" id="addPortServiceId">
+				<div class="mb-3">
+					<label class="form-label fw-medium">Judul Proyek <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" id="addPortTitle" required placeholder="Contoh: Instalasi Jaringan Kantor Pusat">
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">Kategori / Divisi</label>
+					<input type="text" class="form-control" id="addPortCategory" placeholder="Contoh: InetMedia / Network">
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">URL Gambar Proyek</label>
+					<input type="text" class="form-control" id="addPortImage" placeholder="Path atau URL Gambar (/uploads/... atau https://...)">
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">Deskripsi Proyek</label>
+					<textarea class="form-control" id="addPortDesc" rows="2" placeholder="Penjelasan singkat mengenai proyek ini"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer bg-light">
+				<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary px-4" onclick="submitAddPortfolio()">Simpan Proyek</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Edit Showcase Proyek -->
+<div class="modal fade" id="editPortfolioModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header bg-white border-bottom">
+				<h5 class="modal-title fw-bold">Edit Showcase Proyek</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<input type="hidden" id="editPortServiceId">
+				<input type="hidden" id="editPortItemId">
+				<div class="mb-3">
+					<label class="form-label fw-medium">Judul Proyek <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" id="editPortTitle" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">Kategori / Divisi</label>
+					<input type="text" class="form-control" id="editPortCategory">
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">URL Gambar Proyek</label>
+					<input type="text" class="form-control" id="editPortImage">
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">Deskripsi Proyek</label>
+					<textarea class="form-control" id="editPortDesc" rows="2"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer bg-light">
+				<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary px-4" onclick="submitEditPortfolio()">Simpan Perubahan</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Tambah Testimoni Klien -->
+<div class="modal fade" id="addTestimonialModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header bg-white border-bottom">
+				<h5 class="modal-title fw-bold">Tambah Testimoni Klien</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<input type="hidden" id="addTestiServiceId">
+				<div class="mb-3">
+					<label class="form-label fw-medium">Nama Klien <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" id="addTestiName" required placeholder="Contoh: Budi Wibowo">
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">Perusahaan / Jabatan <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" id="addTestiCompany" required placeholder="Contoh: IT Manager PT. Global Niaga">
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">Kutipan Komentar / Testimoni <span class="text-danger">*</span></label>
+					<textarea class="form-control" id="addTestiQuote" rows="3" placeholder="Layanan sangat stabil dan profesional..."></textarea>
+				</div>
+			</div>
+			<div class="modal-footer bg-light">
+				<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary px-4" onclick="submitAddTestimonial()">Simpan Testimoni</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Modal Edit Testimoni Klien -->
+<div class="modal fade" id="editTestimonialModal" tabindex="-1">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header bg-white border-bottom">
+				<h5 class="modal-title fw-bold">Edit Testimoni Klien</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body p-4">
+				<input type="hidden" id="editTestiServiceId">
+				<input type="hidden" id="editTestiItemId">
+				<div class="mb-3">
+					<label class="form-label fw-medium">Nama Klien <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" id="editTestiName" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">Perusahaan / Jabatan <span class="text-danger">*</span></label>
+					<input type="text" class="form-control" id="editTestiCompany" required>
+				</div>
+				<div class="mb-3">
+					<label class="form-label fw-medium">Kutipan Komentar / Testimoni <span class="text-danger">*</span></label>
+					<textarea class="form-control" id="editTestiQuote" rows="3"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer bg-light">
+				<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary px-4" onclick="submitEditTestimonial()">Simpan Perubahan</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+function parseLinesToArray(str) {
+	return (str || '')
+		.split('\n')
+		.map(s => s.trim())
+		.filter(Boolean);
+}
+
+// Tambah Divisi Layanan
+async function submitCreateService() {
+	const form = document.getElementById('createServiceForm');
+	const formData = new FormData(form);
+	const featuresArr = parseLinesToArray(formData.get('featuresInput'));
+
+	const data = {
+		id: formData.get('id'),
+		title: formData.get('title'),
+		subtitle: formData.get('subtitle'),
+		description: formData.get('description'),
+		fullDesc: formData.get('fullDesc'),
+		icon: formData.get('icon'),
+		features: featuresArr
+	};
+
+	try {
+		const res = await fetch('/api/services', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({ icon: 'success', title: 'Berhasil!', text: result.message, confirmButtonColor: '#3BAE7C' })
+				.then(() => location.reload());
+		} else {
+			Swal.fire('Gagal', result.message || 'Gagal menyimpan layanan', 'error');
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Terjadi kesalahan koneksi server', 'error');
+	}
+}
+
+// Edit Divisi Layanan
+function openEditServiceModal(input) {
+	const svc = typeof input === 'string' ? JSON.parse(decodeURIComponent(input)) : input;
+	document.getElementById('editSvcId').value = svc.id;
+	document.getElementById('editSvcTitle').value = svc.title;
+	document.getElementById('editSvcSubtitle').value = svc.subtitle || '';
+	document.getElementById('editSvcDescription').value = svc.description || '';
+	document.getElementById('editSvcFullDesc').value = svc.fullDesc || svc.description || '';
+	document.getElementById('editSvcIcon').value = svc.icon || 'FaLaptopCode';
+
+	let featArr = [];
+	try { featArr = JSON.parse(svc.features || '[]'); } catch (e) {}
+	document.getElementById('editSvcFeaturesInput').value = featArr.join('\n');
+
+	let portArr = [];
+	try { portArr = typeof svc.portfolios === 'string' ? JSON.parse(svc.portfolios) : (svc.portfolios || []); } catch (e) {}
+	document.getElementById('editSvcPortfoliosInput').value = JSON.stringify(portArr, null, 2);
+
+	let testiArr = [];
+	try { testiArr = typeof svc.testimonials === 'string' ? JSON.parse(svc.testimonials) : (svc.testimonials || []); } catch (e) {}
+	document.getElementById('editSvcTestimonialsInput').value = JSON.stringify(testiArr, null, 2);
+
+	new bootstrap.Modal(document.getElementById('editServiceModal')).show();
+}
+
+async function submitEditService() {
+	const id = document.getElementById('editSvcId').value;
+	const featuresArr = parseLinesToArray(document.getElementById('editSvcFeaturesInput').value);
+
+	let portfoliosArr = [];
+	try { portfoliosArr = JSON.parse(document.getElementById('editSvcPortfoliosInput').value || '[]'); } catch (e) {}
+
+	let testimonialsArr = [];
+	try { testimonialsArr = JSON.parse(document.getElementById('editSvcTestimonialsInput').value || '[]'); } catch (e) {}
+
+	const data = {
+		title: document.getElementById('editSvcTitle').value,
+		subtitle: document.getElementById('editSvcSubtitle').value,
+		description: document.getElementById('editSvcDescription').value,
+		heroDesc: document.getElementById('editSvcFullDesc').value,
+		fullDesc: document.getElementById('editSvcFullDesc').value,
+		icon: document.getElementById('editSvcIcon').value,
+		features: featuresArr,
+		portfolios: portfoliosArr,
+		testimonials: testimonialsArr
+	};
+
+	try {
+		const res = await fetch(`/api/services/${id}`, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({ icon: 'success', title: 'Tersimpan!', text: result.message, confirmButtonColor: '#3BAE7C' })
+				.then(() => location.reload());
+		} else {
+			Swal.fire('Gagal', result.message || 'Gagal memperbarui layanan', 'error');
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Terjadi kesalahan koneksi server', 'error');
+	}
+}
+
+async function deleteServiceAction(id, title) {
+	const confirm = await Swal.fire({
+		title: 'Hapus Layanan?',
+		text: `Apakah Anda yakin ingin menghapus divisi "${title}"?`,
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		cancelButtonColor: '#6c757d',
+		confirmButtonText: 'Ya, Hapus'
+	});
+
+	if (confirm.isConfirmed) {
+		const res = await fetch(`/api/services/${id}`, { method: 'DELETE' });
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({ icon: 'success', title: 'Dihapus', confirmButtonColor: '#3BAE7C' })
+				.then(() => location.reload());
+		}
+	}
+}
+
+// Tambah Paket
+function openAddPackageForService(serviceId) {
+	document.getElementById('pkgServiceIdSelect').value = serviceId;
+	new bootstrap.Modal(document.getElementById('addPackageModal')).show();
+}
+
+async function submitCreatePackage() {
+	const form = document.getElementById('createPackageForm');
+	const formData = new FormData(form);
+	const featuresArr = parseLinesToArray(formData.get('featuresInput'));
+
+	const data = {
+		serviceId: formData.get('serviceId'),
+		name: formData.get('name'),
+		price: formData.get('price'),
+		features: featuresArr,
+		isPopular: document.getElementById('isPopularSwitch').checked
+	};
+
+	try {
+		const res = await fetch('/api/services/packages', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Paket Ditambahkan',
+				timer: 1500,
+				showConfirmButton: false
+			}).then(() => location.reload());
+		} else {
+			Swal.fire('Gagal', result.message || 'Gagal menyimpan paket', 'error');
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Terjadi kesalahan koneksi server', 'error');
+	}
+}
+
+// Edit Paket
+function openEditPackageModal(encodedJson) {
+	const pkg = JSON.parse(decodeURIComponent(encodedJson));
+	document.getElementById('editPkgId').value = pkg.id;
+	document.getElementById('editPkgName').value = pkg.name;
+	document.getElementById('editPkgPrice').value = pkg.price;
+	document.getElementById('editPkgIsPopularSwitch').checked = !!pkg.isPopular;
+
+	let featArr = [];
+	try { featArr = JSON.parse(pkg.features || '[]'); } catch (e) {}
+	document.getElementById('editPkgFeaturesInput').value = featArr.join('\n');
+
+	new bootstrap.Modal(document.getElementById('editPackageModal')).show();
+}
+
+async function submitEditPackage() {
+	const id = document.getElementById('editPkgId').value;
+	const featuresArr = parseLinesToArray(document.getElementById('editPkgFeaturesInput').value);
+
+	const data = {
+		name: document.getElementById('editPkgName').value,
+		price: document.getElementById('editPkgPrice').value,
+		features: featuresArr,
+		isPopular: document.getElementById('editPkgIsPopularSwitch').checked
+	};
+
+	try {
+		const res = await fetch(`/api/services/packages/${id}`, {
+			method: 'PUT',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Paket Diperbarui',
+				timer: 1500,
+				showConfirmButton: false
+			}).then(() => location.reload());
+		} else {
+			Swal.fire('Gagal', result.message || 'Gagal memperbarui paket', 'error');
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Terjadi kesalahan koneksi server', 'error');
+	}
+}
+
+async function deletePackageAction(id) {
+	const res = await fetch(`/api/services/packages/${id}`, { method: 'DELETE' });
+	const result = await res.json();
+	if (result.success) {
+		location.reload();
+	}
+}
+
+// =============================
+// INTERACTIVE PORTFOLIO HANDLERS
+// =============================
+function openAddPortfolioModal(serviceId) {
+	document.getElementById('addPortServiceId').value = serviceId;
+	document.getElementById('addPortTitle').value = '';
+	document.getElementById('addPortCategory').value = '';
+	document.getElementById('addPortImage').value = '';
+	document.getElementById('addPortDesc').value = '';
+	new bootstrap.Modal(document.getElementById('addPortfolioModal')).show();
+}
+
+async function submitAddPortfolio() {
+	const serviceId = document.getElementById('addPortServiceId').value;
+	const data = {
+		title: document.getElementById('addPortTitle').value,
+		category: document.getElementById('addPortCategory').value,
+		image: document.getElementById('addPortImage').value,
+		desc: document.getElementById('addPortDesc').value
+	};
+	const res = await fetch(`/api/services/${serviceId}/portfolios`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data)
+	});
+	const result = await res.json();
+	if (result.success) {
+		Swal.fire({ icon: 'success', title: 'Tersimpan', text: result.message, timer: 1500, showConfirmButton: false }).then(() => location.reload());
+	} else {
+		Swal.fire('Gagal', result.message, 'error');
+	}
+}
+
+function openEditPortfolioModal(serviceId, itemId, title, category, image, desc) {
+	document.getElementById('editPortServiceId').value = serviceId;
+	document.getElementById('editPortItemId').value = itemId;
+	document.getElementById('editPortTitle').value = title || '';
+	document.getElementById('editPortCategory').value = category || '';
+	document.getElementById('editPortImage').value = image || '';
+	document.getElementById('editPortDesc').value = desc || '';
+	new bootstrap.Modal(document.getElementById('editPortfolioModal')).show();
+}
+
+async function submitEditPortfolio() {
+	const serviceId = document.getElementById('editPortServiceId').value;
+	const itemId = document.getElementById('editPortItemId').value;
+	const data = {
+		title: document.getElementById('editPortTitle').value,
+		category: document.getElementById('editPortCategory').value,
+		image: document.getElementById('editPortImage').value,
+		desc: document.getElementById('editPortDesc').value
+	};
+	const res = await fetch(`/api/services/${serviceId}/portfolios/${itemId}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data)
+	});
+	const result = await res.json();
+	if (result.success) {
+		Swal.fire({ icon: 'success', title: 'Diperbarui', text: result.message, timer: 1500, showConfirmButton: false }).then(() => location.reload());
+	} else {
+		Swal.fire('Gagal', result.message, 'error');
+	}
+}
+
+async function deletePortfolioAction(serviceId, itemId, title) {
+	const confirm = await Swal.fire({
+		title: 'Hapus Proyek?',
+		text: `Hapus showcase proyek "${title}" dari divisi ini?`,
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		confirmButtonText: 'Ya, Hapus'
+	});
+	if (confirm.isConfirmed) {
+		const res = await fetch(`/api/services/${serviceId}/portfolios/${itemId}`, { method: 'DELETE' });
+		const result = await res.json();
+		if (result.success) location.reload();
+	}
+}
+
+// =============================
+// INTERACTIVE TESTIMONIAL HANDLERS
+// =============================
+function openAddTestimonialModal(serviceId) {
+	document.getElementById('addTestiServiceId').value = serviceId;
+	document.getElementById('addTestiName').value = '';
+	document.getElementById('addTestiCompany').value = '';
+	document.getElementById('addTestiQuote').value = '';
+	new bootstrap.Modal(document.getElementById('addTestimonialModal')).show();
+}
+
+async function submitAddTestimonial() {
+	const serviceId = document.getElementById('addTestiServiceId').value;
+	const data = {
+		name: document.getElementById('addTestiName').value,
+		company: document.getElementById('addTestiCompany').value,
+		quote: document.getElementById('addTestiQuote').value
+	};
+	const res = await fetch(`/api/services/${serviceId}/testimonials`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data)
+	});
+	const result = await res.json();
+	if (result.success) {
+		Swal.fire({ icon: 'success', title: 'Tersimpan', text: result.message, timer: 1500, showConfirmButton: false }).then(() => location.reload());
+	} else {
+		Swal.fire('Gagal', result.message, 'error');
+	}
+}
+
+function openEditTestimonialModal(serviceId, itemId, name, company, quote) {
+	document.getElementById('editTestiServiceId').value = serviceId;
+	document.getElementById('editTestiItemId').value = itemId;
+	document.getElementById('editTestiName').value = name || '';
+	document.getElementById('editTestiCompany').value = company || '';
+	document.getElementById('editTestiQuote').value = quote || '';
+	new bootstrap.Modal(document.getElementById('editTestimonialModal')).show();
+}
+
+async function submitEditTestimonial() {
+	const serviceId = document.getElementById('editTestiServiceId').value;
+	const itemId = document.getElementById('editTestiItemId').value;
+	const data = {
+		name: document.getElementById('editTestiName').value,
+		company: document.getElementById('editTestiCompany').value,
+		quote: document.getElementById('editTestiQuote').value
+	};
+	const res = await fetch(`/api/services/${serviceId}/testimonials/${itemId}`, {
+		method: 'PUT',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(data)
+	});
+	const result = await res.json();
+	if (result.success) {
+		Swal.fire({ icon: 'success', title: 'Diperbarui', text: result.message, timer: 1500, showConfirmButton: false }).then(() => location.reload());
+	} else {
+		Swal.fire('Gagal', result.message, 'error');
+	}
+}
+
+async function deleteTestimonialAction(serviceId, itemId, name) {
+	const confirm = await Swal.fire({
+		title: 'Hapus Testimoni?',
+		text: `Hapus testimoni klien "${name}" dari divisi ini?`,
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#d33',
+		confirmButtonText: 'Ya, Hapus'
+	});
+	if (confirm.isConfirmed) {
+		const res = await fetch(`/api/services/${serviceId}/testimonials/${itemId}`, { method: 'DELETE' });
+		const result = await res.json();
+		if (result.success) location.reload();
+	}
+}
+
+// Filter live table divisi layanan berdasarkan input pencarian
+function filterServicesTable() {
+	const query = (document.getElementById('searchServicesInput')?.value || '').toLowerCase().trim();
+	const rows = document.querySelectorAll('#servicesTableBody tr.service-row');
+	rows.forEach(row => {
+		const textContent = row.textContent.toLowerCase();
+		row.style.display = textContent.includes(query) ? '' : 'none';
+	});
+}
+</script>
+

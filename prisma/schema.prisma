@@ -1,0 +1,374 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// 1. SYSTEM RBAC (ROLES & PERMISSIONS)
+// ==========================================
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String     @unique
+  password  String
+  avatar    String?
+  isActive  Boolean    @default(true)
+  roles     UserRole[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Role {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  description String?
+  users       UserRole[]
+  permissions RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model Permission {
+  id          String           @id @default(uuid())
+  name        String           @unique
+  module      String
+  description String?
+  roles       RolePermission[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role   @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+// ==========================================
+// 2. CONTENT MANAGEMENT ENTITIES (CMS)
+// ==========================================
+
+model Article {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  category    String
+  author      String   @default("Tim Editorial Alexa")
+  views       Int      @default(0)
+  image       String?
+  excerpt     String
+  content     String
+  isPublished     Boolean  @default(true)
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Service {
+  id           String           @id // "mediakampung", "inetmedia", "webmedia"
+  title        String
+  subtitle     String
+  description  String
+  heroDesc     String?
+  fullDesc     String?
+  icon         String           @default("FaLaptopCode")
+  color        String           @default("#3BAE7C")
+  features     String?
+  portfolios   String?
+  testimonials String?
+  packages     PricingPackage[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model PricingPackage {
+  id        String   @id @default(uuid())
+  serviceId String
+  name      String
+  price     String
+  features  String
+  isPopular Boolean  @default(false)
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  name      String
+  image     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Portfolio {
+  id          String   @id @default(uuid())
+  title       String
+  category    String
+  image       String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(uuid())
+  name      String
+  company   String
+  quote     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TeamMember {
+  id        String   @id @default(uuid())
+  name      String
+  role      String
+  image     String
+  bio       String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AnnualReport {
+  id        String   @id @default(uuid())
+  year      Int      @unique
+  title     String
+  size      String   @default("2.0 MB")
+  fileUrl   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Career {
+  id          String   @id @default(uuid())
+  title       String
+  department  String
+  location    String   @default("Jakarta, Hybrid")
+  type        String   @default("Full-time")
+  description String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Inquiry {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("NEW")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PageContent {
+  id        String   @id @default(uuid())
+  pageName  String   @unique
+  content   String
+  updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// 3. TAMBAHAN DARI SCHEMA KAMU (belum ada di punya teman)
+// ==========================================
+
+model HeroBanner {
+  id          String   @id @default(uuid())
+  title       String
+  subtitle    String?
+  image       String?
+  orderNumber Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ManagementTeam {
+  id          String   @id @default(uuid())
+  name        String
+  position    String?
+  photo       String?
+  bio         String?
+  orderNumber Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model WhyChooseUs {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  icon        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Partner {
+  id        String   @id @default(uuid())
+  name      String
+  logo      String?
+  type      String?  // "client" | "tech_partner"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Faq {
+  id          String   @id @default(uuid())
+  question    String
+  answer      String
+  orderNumber Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  phone     String?
+  whatsapp  String?
+  email     String?
+  address   String?
+  latitude  Float?
+  longitude Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SeoSetting {
+  id              String   @id @default(uuid())
+  menuType        String
+  articleId       String?
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+  ogImage         String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model CompanyProfile {
+  id        String   @id @default(uuid())
+  history   String?
+  vision    String?
+  mission   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Timeline {
+  id          String   @id @default(uuid())
+  year        String
+  title       String
+  description String?
+  orderNumber Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ------------------------------------------
+// TABEL KHUSUS PER HALAMAN FRONTEND
+// ------------------------------------------
+
+model PageHome {
+  id                    String   @id @default("home")
+  seoTitle              String?
+  seoDescription        String?
+  seoKeywords           String?
+  seoOgImage            String?
+  heroTitleLine1        String?
+  heroTitleHighlight    String?
+  heroDesc              String?
+  ctaPrimaryText        String?
+  ctaPrimaryLink        String?
+  ctaSecondaryText      String?
+  ctaSecondaryLink      String?
+  introTitle            String?
+  introDesc             String?
+  stat1Number           String?
+  stat1Label            String?
+  stat2Number           String?
+  stat2Label            String?
+  stat3Number           String?
+  stat3Label            String?
+  servicesSectionTitle  String?
+  servicesSectionSubtitle String?
+  clientsSectionTitle   String?
+  articlesSectionTitle  String?
+  updatedAt             DateTime @updatedAt
+}
+
+model PageAbout {
+  id               String   @id @default("about")
+  seoTitle         String?
+  seoDescription   String?
+  seoKeywords      String?
+  seoOgImage       String?
+  heroTitle        String?
+  heroDesc         String?
+  historyTitle     String?
+  historyContent   String?
+  historyPar1      String?
+  historyPar2      String?
+  timelineList     String?  // JSON string
+  teamSectionTitle String?
+  teamList         String?  // JSON string
+  visionText       String?
+  missionList      String?  // JSON string
+  updatedAt        DateTime @updatedAt
+}
+
+model PageServices {
+  id                String   @id @default("services")
+  seoTitle          String?
+  seoDescription    String?
+  seoKeywords       String?
+  seoOgImage        String?
+  heroTitle         String?
+  heroSubtitle      String?
+  sectionTitle      String?
+  sectionSubtitle   String?
+  testiSectionTitle String?
+  updatedAt         DateTime @updatedAt
+}
+
+model PageContact {
+  id             String   @id @default("contact")
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String?
+  seoOgImage     String?
+  heroTitle      String?
+  heroSubtitle   String?
+  addressTitle   String?
+  addressText    String?
+  phoneTitle     String?
+  phoneText      String?
+  emailTitle     String?
+  emailText      String?
+  mapEmbedUrl    String?
+  faqTitle       String?
+  faqSubtitle    String?
+  faqList        String?  // JSON string
+  updatedAt      DateTime @updatedAt
+}

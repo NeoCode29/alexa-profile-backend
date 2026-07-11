@@ -1,0 +1,405 @@
+<!-- Custom Clean Table & Page Styling -->
+<style>
+	.articles-card {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 14px;
+		box-shadow: 0 1px 3px rgba(15, 23, 42, 0.035);
+		overflow: hidden;
+	}
+	.articles-card-header {
+		padding: 18px 24px;
+		background: #ffffff;
+		border-bottom: 1px solid #f1f5f9;
+	}
+	.clean-table {
+		margin-bottom: 0;
+	}
+	.clean-table thead th {
+		background: #fafbfc;
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+		color: #64748b;
+		padding: 14px 20px;
+		border-bottom: 1px solid #e2e8f0;
+	}
+	.clean-table tbody td {
+		padding: 16px 20px;
+		vertical-align: middle;
+		border-bottom: 1px solid #f1f5f9;
+		font-size: 0.925rem;
+	}
+	.clean-table tbody tr:last-child td {
+		border-bottom: none;
+	}
+	.clean-table tbody tr {
+		transition: background-color 0.15s ease;
+	}
+	.clean-table tbody tr:hover {
+		background-color: #f8fafc;
+	}
+	.article-cover-thumb {
+		width: 68px;
+		height: 44px;
+		object-fit: cover;
+		border-radius: 8px;
+		border: 1px solid #e2e8f0;
+		flex-shrink: 0;
+	}
+	.article-title-link {
+		color: #0f172a;
+		transition: color 0.15s ease;
+	}
+	.article-title-link:hover {
+		color: #3BAE7C;
+	}
+	.search-input-wrapper {
+		position: relative;
+		width: 280px;
+	}
+	.search-input-wrapper .search-icon {
+		position: absolute;
+		left: 14px;
+		top: 50%;
+		transform: translateY(-50%);
+		color: #94a3b8;
+		pointer-events: none;
+	}
+	.search-input-wrapper input {
+		padding-left: 38px;
+		border-radius: 8px;
+		border: 1px solid #e2e8f0;
+		font-size: 0.88rem;
+	}
+	.search-input-wrapper input:focus {
+		border-color: #3BAE7C;
+		box-shadow: 0 0 0 3px rgba(59, 174, 124, 0.12);
+	}
+</style>
+
+<!-- Quill Rich Text Editor CSS -->
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+
+<!-- Page Clean Action Header -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+	<div>
+		<h3 class="fw-bold text-dark mb-1">Manajemen Artikel & Blog</h3>
+		<p class="text-muted small mb-0">Kelola daftar artikel, editorial konten, serta status publikasi</p>
+	</div>
+	<div class="d-flex align-items-center gap-2">
+		<button type="button" class="btn btn-primary rounded-3 px-3 py-2 fw-semibold d-flex align-items-center shadow-sm" data-bs-toggle="modal" data-bs-target="#addArticleModal">
+			<i class="ti ti-plus me-1"></i> Buat Artikel Baru
+		</button>
+	</div>
+</div>
+
+<!-- Clean Table Card Container -->
+<div class="articles-card mb-4">
+	<!-- Card Header Filter & Search -->
+	<div class="articles-card-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+		<div class="d-flex align-items-center gap-2">
+			<span class="badge bg-light text-secondary border px-3 py-2 fw-semibold rounded-pill">
+				Total: <%= articles ? articles.length : 0 %> Artikel
+			</span>
+		</div>
+		<div class="search-input-wrapper">
+			<i class="ti ti-search search-icon"></i>
+			<input type="text" class="form-control" id="searchArticlesInput" placeholder="Cari artikel..." onkeyup="filterArticlesTable()">
+		</div>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table clean-table">
+			<thead>
+				<tr>
+					<th style="min-width: 300px;">Artikel</th>
+					<th>Kategori</th>
+					<th>Penulis</th>
+					<th>Views</th>
+					<th>Tanggal</th>
+					<th class="text-end">Aksi</th>
+				</tr>
+			</thead>
+			<tbody id="articlesTableBody">
+				<% if (articles && articles.length > 0) { %>
+					<% articles.forEach(function(item) { %>
+						<tr class="article-row">
+							<td>
+								<div class="d-flex align-items-center">
+									<a href="/admin/articles/<%= item.id %>" class="text-decoration-none me-3">
+										<% if (item.image) { %>
+											<img src="<%= item.image %>" alt="" class="article-cover-thumb">
+										<% } else { %>
+											<div class="article-cover-thumb bg-light d-flex align-items-center justify-content-center">
+												<i class="ti ti-photo text-muted"></i>
+											</div>
+										<% } %>
+									</a>
+									<div>
+										<a href="/admin/articles/<%= item.id %>" class="fw-bold text-decoration-none article-title-link d-block mb-1">
+											<%= item.title %>
+										</a>
+										<div class="d-flex align-items-center gap-2">
+											<% if (item.isPublished) { %>
+												<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-0" style="font-size: 11px;">
+													Terbit
+												</span>
+											<% } else { %>
+												<span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-0" style="font-size: 11px;">
+													Draf
+												</span>
+											<% } %>
+											<span class="text-muted small">/blog/<%= item.slug %></span>
+										</div>
+									</div>
+								</div>
+							</td>
+							<td>
+								<span class="badge bg-light text-secondary border px-2 py-1 fw-medium rounded-pill">
+									<%= item.category %>
+								</span>
+							</td>
+							<td>
+								<div class="d-flex align-items-center text-dark">
+									<i class="ti ti-user-circle text-muted fs-5 me-1"></i>
+									<span class="fw-medium small"><%= item.author %></span>
+								</div>
+							</td>
+							<td>
+								<span class="text-muted small">
+									<i class="ti ti-eye me-1"></i><%= Number(item.views || 0).toLocaleString('id-ID') %>
+								</span>
+							</td>
+							<td class="text-muted small text-nowrap">
+								<%= new Date(item.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) %>
+							</td>
+							<td class="text-end text-nowrap">
+								<div class="d-flex justify-content-end align-items-center gap-1">
+									<a href="/admin/articles/<%= item.id %>" class="btn btn-sm btn-light border text-primary fw-semibold px-3 rounded-2 d-inline-flex align-items-center" title="Kelola Artikel Utuh">
+										<i class="ti ti-edit me-1"></i>Kelola
+									</a>
+									<button type="button" class="btn btn-sm btn-light border text-danger px-2 rounded-2" title="Hapus Artikel" onclick="deleteArticle('<%= item.id %>', '<%= item.title.replace(/'/g, "\\'") %>')">
+										<i class="ti ti-trash"></i>
+									</button>
+								</div>
+							</td>
+						</tr>
+					<% }); %>
+				<% } else { %>
+					<tr>
+						<td colspan="6" class="text-center text-muted py-5">
+							<i class="ti ti-file-text fs-1 d-block mb-2 text-secondary"></i>
+							Belum ada artikel yang ditambahkan.
+						</td>
+					</tr>
+				<% } %>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- Modal Tambah Artikel -->
+<div class="modal fade" id="addArticleModal" tabindex="-1">
+	<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title fw-bold">Tambah Artikel Baru</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+			</div>
+			<div class="modal-body">
+				<form id="createArticleForm">
+					<div class="row">
+						<div class="col-md-8 mb-3">
+							<label class="form-label fw-medium">Judul Artikel <span class="text-danger">*</span></label>
+							<input type="text" class="form-control" name="title" required placeholder="Contoh: Pentingnya Transformasi Digital Bagi UMKM">
+						</div>
+						<div class="col-md-4 mb-3">
+							<label class="form-label fw-medium">Kategori <span class="text-danger">*</span></label>
+							<select class="form-select" name="category" required>
+								<option value="Teknologi">Teknologi</option>
+								<option value="Desain Web">Desain Web</option>
+								<option value="Tips Jaringan">Tips Jaringan</option>
+								<option value="Software">Software</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="row align-items-end">
+						<div class="col-md-5 mb-3">
+							<label class="form-label fw-medium">Unggah Gambar Cover (.jpg/.png/.webp)</label>
+							<input type="file" class="form-control" id="coverUploadInput" accept="image/*" onchange="uploadCoverFile(event)">
+						</div>
+						<div class="col-md-5 mb-3">
+							<label class="form-label fw-medium">Atau URL Gambar Cover</label>
+							<input type="text" class="form-control" name="image" id="imageUrlInput" placeholder="Path / URL Gambar (/uploads/... atau https://...)">
+						</div>
+						<div class="col-md-2 mb-3 text-center">
+							<img id="coverPreview" src="" class="img-fluid rounded border d-none" style="max-height: 48px; object-fit: cover;">
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-medium">Kutipan Singkat (Opsional)</label>
+						<textarea class="form-control" name="excerpt" rows="2" placeholder="Kosongkan untuk otomatis membuat ringkasan dari isi artikel..."></textarea>
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-medium">Isi Lengkap Artikel (Rich Text WYSIWYG) <span class="text-danger">*</span></label>
+						<div id="quillEditor" style="height: 250px; background: #fff; border-radius: 6px;"></div>
+						<input type="hidden" name="content" id="articleContentHidden">
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+				<button type="button" class="btn btn-primary" onclick="submitCreateArticle()">Simpan & Terbitkan</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Quill JS -->
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+<script>
+let quill, quillEdit;
+const articlesList = <%- JSON.stringify(typeof articles !== 'undefined' ? articles : []) %>;
+
+document.addEventListener("DOMContentLoaded", function() {
+	quill = new Quill('#quillEditor', {
+		theme: 'snow',
+		placeholder: 'Tulis isi lengkap artikel di sini dengan pemformatan...',
+		modules: {
+			toolbar: [
+				[{ 'header': [2, 3, false] }],
+				['bold', 'italic', 'underline', 'blockquote'],
+				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+				['link', 'clean']
+			]
+		}
+	});
+
+	quillEdit = new Quill('#quillEditEditor', {
+		theme: 'snow',
+		placeholder: 'Edit isi artikel...',
+		modules: {
+			toolbar: [
+				[{ 'header': [2, 3, false] }],
+				['bold', 'italic', 'underline', 'blockquote'],
+				[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+				['link', 'clean']
+			]
+		}
+	});
+});
+
+async function uploadCoverFile(e) {
+	const file = e.target.files[0];
+	if (!file) return;
+
+	const formData = new FormData();
+	formData.append('image', file);
+
+	// Tampilkan loading loading kecil di preview
+	const previewImg = document.getElementById('coverPreview');
+	previewImg.classList.add('d-none');
+
+	try {
+		const res = await fetch('/api/upload', {
+			method: 'POST',
+			body: formData
+		});
+		const result = await res.json();
+		if (result.success) {
+			document.getElementById('imageUrlInput').value = result.url;
+			previewImg.src = result.url;
+			previewImg.classList.remove('d-none');
+		} else {
+			Swal.fire('Gagal', result.message, 'error');
+		}
+	} catch (err) {
+		Swal.fire('Error', 'Gagal mengunggah gambar', 'error');
+	}
+}
+
+async function submitCreateArticle() {
+	const form = document.getElementById('createArticleForm');
+	const formData = new FormData(form);
+	const data = Object.fromEntries(formData.entries());
+
+	// Ambil HTML dari editor Quill
+	data.content = quill.root.innerHTML;
+
+	if (!data.title || !data.content || data.content === "<p><br></p>") {
+		Swal.fire('Peringatan', 'Harap isi Judul dan Isi Artikel.', 'warning');
+		return;
+	}
+
+	try {
+		const res = await fetch('/api/articles', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		const result = await res.json();
+		if (result.success) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Berhasil',
+				text: 'Artikel baru telah berhasil diterbitkan.',
+				timer: 1500,
+				showConfirmButton: false
+			}).then(() => location.reload());
+		} else {
+			Swal.fire('Gagal', result.message || 'Gagal menyimpan artikel', 'error');
+		}
+	} catch (e) {
+		Swal.fire('Error', 'Terjadi kesalahan koneksi server.', 'error');
+	}
+}
+
+async function deleteArticle(id, title) {
+	Swal.fire({
+		title: 'Hapus Artikel?',
+		text: `Apakah Anda yakin ingin menghapus artikel "${title}"?`,
+		icon: 'warning',
+		showCancelButton: true,
+		confirmButtonColor: '#dc3545',
+		cancelButtonColor: '#6c757d',
+		confirmButtonText: 'Ya, Hapus',
+		cancelButtonText: 'Batal'
+	}).then(async (result) => {
+		if (result.isConfirmed) {
+			try {
+				const res = await fetch(`/api/articles/${id}`, { method: 'DELETE' });
+				const resultData = await res.json();
+				if (resultData.success) {
+					Swal.fire({
+						icon: 'success',
+						title: 'Terhapus',
+						text: 'Artikel telah berhasil dihapus.',
+						timer: 1500,
+						showConfirmButton: false
+					}).then(() => location.reload());
+				} else {
+					Swal.fire('Gagal', resultData.message, 'error');
+				}
+			} catch (e) {
+				Swal.fire('Error', 'Terjadi kesalahan koneksi server.', 'error');
+			}
+		}
+	});
+}
+
+
+// Filter live table berdasarkan input pencarian
+function filterArticlesTable() {
+	const query = (document.getElementById('searchArticlesInput')?.value || '').toLowerCase().trim();
+	const rows = document.querySelectorAll('#articlesTableBody tr.article-row');
+	rows.forEach(row => {
+		const textContent = row.textContent.toLowerCase();
+		row.style.display = textContent.includes(query) ? '' : 'none';
+	});
+}
+</script>
