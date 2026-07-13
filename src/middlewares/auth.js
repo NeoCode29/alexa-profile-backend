@@ -179,8 +179,16 @@ export const apiGatewayGuard = async (req, res, next) => {
 
   const validApiToken = process.env.API_TOKEN || process.env.API_KEY || 'alexa_live_secret_api_token_2026';
 
-  if (providedToken && providedToken === validApiToken) {
-    return next();
+  // Jika token disertakan tetapi tidak cocok, tolak langsung 401
+  if (providedToken) {
+    if (providedToken === validApiToken) {
+      return next();
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: 'Akses API Ditolak. API Token (X-API-KEY) yang diberikan tidak valid.'
+      });
+    }
   }
 
   // 2. Jika tidak ada API Token, cek apakah ada sesi Admin JWT yang valid (misalnya Admin sedang mengoperasikan UI)
