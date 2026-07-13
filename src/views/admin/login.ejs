@@ -108,6 +108,9 @@
 	<!-- /Main Wrapper -->
 
 	<script>
+		// Bersihkan token lokal lama ketika berada di halaman login
+		localStorage.removeItem('alexa_admin_token');
+
 		function togglePasswordVisibility() {
 			const pwdInput = document.getElementById('password');
 			const eyeIcon = document.getElementById('togglePasswordIcon');

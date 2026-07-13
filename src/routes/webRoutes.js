@@ -1,12 +1,12 @@
 import express from 'express';
 import * as WebController from '../controllers/webController.js';
-import { requireAdminAuth } from '../middlewares/auth.js';
+import { requireAdminAuth, redirectIfAuthenticated } from '../middlewares/auth.js';
 import { requireWebPermission } from '../middlewares/rbac.js';
 
 const router = express.Router();
 
-// Public login page
-router.get('/login', WebController.renderLogin);
+// Public login page (jika sudah login, otomatis dialihkan ke /admin)
+router.get('/login', redirectIfAuthenticated, WebController.renderLogin);
 
 // Logout route: bersihkan cookie token & redirect ke login
 router.get('/logout', (req, res) => {

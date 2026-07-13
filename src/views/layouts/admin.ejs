@@ -326,7 +326,7 @@
 										<i class="ti ti-user-shield me-2 text-primary"></i>Profil Saya & Keamanan
 									</a>
 									<div class="dropdown-divider my-1"></div>
-									<a class="dropdown-item d-flex align-items-center py-2 text-danger rounded-3" href="/admin/logout">
+									<a class="dropdown-item d-flex align-items-center py-2 text-danger rounded-3" href="/admin/logout" onclick="confirmLogout(event)">
 										<i class="ti ti-logout me-2"></i>Keluar Sesi
 									</a>
 								</div>
@@ -462,6 +462,26 @@
 	<!-- Custom JS -->
 	<script src="/assets/js/script.js"></script>
 	<script src="/assets/js/chip-input.js?v=2.2"></script>
+	<script>
+		function confirmLogout(e) {
+			e.preventDefault();
+			Swal.fire({
+				title: 'Keluar dari Sesi?',
+				text: 'Anda akan keluar dari Admin Panel.',
+				icon: 'question',
+				showCancelButton: true,
+				confirmButtonColor: '#d33',
+				cancelButtonColor: '#6c757d',
+				confirmButtonText: 'Ya, Keluar',
+				cancelButtonText: 'Batal'
+			}).then((result) => {
+				if (result.isConfirmed) {
+					localStorage.removeItem('alexa_admin_token');
+					window.location.href = '/admin/logout';
+				}
+			});
+		}
+	</script>
 
 </body>
 

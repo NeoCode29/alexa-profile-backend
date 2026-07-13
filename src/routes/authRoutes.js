@@ -10,5 +10,8 @@ router.get('/me', authenticateJWT, AuthController.getMe);
 router.put('/profile', authenticateJWT, AuthController.updateProfile);
 router.put('/change-password', authenticateJWT, AuthController.changePassword);
 
+// API Integration Token endpoints
+router.get('/api-token-info', authenticateJWT, AuthController.getApiTokenInfo);
+router.post('/verify-api-token', AuthController.verifyApiToken);
 
 export default router;

@@ -20,7 +20,12 @@ VITE_API_URL=http://localhost:4000/api
 
 ### CORS & kredensial (Credentials)
 - **CORS Origin:** Backend telah dikonfigurasi mengizinkan request dari origin frontend lokal (`http://localhost:5173`).
-- **Autentikasi Cookie:** Untuk endpoint yang membutuhkan autentikasi (seperti profil atau admin), backend menggunakan **JWT di dalam HTTP-Only Cookie (`token`)**. Jika frontend melakukan request ke *protected endpoints*, tambahkan konfigurasi `credentials: 'include'` pada `fetch` atau `withCredentials: true` pada `axios`.
+- **Autentikasi API Token (WAJIB untuk Koneksi Frontend / Eksternal):** Seluruh request dari aplikasi Frontend React ke endpoint `/api/*` **wajib menyertakan header `X-API-KEY`** agar diizinkan oleh API Gateway Guard:
+  ```http
+  X-API-KEY: alexa_live_secret_api_token_2026
+  ```
+  *(Token rahasia pengembangan dapat dilihat & disalin pada menu **Profil Saya & Keamanan** di Admin Panel atau dikonfigurasi melalui variabel `.env` `API_TOKEN`).*
+- **Autentikasi Cookie / JWT Admin:** Untuk pengoperasian dari dalam Admin UI, backend mendukung autentikasi **JWT di dalam HTTP-Only Cookie (`token`)** atau header `Authorization: Bearer <JWT>`.
 
 ---
 

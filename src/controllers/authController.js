@@ -242,3 +242,42 @@ export const changePassword = async (req, res) => {
   }
 };
 
+// Mendapatkan informasi Token API integrasi aktif (untuk Administrator)
+export const getApiTokenInfo = (req, res) => {
+  const apiToken = process.env.API_TOKEN || process.env.API_KEY || 'alexa_live_secret_api_token_2026';
+  return res.json({
+    success: true,
+    apiToken,
+    headerName: 'X-API-KEY',
+    exampleCurl: `curl -H "X-API-KEY: ${apiToken}" http://localhost:${process.env.PORT || 4000}/api/articles`
+  });
+};
+
+// Pengujian dan verifikasi validitas API Token dari eksternal/frontend
+export const verifyApiToken = (req, res) => {
+  const { apiToken } = req.body;
+  const headerToken = req.headers['x-api-key'] || req.headers['x-api-token'];
+  const tokenToTest = apiToken || headerToken;
+
+  const validToken = process.env.API_TOKEN || process.env.API_KEY || 'alexa_live_secret_api_token_2026';
+
+  if (tokenToTest && tokenToTest === validToken) {
+    return res.json({
+      success: true,
+      valid: true,
+      message: 'Koneksi API Token Valid! Anda memiliki hak akses integrasi penuh (Super Admin Integration).',
+      identity: {
+        name: 'System API Integration',
+        role: 'Super Admin',
+        access: 'Full REST API Permissions'
+      }
+    });
+  }
+
+  return res.status(401).json({
+    success: false,
+    valid: false,
+    message: 'API Token tidak valid. Periksa kembali token Anda.'
+  });
+};
+

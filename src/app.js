@@ -37,7 +37,8 @@ app.use(
 app.use(
   cors({
     origin: process.env.CLIENT_URL || 'http://localhost:5173',
-    credentials: true
+    credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-API-KEY', 'X-API-TOKEN']
   })
 );
 
@@ -60,9 +61,12 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 app.use('/api', apiRoutes);
 app.use('/admin', webRoutes);
 
-// Redirect root ke admin panel
+// Redirect root & /login ke admin panel
 app.get('/', (req, res) => {
   res.redirect('/admin');
+});
+app.get('/login', (req, res) => {
+  res.redirect('/admin/login');
 });
 
 // 404 & Global Error Handling

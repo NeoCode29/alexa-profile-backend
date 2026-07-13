@@ -119,6 +119,55 @@
 				</form>
 			</div>
 		</div>
+
+		<!-- Integrasi API Backend -->
+		<div class="card shadow-sm border-0 rounded-4 mt-4">
+			<div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center flex-wrap">
+				<div>
+					<h5 class="fw-bold mb-1 text-dark"><i class="ti ti-api-app text-primary me-2"></i>Token API Integrasi Backend</h5>
+					<p class="text-muted small mb-0">Gunakan rahasia API Token ini untuk menghubungkan aplikasi eksternal, frontend, atau mobile app ke REST API</p>
+				</div>
+				<span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill mt-2 mt-sm-0">
+					<i class="ti ti-circle-check me-1"></i>Aktif & Siap Pakai
+				</span>
+			</div>
+			<div class="card-body p-4">
+				<div class="mb-4">
+					<label class="form-label fw-medium text-dark">Secret API Token Anda</label>
+					<div class="input-group">
+						<span class="input-group-text bg-light border-end-0 text-muted">
+							<i class="ti ti-key"></i>
+						</span>
+						<input type="password" id="apiTokenInput" class="form-control bg-light border-start-0 border-end-0 font-monospace text-primary fw-bold" readonly value="<%= typeof apiToken !== 'undefined' ? apiToken : 'alexa_live_secret_api_token_2026' %>">
+						<button class="btn btn-outline-secondary bg-white" type="button" onclick="toggleApiTokenVisibility()" title="Tampilkan/Sembunyikan Token">
+							<i class="ti ti-eye" id="toggleApiTokenIcon"></i>
+						</button>
+						<button class="btn btn-primary fw-medium px-3" type="button" onclick="copyApiToken()">
+							<i class="ti ti-copy me-1"></i>Salin Token
+						</button>
+						<button class="btn btn-dark fw-medium px-3" type="button" onclick="testApiTokenConnection()">
+							<i class="ti ti-plug me-1"></i>Uji Token
+						</button>
+					</div>
+					<small class="text-muted d-block mt-2">
+						<i class="ti ti-shield-lock me-1 text-warning"></i>Jaga kerahasiaan token ini. Token ini memberikan izin integrasi penuh (Super Admin Integration) pada seluruh endpoint REST API.
+					</small>
+				</div>
+
+				<!-- Cara Penggunaan -->
+				<div class="bg-light p-3 rounded-3 border">
+					<h6 class="fw-bold text-dark mb-2"><i class="ti ti-code me-2 text-primary"></i>Cara Menggunakan Token API pada Header HTTP</h6>
+					<p class="small text-muted mb-2">Sertakan header <code class="text-danger fw-bold">X-API-KEY</code> atau <code class="text-danger fw-bold">Authorization: Bearer</code> pada setiap request ke endpoint <code class="text-dark">/api/*</code>:</p>
+					
+					<div class="bg-dark text-light p-3 rounded-2 font-monospace small overflow-auto mb-0" style="max-height: 140px;">
+						<span class="text-secondary"># Contoh request cURL ke backend API:</span><br>
+						curl -X GET http://localhost:4000/api/articles \<br>
+						&nbsp;&nbsp;-H <span class="text-warning">"X-API-KEY: <%= typeof apiToken !== 'undefined' ? apiToken : 'alexa_live_secret_api_token_2026' %>"</span> \<br>
+						&nbsp;&nbsp;-H "Content-Type: application/json"
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 
@@ -200,6 +249,64 @@ async function handleChangePassword(e) {
 		btn.disabled = false;
 		btn.innerHTML = `<i class="ti ti-key me-2"></i>Perbarui Password`;
 		Swal.fire('Error', 'Terjadi kesalahan koneksi ke server.', 'error');
+	}
+}
+
+function toggleApiTokenVisibility() {
+	const input = document.getElementById('apiTokenInput');
+	const icon = document.getElementById('toggleApiTokenIcon');
+	if (input.type === 'password') {
+		input.type = 'text';
+		icon.className = 'ti ti-eye-off text-primary';
+	} else {
+		input.type = 'password';
+		icon.className = 'ti ti-eye';
+	}
+}
+
+function copyApiToken() {
+	const input = document.getElementById('apiTokenInput');
+	navigator.clipboard.writeText(input.value).then(() => {
+		Swal.fire({
+			icon: 'success',
+			title: 'Tersalin!',
+			text: 'API Token berhasil disalin ke clipboard.',
+			timer: 1500,
+			showConfirmButton: false
+		});
+	});
+}
+
+async function testApiTokenConnection() {
+	const apiToken = document.getElementById('apiTokenInput').value;
+	Swal.fire({
+		title: 'Menguji Koneksi...',
+		allowOutsideClick: false,
+		didOpen: () => { Swal.showLoading(); }
+	});
+
+	try {
+		const res = await fetch('/api/auth/verify-api-token', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-API-KEY': apiToken
+			},
+			body: JSON.stringify({ apiToken })
+		});
+		const data = await res.json();
+		if (data.success && data.valid) {
+			Swal.fire({
+				icon: 'success',
+				title: 'Koneksi API Valid!',
+				html: `<b>Identitas:</b> ${data.identity.name}<br><b>Hak Akses:</b> ${data.identity.access}`,
+				confirmButtonColor: '#3BAE7C'
+			});
+		} else {
+			Swal.fire('Koneksi Gagal', data.message || 'Token tidak valid.', 'error');
+		}
+	} catch (err) {
+		Swal.fire('Error', 'Gagal menghubungi server.', 'error');
 	}
 }
 </script>

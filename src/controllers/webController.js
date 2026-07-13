@@ -245,10 +245,13 @@ export const renderProfile = async (req, res) => {
       }
     });
 
+    const apiToken = process.env.API_TOKEN || process.env.API_KEY || 'alexa_live_secret_api_token_2026';
+
     res.render('admin/profile', {
       title: 'Profil Saya & Keamanan',
       activeMenu: 'profile',
-      userDetail
+      userDetail,
+      apiToken
     });
   } catch (error) {
     res.status(500).send('Gagal memuat halaman profil');

@@ -8,8 +8,12 @@ import userRoutes from './userRoutes.js';
 import uploadRoutes from './uploadRoutes.js';
 import clientRoutes from './clientRoutes.js';
 import pageContentRoutes from './pageContentRoutes.js';
+import { apiGatewayGuard } from '../middlewares/auth.js';
 
 const router = express.Router();
+
+// Terapkan API Gateway Guard (Wajib menyertakan header X-API-KEY untuk Frontend/Klien Eksternal)
+router.use(apiGatewayGuard);
 
 // Register API routes
 router.use('/auth', authRoutes);
