@@ -179,7 +179,7 @@ export const apiGatewayGuard = async (req, res, next) => {
 
   const validApiToken = process.env.API_TOKEN || process.env.API_KEY || 'alexa_live_secret_api_token_2026';
 
-  // Jika token disertakan tetapi tidak cocok, tolak langsung 401
+  // 1. Jika token disertakan tetapi tidak cocok, tolak langsung 401
   if (providedToken) {
     if (providedToken === validApiToken) {
       return next();
@@ -191,7 +191,20 @@ export const apiGatewayGuard = async (req, res, next) => {
     }
   }
 
-  // 2. Jika tidak ada API Token, cek apakah ada sesi Admin JWT yang valid (misalnya Admin sedang mengoperasikan UI)
+  // 2. Jika permintaan berasal dari aplikasi Frontend / Eksternal (misal http://localhost:5173),
+  // WAJIB menyertakan X-API-KEY dan TIDAK BOLEH menembus menggunakan cookie sesi Admin browser.
+  const origin = req.headers.origin || '';
+  const referer = req.headers.referer || '';
+  const isExternalClient = origin.includes(':5173') || referer.includes(':5173') || (origin && !origin.includes(req.get('host')));
+
+  if (isExternalClient) {
+    return res.status(401).json({
+      success: false,
+      message: 'Akses API Ditolak. Aplikasi Frontend wajib menyertakan header X-API-KEY yang valid.'
+    });
+  }
+
+  // 3. Jika permintaan dari internal browser Admin Panel (/admin/*), cek sesi cookie Admin
   const user = await verifyTokenAndLoadUser(req);
   if (user) {
     req.user = user;
@@ -199,9 +212,9 @@ export const apiGatewayGuard = async (req, res, next) => {
     return next();
   }
 
-  // 3. Tolak jika tidak menyertakan API Token
+  // 4. Tolak jika tidak menyertakan API Token dan bukan Admin internal
   return res.status(401).json({
     success: false,
-    message: 'Akses API Ditolak. Aplikasi Frontend wajib menyertakan API Token (header X-API-KEY) yang valid untuk terhubung ke backend ini.'
+    message: 'Akses API Ditolak. Aplikasi wajib menyertakan API Token (header X-API-KEY) yang valid untuk terhubung ke backend ini.'
   });
 };
