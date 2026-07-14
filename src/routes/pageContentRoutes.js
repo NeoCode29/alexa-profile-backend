@@ -10,6 +10,6 @@ router.get('/', PageContentController.getAllPagesContent);
 router.get('/:pageName', PageContentController.getPageContent);
 
 // Protected Routes (Untuk diubah oleh Admin Panel)
-router.put('/:pageName', authenticateJWT, PageContentController.updatePageContent);
+router.put('/:pageName', authenticateJWT, requirePermission('frontend.manage'), PageContentController.updatePageContent);
 
 export default router;

@@ -15,9 +15,19 @@ export const renderDashboard = async (req, res) => {
     const totalInquiries = await prisma.inquiry.count({ where: { status: 'NEW' } });
     const totalClients = await prisma.client.count();
 
+    const viewsAgg = await prisma.article.aggregate({
+      _sum: { views: true }
+    });
+    const totalArticleViews = viewsAgg._sum.views || 0;
+
     const recentArticles = await prisma.article.findMany({
       take: 5,
       orderBy: { createdAt: 'desc' }
+    });
+
+    const topArticles = await prisma.article.findMany({
+      take: 5,
+      orderBy: { views: 'desc' }
     });
 
     const recentInquiries = await prisma.inquiry.findMany({
@@ -32,9 +42,11 @@ export const renderDashboard = async (req, res) => {
         totalArticles,
         totalServices,
         totalInquiries,
-        totalClients
+        totalClients,
+        totalArticleViews
       },
       recentArticles,
+      topArticles,
       recentInquiries
     });
   } catch (error) {

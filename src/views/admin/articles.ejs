@@ -41,16 +41,36 @@
 		background-color: #f8fafc;
 	}
 	.article-cover-thumb {
-		width: 68px;
-		height: 44px;
-		object-fit: cover;
-		border-radius: 8px;
-		border: 1px solid #e2e8f0;
-		flex-shrink: 0;
+		width: 68px !important;
+		min-width: 68px !important;
+		max-width: 68px !important;
+		height: 48px !important;
+		min-height: 48px !important;
+		max-height: 48px !important;
+		object-fit: cover !important;
+		border-radius: 8px !important;
+		border: 1px solid #e2e8f0 !important;
+		flex-shrink: 0 !important;
+		display: block !important;
+	}
+	.article-thumb-link {
+		width: 68px !important;
+		min-width: 68px !important;
+		max-width: 68px !important;
+		height: 48px !important;
+		min-height: 48px !important;
+		flex-shrink: 0 !important;
+		display: block !important;
+	}
+	.article-text-wrapper {
+		flex-grow: 1 !important;
+		min-width: 0 !important;
 	}
 	.article-title-link {
 		color: #0f172a;
 		transition: color 0.15s ease;
+		display: block;
+		word-break: break-word;
 	}
 	.article-title-link:hover {
 		color: #3BAE7C;
@@ -128,7 +148,7 @@
 						<tr class="article-row">
 							<td>
 								<div class="d-flex align-items-center">
-									<a href="/admin/articles/<%= item.id %>" class="text-decoration-none me-3">
+									<a href="/admin/articles/<%= item.id %>" class="text-decoration-none me-3 article-thumb-link">
 										<% if (item.image) { %>
 											<img src="<%= item.image %>" alt="" class="article-cover-thumb">
 										<% } else { %>
@@ -137,11 +157,11 @@
 											</div>
 										<% } %>
 									</a>
-									<div>
+									<div class="article-text-wrapper">
 										<a href="/admin/articles/<%= item.id %>" class="fw-bold text-decoration-none article-title-link d-block mb-1">
 											<%= item.title %>
 										</a>
-										<div class="d-flex align-items-center gap-2">
+										<div class="d-flex align-items-center gap-2 flex-wrap">
 											<% if (item.isPublished) { %>
 												<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-0" style="font-size: 11px;">
 													Terbit

@@ -27,7 +27,7 @@ const verifyTokenAndLoadUser = async (req) => {
         'roles.manage',
         'users.manage',
         'clients.manage',
-        'pages.manage'
+        'frontend.manage'
       ],
       isApiToken: true
     };
@@ -127,6 +127,12 @@ export const requireAdminAuth = async (req, res, next) => {
 
   req.user = user;
   res.locals.user = user;
+  res.locals.hasPerm = (permName) => {
+    if (!user) return false;
+    if (user.roles && user.roles.includes('Super Admin')) return true;
+    const perms = Array.isArray(permName) ? permName : [permName];
+    return perms.some((p) => user.permissions && user.permissions.includes(p));
+  };
   next();
 };
 

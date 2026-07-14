@@ -80,54 +80,93 @@ h1, h2, h3, h4, h5, h6,
    ========================================================================== */
 .sidebar {
   background-color: #FFFFFF !important;
-  border-right: 1px solid #E5E7EB !important;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.04) !important;
+  border-right: 1px solid #EEF2F6 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+}
+
+.sidebar .slimScrollDiv {
+  overflow: hidden !important;
+}
+
+.sidebar .sidebar-inner {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.sidebar .sidebar-menu,
+.sidebar .slimScrollDiv .sidebar-menu {
+  padding: 12px 16px 40px 16px !important;
+  box-sizing: border-box !important;
+}
+
+.sidebar-menu ul li.menu-title {
+  padding: 14px 10px 4px 10px !important;
+  margin: 0 !important;
+  list-style: none !important;
 }
 
 .sidebar-menu ul li.menu-title span {
-  color: #8B9BB0 !important;
+  color: #94A3B8 !important;
   font-weight: 700 !important;
-  font-size: 11px !important;
-  letter-spacing: 1.2px !important;
+  font-size: 10.8px !important;
+  letter-spacing: 0.8px !important;
   text-transform: uppercase !important;
 }
 
 .sidebar-menu ul li a {
-  color: #374151 !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+  margin: 2px 0 !important;
+  border-radius: 8px !important;
+  color: #475569 !important;
+  font-size: 0.85rem !important;
   font-weight: 500 !important;
-  transition: all 0.25s ease !important;
+  text-decoration: none !important;
+  border: 1px solid transparent !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 .sidebar-menu ul li a i,
 .sidebar-menu ul li a svg {
-  color: #6B7280 !important;
-  transition: all 0.25s ease !important;
+  font-size: 1.08rem !important;
+  margin-right: 10px !important;
+  color: #64748B !important;
+  flex-shrink: 0 !important;
+  transition: all 0.2s ease !important;
 }
 
-.sidebar-menu ul li a:hover {
-  background-color: rgba(59, 174, 124, 0.1) !important;
+.sidebar-menu ul li a:hover:not(.active) {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
+}
+
+.sidebar-menu ul li a:hover:not(.active) i,
+.sidebar-menu ul li a:hover:not(.active) svg {
   color: var(--color-green) !important;
 }
 
-.sidebar-menu ul li a:hover i,
-.sidebar-menu ul li a:hover svg {
-  color: var(--color-green) !important;
-}
-
-/* Active Menu Item */
+/* Active Menu Item (Sleek Soft Emerald Card) */
 .sidebar-menu ul li.active > a,
-.sidebar .sidebar-menu > ul > li > a.active {
-  background-color: var(--color-green) !important;
-  color: var(--color-white) !important;
+.sidebar .sidebar-menu > ul > li > a.active,
+.sidebar .sidebar-menu ul li.active > a,
+.sidebar .sidebar-menu ul li > a.active {
+  background-color: rgba(59, 174, 124, 0.12) !important;
+  color: #167A4F !important;
   font-weight: 600 !important;
-  box-shadow: 0 4px 12px rgba(59, 174, 124, 0.25) !important;
+  border: 1px solid rgba(59, 174, 124, 0.2) !important;
+  box-shadow: 0 2px 6px rgba(59, 174, 124, 0.08) !important;
 }
 
 .sidebar-menu ul li.active > a i,
 .sidebar-menu ul li.active > a span,
 .sidebar .sidebar-menu > ul > li > a.active i,
-.sidebar .sidebar-menu > ul > li > a.active span {
-  color: var(--color-white) !important;
+.sidebar .sidebar-menu > ul > li > a.active span,
+.sidebar .sidebar-menu ul li.active > a i,
+.sidebar .sidebar-menu ul li.active > a span {
+  color: #167A4F !important;
 }
 
 /* Mobile Sidebar Logo Header */

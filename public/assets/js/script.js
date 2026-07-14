@@ -9,8 +9,9 @@ Template Name: Dreams rent - Bootstrap Admin Template
 	// Variables declarations
 	var $wrapper = $('.main-wrapper');
 	var $slimScrolls = $('.slimscroll');
-	var $pageWrapper = $('.page-wrapper');
-	feather.replace();
+	if (typeof feather !== 'undefined') {
+		feather.replace();
+	}
 
 	// Page Content Height Resize
 	$(window).resize(function () {

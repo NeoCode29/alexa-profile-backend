@@ -52,6 +52,18 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Global EJS view helpers
+app.use((req, res, next) => {
+  res.locals.hasPerm = (permName) => {
+    const user = res.locals.user || req.user;
+    if (!user) return false;
+    if (user.roles && user.roles.includes('Super Admin')) return true;
+    const perms = Array.isArray(permName) ? permName : [permName];
+    return perms.some((p) => user.permissions && user.permissions.includes(p));
+  };
+  next();
+});
+
 // Static files (Aset lokal project dahulu, lalu fallback ke referensi-admin-panel)
 app.use('/assets', express.static(path.join(__dirname, '../public/assets')));
 app.use('/assets', express.static(path.join(__dirname, '../../referensi-admin-panel/assets')));

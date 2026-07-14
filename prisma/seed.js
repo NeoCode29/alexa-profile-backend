@@ -10,6 +10,7 @@ async function main() {
   const permissionsData = [
     { name: 'articles.manage', module: 'Articles', description: 'Kelola penuh Artikel Blog' },
     { name: 'services.manage', module: 'Services', description: 'Kelola Layanan, Paket Harga & Portfolio' },
+    { name: 'frontend.manage', module: 'Frontend', description: 'Kelola Halaman & Konten Frontend' },
     { name: 'careers.manage', module: 'Careers', description: 'Kelola Lowongan Kerja' },
     { name: 'inquiries.manage', module: 'Inquiries', description: 'Lihat dan proses pesan masuk' },
     { name: 'users.manage', module: 'Users', description: 'Kelola akun pengguna admin' },
@@ -63,7 +64,7 @@ async function main() {
   }
 
   // Hubungkan Content Editor ke permissions konten
-  const editorPermNames = ['articles.manage', 'services.manage'];
+  const editorPermNames = ['articles.manage', 'services.manage', 'frontend.manage'];
   for (const name of editorPermNames) {
     const perm = createdPermissions.find(p => p.name === name);
     if (perm) {

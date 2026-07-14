@@ -28,6 +28,6 @@ router.get('/inquiries', requireWebPermission('inquiries.manage'), WebController
 router.get('/roles', requireWebPermission('roles.manage'), WebController.renderRoles);
 router.get('/users', requireWebPermission('users.manage'), WebController.renderUsers);
 router.get('/clients', requireWebPermission('services.manage'), WebController.renderClients);
-router.get('/pages', WebController.renderPages);
+router.get('/pages', requireWebPermission('frontend.manage'), WebController.renderPages);
 
 export default router;
